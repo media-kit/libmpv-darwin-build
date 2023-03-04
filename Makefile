@@ -214,6 +214,8 @@ build/macos/x64/lib/libavcodec.dylib: \
 				--disable-debug \
 				--disable-programs \
 				--disable-doc \
+				--disable-avdevice \
+				--disable-postproc \
 				--enable-pic \
 				--enable-shared \
 				--disable-x86asm \
