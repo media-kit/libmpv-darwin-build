@@ -64,7 +64,14 @@ build/macos/x64/bin/pkg-config: sources/.timestamp build/macos/x64
 			&& cd sources/pkg-config \
 				&& ./configure \
 					--prefix="$(PREFIX)" \
+					--disable-static \
+					--enable-fast-instal=true \
+					--disable-dependency-tracking \
+					--with-pic \
+					--with-aix-soname=aix \
+					--without-gnu-ld \
 					--with-internal-glib \
+					--without-gcov \
 				&& make \
 				&& make install
 
