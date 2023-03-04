@@ -209,7 +209,7 @@ build/macos/x64/lib/libavcodec.dylib: \
 			&& ./configure \
 				--prefix="$(PREFIX)" \
 				--disable-lzma \
-				--disable-securetransport \
+				--enable-securetransport \
 				--disable-sdl2 \
 				--disable-debug \
 				--disable-programs \
