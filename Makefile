@@ -106,6 +106,11 @@ build/macos/x64/lib/libfribidi.dylib: \
 		&& cd sources/fribidi \
 			&& meson setup build \
 				--prefix="$(PREFIX)" \
+				-Ddeprecated=false \
+				-Ddocs=false \
+				-Dbin=false \
+				-Dtests=false \
+				-Dfuzzer_ldflags= \
 			&& meson compile -C build \
 			&& meson install -C build
 
