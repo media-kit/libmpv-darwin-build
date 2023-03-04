@@ -219,6 +219,7 @@ build/macos/x64/lib/libavcodec.dylib: \
 				--enable-pic \
 				--enable-shared \
 				--disable-x86asm \
+				--enable-videotoolbox \
 			&& make \
 			&& make install
 
