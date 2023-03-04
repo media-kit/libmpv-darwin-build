@@ -72,7 +72,7 @@ build/macos/x64/bin/pkg-config: sources/.timestamp build/macos/x64
 					--without-gnu-ld \
 					--with-internal-glib \
 					--without-gcov \
-				&& make \
+				&& make -j$(shell sysctl -n hw.ncpu) \
 				&& make install
 
 .PHONY: pkg-config
@@ -191,7 +191,7 @@ build/macos/x64/lib/libass.dylib: \
 				--with-pic \
 				--with-aix-soname=aix \
 				--without-gnu-ld \
-			&& make \
+			&& make -j$(shell sysctl -n hw.ncpu) \
 			&& make install
 
 .PHONY: libass
@@ -219,8 +219,13 @@ build/macos/x64/lib/libavcodec.dylib: \
 				--enable-pic \
 				--enable-shared \
 				--disable-x86asm \
+				--disable-xlib \
+				--disable-libxcb \
+				--disable-libxcb-shm \
+				--disable-libxcb-xfixes \
+				--disable-libxcb-shape \
 				--enable-videotoolbox \
-			&& make \
+			&& make -j$(shell sysctl -n hw.ncpu) \
 			&& make install
 
 .PHONY: ffmpeg
