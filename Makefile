@@ -245,7 +245,7 @@ build/macos/x64/lib/libmpv.dylib: \
 				`# audio output features` \
 				-Dalsa=disabled       `# ALSA audio output` \
 				-Daudiounit=disabled  `# AudioUnit output for iOS` \
-				-Dcoreaudio=disabled  `# CoreAudio audio output` \
+				-Dcoreaudio=enabled   `# CoreAudio audio output` \
 				-Djack=disabled       `# JACK audio output` \
 				-Dopenal=disabled     `# OpenAL audio output` \
 				-Dopensles=disabled   `# OpenSL ES audio output` \
