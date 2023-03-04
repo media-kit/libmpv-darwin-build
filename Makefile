@@ -158,11 +158,22 @@ build/macos/x64/lib/libass.dylib: \
 			&& ./configure \
 				--prefix="$(PREFIX)" \
 				--disable-static \
+				--enable-fast-install \
 				--disable-dependency-tracking \
-				--with-pic \
+				--disable-test \
+				--disable-compare \
+				--disable-profile \
+				--disable-fuzz \
 				--disable-fontconfig \
-				--disable-require-system-font-provider \
 				--disable-directwrite \
+				--enable-coretext \
+				--disable-libunibreak \
+				--disable-require-system-font-provider \
+				--disable-asm \
+				--disable-large-tiles \
+				--with-pic \
+				--with-aix-soname=aix \
+				--without-gnu-ld \
 			&& make \
 			&& make install
 
