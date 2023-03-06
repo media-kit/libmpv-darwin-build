@@ -1,3 +1,9 @@
+## Todo
+
+- [ ] Maybe drop meson build for `libass` & `ffmpeg`
+- [ ] Fix assembly support
+- [ ] Maybe move to `gnutls`
+
 ## Resources
 
 - https://github.com/stps/mpv-ios-scripts

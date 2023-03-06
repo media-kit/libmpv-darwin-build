@@ -33,29 +33,90 @@ tasks:
     run: once
     platforms:
       - darwin
+    vars:
+      OS: darwin
+      TARGET_DIR: '{{.BUILD_DIR}}/{{.OS}}'
+      ARHC1: amd64
+      ARHC2: arm64
+      ARHC3: universal
+      PACKAGE_ARHC1_DIR: '{{.TARGET_DIR}}/{{.ARHC1}}/package'
+      PACKAGE_ARHC2_DIR: '{{.TARGET_DIR}}/{{.ARHC2}}/package'
+      PACKAGE_ARHC3_DIR: '{{.TARGET_DIR}}/{{.ARHC3}}/package'
+    desc: build {{.ARHC1}} & {{.ARHC2}} packages and merge to {{.ARHC3}}
     deps:
       - build-darwin-amd64
-      # - build-darwin-arm64
+      - build-darwin-arm64
+    sources:
+      - '{{.PACKAGE_ARHC1_DIR}}/*.dylib'
+      - '{{.PACKAGE_ARHC2_DIR}}/*.dylib'
+    generates:
+      - '{{.PACKAGE_ARHC3_DIR}}/*.dylib'
+    cmds:
+      - |
+        set -e
+        export PATH={{.PATH}}
+
+        mkdir -p {{.PACKAGE_ARHC3_DIR}}
+
+        find {{.PACKAGE_ARHC1_DIR}} \
+          -type f -name '*.dylib' \
+          -exec \
+          sh -c ' \
+            lipo \
+              -create \
+                "{}" \
+                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC2}}|g") \
+              -output \
+                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC3}}|g") \
+          ' \
+        \;
 
   build-darwin-amd64:
     run: once
     platforms:
       - darwin
+    vars:
+      OS: darwin
+      TARGET_DIR: '{{.BUILD_DIR}}/{{.OS}}'
     deps:
       - task: build
         vars:
-          OS: darwin
+          OS: '{{.OS}}'
           ARCH: amd64
+          TARGET_DIR: '{{.TARGET_DIR}}'
   
   build-darwin-arm64:
     run: once
     platforms:
       - darwin
+    vars:
+      OS: darwin
+      TARGET_DIR: '{{.BUILD_DIR}}/{{.OS}}'
     deps:
       - task: build
         vars:
-          OS: darwin
+          OS: '{{.OS}}'
           ARCH: arm64
+          TARGET_DIR: '{{.TARGET_DIR}}'
+
+  build:
+    label: build-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    vars:
+      PACKAGE_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/package'
+      SOURCES_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/sources'
+      CHROOT_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/chroot'
+      PKG_CONFIG_PATH: '{{.CHROOT_DIR}}/lib/pkgconfig'
+    deps:
+      - task: package
+        vars:
+          PACKAGE_DIR: '{{.PACKAGE_DIR}}'
+          SOURCES_DIR: '{{.SOURCES_DIR}}'
+          CHROOT_DIR: '{{.CHROOT_DIR}}'
+          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
+          OS: '{{.OS}}'
+          ARCH: '{{.ARCH}}'
 
   downloads:
     internal: true
@@ -311,27 +372,38 @@ tasks:
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/libass
-        ./configure \
-          --prefix="{{.CHROOT_DIR}}" \
-          --disable-static \
-          --enable-fast-install \
-          --disable-dependency-tracking \
-          --disable-test \
-          --disable-compare \
-          --disable-profile \
-          --disable-fuzz \
-          --disable-fontconfig \
-          --disable-directwrite \
-          --enable-coretext \
-          --disable-libunibreak \
-          --disable-require-system-font-provider \
-          --disable-asm \
-          --disable-large-tiles \
-          --with-pic \
-          --with-aix-soname=aix \
-          --without-gnu-ld
-        make -j$(sysctl -n hw.ncpu)
-        make install
+
+        # ./configure \
+        #   --prefix="{{.CHROOT_DIR}}" \
+        #   --disable-static \
+        #   --enable-fast-install \
+        #   --disable-dependency-tracking \
+        #   --disable-test \
+        #   --disable-compare \
+        #   --disable-profile \
+        #   --disable-fuzz \
+        #   --disable-fontconfig \
+        #   --disable-directwrite \
+        #   --enable-coretext \
+        #   --disable-libunibreak \
+        #   --disable-require-system-font-provider \
+        #   --disable-asm \
+        #   --disable-large-tiles \
+        #   --with-pic \
+        #   --with-aix-soname=aix \
+        #   --without-gnu-ld
+        # make -l
+        # make install
+
+        cp {{.PROJECT_DIR}}/scripts/libass/meson.build ./meson.build
+        meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
+          --prefix="{{.CHROOT_DIR}}"
+
+        meson compile -C build libass
+
+        # manual install to preserve symlinks (meson install -C build)
+        cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
 
   ffmpeg:
     label: ffmpeg-{{.OS}}-{{.ARCH}}
@@ -355,28 +427,46 @@ tasks:
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/ffmpeg
-        ./configure \
-          --prefix="{{.CHROOT_DIR}}" \
-          --disable-lzma \
-          --enable-securetransport \
-          --disable-sdl2 \
-          --disable-debug \
-          --disable-programs \
-          --disable-doc \
-          --disable-avdevice \
-          --disable-postproc \
-          --enable-pic \
-          --disable-static \
-          --enable-shared \
-          --disable-x86asm \
-          --disable-xlib \
-          --disable-libxcb \
-          --disable-libxcb-shm \
-          --disable-libxcb-xfixes \
-          --disable-libxcb-shape \
-          --enable-videotoolbox
-        make -j$(sysctl -n hw.ncpu)
-        make install
+
+        # ./configure \
+        #   --prefix="{{.CHROOT_DIR}}" \
+        #   --disable-lzma \
+        #   --enable-securetransport \
+        #   --disable-sdl2 \
+        #   --disable-debug \
+        #   --disable-programs \
+        #   --disable-doc \
+        #   --disable-avdevice \
+        #   --disable-postproc \
+        #   --enable-pic \
+        #   --disable-static \
+        #   --enable-shared \
+        #   --disable-x86asm \
+        #   --disable-xlib \
+        #   --disable-libxcb \
+        #   --disable-libxcb-shm \
+        #   --disable-libxcb-xfixes \
+        #   --disable-libxcb-shape \
+        #   --enable-videotoolbox \
+        #   --enable-neon \
+        #   \
+        #   --enable-cross-compile \
+        #   --target-os=darwin \
+        #   --arch=aarch64 \
+        #   --extra-cflags="-arch arm64" \
+        #   --extra-ldflags="-arch arm64"
+        # make -l
+        # make install
+
+        cp {{.PROJECT_DIR}}/scripts/ffmpeg/meson.build ./meson.build
+        meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
+          --prefix="{{.CHROOT_DIR}}"
+
+        meson compile -C build ffmpeg
+
+        # manual install to preserve symlinks (meson install -C build)
+        cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
 
   mpv:
     label: mpv-{{.OS}}-{{.ARCH}}
@@ -577,26 +667,6 @@ tasks:
         ./scripts/relink_dylibs.sh {{.CHROOT_DIR}}/lib {{.PACKAGE_DIR}}
 
         codesign --remove {{.PACKAGE_DIR}}/*.dylib
-
-  build:
-    label: build-{{.OS}}-{{.ARCH}}
-    internal: true
-    run: when_changed
-    vars:
-      TARGET_DIR: '{{.BUILD_DIR}}/{{.OS}}'
-      PACKAGE_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/package'
-      SOURCES_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/sources'
-      CHROOT_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/chroot'
-      PKG_CONFIG_PATH: '{{.CHROOT_DIR}}/lib/pkgconfig'
-    deps:
-      - task: package
-        vars:
-          PACKAGE_DIR: '{{.PACKAGE_DIR}}'
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
 
   clean:
     run: once
