@@ -3,7 +3,8 @@ version: '3'
 vars:
   PWD:
     sh: pwd
-  BUILD_DIR: '{{.PWD}}/build'
+  PROJECT_DIR: '{{.PWD}}'
+  BUILD_DIR: '{{.PROJECT_DIR}}/build'
   TOOLS_DIR: '{{.BUILD_DIR}}/tools'
   TOOLS_CHROOT_DIR: '{{.TOOLS_DIR}}/chroot'
   TOOLS_SOURCES_DIR: '{{.TOOLS_DIR}}/sources'
@@ -46,15 +47,15 @@ tasks:
           OS: darwin
           ARCH: amd64
   
-  # build-darwin-arm64:
-  #   run: once
-  #   platforms:
-  #     - darwin
-  #   deps:
-  #     - task: build
-  #       vars:
-  #         OS: darwin
-  #         ARCH: arm64
+  build-darwin-arm64:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - task: build
+        vars:
+          OS: darwin
+          ARCH: arm64
 
   downloads:
     internal: true
@@ -175,6 +176,7 @@ tasks:
 
         cd {{.SOURCES_DIR}}/freetype
         meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
           --prefix="{{.CHROOT_DIR}}" \
           -Dbrotli=disabled \
           -Dbzip2=disabled \
@@ -209,6 +211,7 @@ tasks:
 
         cd {{.SOURCES_DIR}}/fribidi
         meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
           --prefix="{{.CHROOT_DIR}}" \
           -Ddeprecated=false \
           -Ddocs=false \
@@ -241,6 +244,7 @@ tasks:
 
         cd {{.SOURCES_DIR}}/harfbuzz
         meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
           --prefix="{{.CHROOT_DIR}}" \
           -Dglib=disabled \
           -Dgobject=disabled \
@@ -411,6 +415,7 @@ tasks:
 
         cd {{.SOURCES_DIR}}/mpv
         meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
           --prefix="{{.CHROOT_DIR}}" \
           `# booleans` \
           -Dgpl=true             `# GPL (version 2 or later) build` \
