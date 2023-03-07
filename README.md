@@ -4,7 +4,6 @@
 - [ ] Maybe fix assembly support
 - [ ] Maybe move to `gnutls`
 - [ ] Set `macosx-version-min`
-- [ ] Fix log output if keep meson build
 
 ## Resources
 

@@ -25,6 +25,7 @@ p = mod.add_project('configure',
         '--with-aix-soname=aix',
         '--without-gnu-ld',
     ],
+    verbose: true,
 )
 
 libass_dep = p.dependency('libass')

@@ -33,6 +33,7 @@ p = mod.add_project('configure',
         '--target-os=@0@'.format(host_machine.system()),
         '--arch=@0@'.format(host_machine.cpu_family()),
     ],
+    verbose: true,
 )
 
 libavfilter_dep = p.dependency('libavfilter')
