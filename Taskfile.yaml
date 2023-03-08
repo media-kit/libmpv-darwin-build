@@ -3,6 +3,11 @@ version: '3'
 vars:
   PWD:
     sh: pwd
+  TERM:
+    sh: echo $TERM
+  UNSETENV: |
+    # unset all env vars
+    for i in $(env | awk -F"=" '{print $1}') ; do unset $i ; done
   PROJECT_DIR: '{{.PWD}}'
   BUILD_DIR: '{{.PROJECT_DIR}}/build'
   TOOLS_DIR: '{{.BUILD_DIR}}/tools'
@@ -54,11 +59,14 @@ tasks:
     cmds:
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
 
-        mkdir -p {{.PACKAGE_ARHC3_DIR}}
+        mkdir -p "{{.PACKAGE_ARHC3_DIR}}"
 
-        find {{.PACKAGE_ARHC1_DIR}} \
+        find "{{.PACKAGE_ARHC1_DIR}}" \
           -type f -name '*.dylib' \
           -exec \
           sh -c ' \
@@ -138,7 +146,6 @@ tasks:
     cmds:
       - |
         set -e
-        export PATH={{.PATH}}
 
         rm -rf {{.TARGET_DIR}}
         mkdir -p {{.TARGET_DIR}}
@@ -191,7 +198,10 @@ tasks:
           TARGET_DIR: '{{.TOOLS_SOURCES_DIR}}/pkg-config'
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
 
         cd {{.TOOLS_SOURCES_DIR}}/pkg-config
         ./configure \
@@ -232,7 +242,10 @@ tasks:
           TARGET_DIR: '{{.SOURCES_DIR}}/freetype'
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/freetype
@@ -267,7 +280,10 @@ tasks:
           TARGET_DIR: '{{.SOURCES_DIR}}/fribidi'
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/fribidi
@@ -300,7 +316,10 @@ tasks:
           TARGET_DIR: '{{.SOURCES_DIR}}/harfbuzz'
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/harfbuzz
@@ -368,7 +387,10 @@ tasks:
           TARGET_DIR: '{{.SOURCES_DIR}}/libass'
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/libass
@@ -423,7 +445,10 @@ tasks:
           TARGET_DIR: '{{.SOURCES_DIR}}/ffmpeg'
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/ffmpeg
@@ -500,7 +525,10 @@ tasks:
           TARGET_DIR: '{{.SOURCES_DIR}}/mpv'
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
         cd {{.SOURCES_DIR}}/mpv
@@ -642,18 +670,21 @@ tasks:
       - echo build {{.OS}}/{{.ARCH}}
       - |
         set -e
+
+        {{.UNSETENV}}
         export PATH={{.PATH}}
+        export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        rm -rf {{.PACKAGE_DIR}}
-        mkdir -p {{.PACKAGE_DIR}}
+        rm -rf "{{.PACKAGE_DIR}}"
+        mkdir -p "{{.PACKAGE_DIR}}"
 
         # copy dylibs except '*-subset.*.dylib'
-        find {{.CHROOT_DIR}}/lib \
+        find "{{.CHROOT_DIR}}/lib" \
           -type f -name '*.dylib' \
           ! -name '*-subset.*.dylib' \
           -exec \
-          cp {} {{.PACKAGE_DIR}} \
+          cp "{}" "{{.PACKAGE_DIR}}" \
         \;
 
         # libfoo.100.99.88.dylib -> libfoo.100.dylib
@@ -661,12 +692,12 @@ tasks:
           sh -c 'mv "{}" $(echo "{}" | sed -r "s|([0-9]+)(\.[0-9]+)*|\1|g")' \
         \;
 
-        mv {{.PACKAGE_DIR}}/libmpv.*.dylib {{.PACKAGE_DIR}}/libmpv.dylib
-        install_name_tool -id @rpath/libmpv.dylib {{.PACKAGE_DIR}}/libmpv.dylib
+        mv "{{.PACKAGE_DIR}}"/libmpv.*.dylib "{{.PACKAGE_DIR}}/libmpv.dylib"
+        install_name_tool -id @rpath/libmpv.dylib "{{.PACKAGE_DIR}}/libmpv.dylib"
 
-        ./scripts/relink_dylibs.sh {{.CHROOT_DIR}}/lib {{.PACKAGE_DIR}}
+        ./scripts/relink_dylibs.sh "{{.CHROOT_DIR}}/lib" "{{.PACKAGE_DIR}}"
 
-        codesign --remove {{.PACKAGE_DIR}}/*.dylib
+        codesign --remove "{{.PACKAGE_DIR}}"/*.dylib
 
   clean:
     run: once
