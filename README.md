@@ -2,7 +2,7 @@
 
 - [ ] Maybe drop meson build for `libass` & `ffmpeg`
 - [ ] Maybe fix assembly support
-- [ ] Maybe move to `gnutls`
+- [ ] Maybe move to `gnutls` (securetransport seems deprecated)
 - [ ] Add cheksum on downloads
 
 ## Resources
