@@ -3,7 +3,7 @@
 - [ ] Maybe drop meson build for `libass` & `ffmpeg`
 - [ ] Maybe fix assembly support
 - [ ] Maybe move to `gnutls`
-- [ ] Set `macosx-version-min`
+- [ ] Add cheksum on downloads
 
 ## Resources
 
