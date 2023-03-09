@@ -1,2 +1,5 @@
+clang 14.0.0
 golang 1.20
+meson 1.0.1
+ninja 1.11.1
 task 3.21.0
