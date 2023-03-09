@@ -129,16 +129,16 @@ tasks:
           ARCH: '{{.ARCH}}'
 
   downloads:
-    internal: true
     run: once
     sources:
       - downloads.lock
     generates:
-      - downloads/*
+      - downloads/*.tar.*
     cmds:
       - |
         set -e
 
+        rm -f downloads/.*.tmp
         rm -f downloads/*.tar.*
         go run cmd/download/download.go downloads.lock downloads
   

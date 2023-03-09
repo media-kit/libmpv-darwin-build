@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -13,15 +15,45 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Reverse[T comparable](s []T) []T {
-	var r []T
-	for i := len(s) - 1; i >= 0; i-- {
-		r = append(r, s[i])
+func main() {
+	lockFile := os.Args[1:][0]
+	destDir := os.Args[1:][1]
+
+	lock, err := parseLock(lockFile)
+	if err != nil {
+		log.Fatal(err)
 	}
-	return r
+
+	for name := range lock {
+		dep := lock[name]
+		ext := parseExt(dep.URL, 2)
+
+		tmpName := fmt.Sprintf(".%s-%s%s.tmp", name, dep.Version, ext)
+		tmpPath := path.Join(destDir, tmpName)
+
+		destName := fmt.Sprintf("%s-%s%s", name, dep.Version, ext)
+		destPath := path.Join(destDir, destName)
+
+		log.Println(destPath)
+
+		err := download(dep.URL, tmpPath)
+		if err != nil {
+			log.Fatalf("%s: %s", destPath, err)
+		}
+
+		err = check(tmpPath, dep.Sha256)
+		if err != nil {
+			log.Fatalf("%s: %s", destPath, err)
+		}
+
+		err = os.Rename(tmpPath, destPath)
+		if err != nil {
+			log.Fatalf("%s: %s", destPath, err)
+		}
+	}
 }
 
-func Ext(filename string, count int) string {
+func parseExt(filename string, count int) string {
 	var exts []string
 
 	for i := 0; i < count; i++ {
@@ -30,68 +62,87 @@ func Ext(filename string, count int) string {
 		exts = append(exts, ext)
 	}
 
-	return strings.Join(Reverse(exts), "")
+	return strings.Join(reverse(exts), "")
 }
 
-func main() {
-	lockFile := os.Args[1:][0]
-	destDir := os.Args[1:][1]
+func reverse[T comparable](s []T) []T {
+	var r []T
+	for i := len(s) - 1; i >= 0; i-- {
+		r = append(r, s[i])
+	}
+	return r
+}
 
-	f, err := os.Open(lockFile)
+func parseLock(path string) (models.Lock, error) {
+	f, err := os.Open(path)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, fmt.Errorf("parseLock: %w", err)
 	}
 
 	data, err := io.ReadAll(f)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, fmt.Errorf("parseLock: %w", err)
 	}
 
 	var lock models.Lock
 	err = yaml.Unmarshal(data, &lock)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, fmt.Errorf("parseLock: %w", err)
 	}
 
-	for name := range lock {
-		dep := lock[name]
+	return lock, nil
+}
 
-		ext := Ext(dep.URL, 2)
-		filename := fmt.Sprintf("%s-%s%s", name, dep.Version, ext)
-		destPath := path.Join(destDir, filename)
-
-		log.Println(destPath)
-
-		destFile, err := os.Create(destPath)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		defer destFile.Close()
-
-		req, err := http.NewRequest(http.MethodGet, dep.URL, nil)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		res, err := http.DefaultClient.Do(req)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		defer res.Body.Close()
-
-		if res.StatusCode != http.StatusOK {
-			log.Fatalln(
-				fmt.Sprintf(
-					"resp: error: %d!=%d", res.StatusCode, http.StatusOK,
-				),
-			)
-		}
-
-		_, err = io.Copy(destFile, res.Body)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		// TODO: add checksum
+func download(url, path string) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("download: %w", err)
 	}
+	defer file.Close()
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return fmt.Errorf("download: %w", err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("download: %w", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf(
+			"download: status error: %d!=%d", res.StatusCode, http.StatusOK,
+		)
+	}
+
+	_, err = io.Copy(file, res.Body)
+	if err != nil {
+		return fmt.Errorf("download: %w", err)
+	}
+
+	return nil
+}
+
+func check(path, sha256sum string) error {
+	file, err := os.Open(path)
+	if err != nil {
+		return fmt.Errorf("check: %w", err)
+	}
+	defer file.Close()
+
+	hash := sha256.New()
+
+	_, err = io.Copy(hash, file)
+	if err != nil {
+		return fmt.Errorf("check: %w", err)
+	}
+
+	sum := fmt.Sprintf("%x", hash.Sum(nil))
+	if sum != sha256sum {
+		return errors.New("check: cheksums not matching")
+	}
+
+	return nil
 }
