@@ -1,10 +1,7 @@
 ## Todo
 
-- [ ] Improve sandboxing, notably by removing access to gcc to force the use of
-      clang
-- [ ] Maybe move to `gnutls` (securetransport seems deprecated)
 - [ ] Add cheksum on downloads
-- [ ] Maybe install meson & ninja with asdf instead of brew
+- [ ] Maybe move to `gnutls` (securetransport seems deprecated)
 - [ ] Compare conf with what brew does
 
 ## Resources

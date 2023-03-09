@@ -156,32 +156,41 @@ tasks:
             -C {{.TARGET_DIR}} \
         \;
   
-  ninja:
+  links:
     internal: true
     run: when_changed
+    vars:
+      BINARIES:
+        meson
+        ninja
     status:
-      - test -f {{.TOOLS_CHROOT_DIR}}/bin/ninja
+      - |
+        set -e
+        
+        # check BINARY presence in \$TOOLS_CHROOT_DIR/bin
+        for BINARY in {{.BINARIES}} ; do \
+          test -f {{.TOOLS_CHROOT_DIR}}/bin/$BINARY ; \
+        done
     cmds:
       - |
         set -e
 
         mkdir -p {{.TOOLS_CHROOT_DIR}}/bin
-        ln -s $(which ninja) {{.TOOLS_CHROOT_DIR}}/bin/ninja
-  
-  meson:
-    internal: true
-    run: when_changed
-    deps:
-      - ninja
-    status:
-      - test -f {{.TOOLS_CHROOT_DIR}}/bin/meson
-    cmds:
-      - |
-        set -e
 
-        mkdir -p {{.TOOLS_CHROOT_DIR}}/bin
-        ln -s $(which meson) {{.TOOLS_CHROOT_DIR}}/bin/meson
-  
+        # check BINARY presence in PATH
+        for BINARY in {{.BINARIES}} ; do \
+          [ -z $(which $BINARY) ] \
+            && echo $BINARY not found in \$PATH \
+            && false || true ; \
+        done
+
+        # sym link BINARY
+        for BINARY in {{.BINARIES}} ; do \
+          [ ! -h {{.TOOLS_CHROOT_DIR}}/bin/$BINARY ] \
+            && ln -s $(which $BINARY) {{.TOOLS_CHROOT_DIR}}/bin/$BINARY \
+            || true ; \
+        done
+
   pkg-config:
     internal: true
     run: when_changed
@@ -204,24 +213,23 @@ tasks:
         export TERM={{.TERM}}
 
         cd {{.TOOLS_SOURCES_DIR}}/pkg-config
-        ./configure \
-          --prefix="{{.TOOLS_CHROOT_DIR}}" \
-          --disable-static \
-          --enable-fast-instal=true \
-          --disable-dependency-tracking \
-          --with-pic \
-          --with-aix-soname=aix \
-          --without-gnu-ld \
-          --with-internal-glib \
-          --without-gcov
-        make -j$(sysctl -n hw.ncpu)
-        make install
+
+        cp {{.PROJECT_DIR}}/scripts/pkg-config/meson.build ./meson.build
+        meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{OS}}-{{ARCH}}.ini \
+          --prefix="{{.TOOLS_CHROOT_DIR}}"
+
+        meson compile -C build pkg-config
+
+        # manual install to preserve symlinks (meson install -C build)
+        mkdir -p '{{.TOOLS_CHROOT_DIR}}'
+        cp -R build/dist'{{.TOOLS_CHROOT_DIR}}'/* '{{.TOOLS_CHROOT_DIR}}'/
 
   tools:
     internal: true
     run: once
     deps:
-      - meson
+      - links
       - pkg-config
 
   freetype:
