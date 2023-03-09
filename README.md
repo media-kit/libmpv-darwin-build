@@ -2,10 +2,10 @@
 
 - [ ] Improve sandboxing, notably by removing access to gcc to force the use of
       clang
-- [ ] Maybe drop meson build for `libass` & `ffmpeg`
-- [ ] Maybe fix assembly support
 - [ ] Maybe move to `gnutls` (securetransport seems deprecated)
 - [ ] Add cheksum on downloads
+- [ ] Maybe install meson & ninja with asdf instead of brew
+- [ ] Compare conf with what brew does
 
 ## Resources
 

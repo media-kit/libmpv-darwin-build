@@ -395,28 +395,6 @@ tasks:
 
         cd {{.SOURCES_DIR}}/libass
 
-        # ./configure \
-        #   --prefix="{{.CHROOT_DIR}}" \
-        #   --disable-static \
-        #   --enable-fast-install \
-        #   --disable-dependency-tracking \
-        #   --disable-test \
-        #   --disable-compare \
-        #   --disable-profile \
-        #   --disable-fuzz \
-        #   --disable-fontconfig \
-        #   --disable-directwrite \
-        #   --enable-coretext \
-        #   --disable-libunibreak \
-        #   --disable-require-system-font-provider \
-        #   --disable-asm \
-        #   --disable-large-tiles \
-        #   --with-pic \
-        #   --with-aix-soname=aix \
-        #   --without-gnu-ld
-        # make -l
-        # make install
-
         cp {{.PROJECT_DIR}}/scripts/libass/meson.build ./meson.build
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
@@ -425,6 +403,7 @@ tasks:
         meson compile -C build libass
 
         # manual install to preserve symlinks (meson install -C build)
+        mkdir -p '{{.CHROOT_DIR}}'
         cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
 
   ffmpeg:
@@ -453,36 +432,6 @@ tasks:
 
         cd {{.SOURCES_DIR}}/ffmpeg
 
-        # ./configure \
-        #   --prefix="{{.CHROOT_DIR}}" \
-        #   --disable-lzma \
-        #   --enable-securetransport \
-        #   --disable-sdl2 \
-        #   --disable-debug \
-        #   --disable-programs \
-        #   --disable-doc \
-        #   --disable-avdevice \
-        #   --disable-postproc \
-        #   --enable-pic \
-        #   --disable-static \
-        #   --enable-shared \
-        #   --disable-x86asm \
-        #   --disable-xlib \
-        #   --disable-libxcb \
-        #   --disable-libxcb-shm \
-        #   --disable-libxcb-xfixes \
-        #   --disable-libxcb-shape \
-        #   --enable-videotoolbox \
-        #   --enable-neon \
-        #   \
-        #   --enable-cross-compile \
-        #   --target-os=darwin \
-        #   --arch=aarch64 \
-        #   --extra-cflags="-arch arm64" \
-        #   --extra-ldflags="-arch arm64"
-        # make -l
-        # make install
-
         cp {{.PROJECT_DIR}}/scripts/ffmpeg/meson.build ./meson.build
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
@@ -491,6 +440,7 @@ tasks:
         meson compile -C build ffmpeg
 
         # manual install to preserve symlinks (meson install -C build)
+        mkdir -p '{{.CHROOT_DIR}}'
         cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
 
   mpv:
