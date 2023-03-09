@@ -23,7 +23,8 @@ p = mod.add_project('configure',
     configure_options : [
         '--prefix=@PREFIX@',
         '--disable-lzma',
-        '--enable-securetransport',
+        '--disable-securetransport',
+        '--enable-libtls', # libressl (https support)
         '--disable-sdl2',
         '--disable-debug',
         '--disable-programs',

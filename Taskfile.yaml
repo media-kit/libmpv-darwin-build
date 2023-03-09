@@ -31,6 +31,8 @@ tasks:
             harfbuzz
             fribidi
           ffmpeg
+            libressl
+
     cmds:
       - go run cmd/lock/lock.go {{.DEPS}} > downloads.lock
 
@@ -414,6 +416,45 @@ tasks:
         mkdir -p '{{.CHROOT_DIR}}'
         cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
 
+  libressl:
+    label: libressl-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    deps:
+      - tools
+      - downloads
+    sources:
+      - downloads/libressl-*.tar.*
+    generates:
+      - '{{.CHROOT_DIR}}/lib/libcrypto.dylib'
+      - '{{.CHROOT_DIR}}/lib/libssl.dylib'
+      - '{{.CHROOT_DIR}}/lib/libtls.dylib'
+    cmds:
+      - task: extract-pkg
+        vars:
+          PKG_NAME: libressl
+          TARGET_DIR: '{{.SOURCES_DIR}}/libressl'
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+        export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
+
+        cd {{.SOURCES_DIR}}/libressl
+
+        cp {{.PROJECT_DIR}}/scripts/libressl/meson.build ./meson.build
+        meson setup build \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
+          --prefix="{{.CHROOT_DIR}}"
+
+        meson compile -C build libressl
+
+        # manual install to preserve symlinks (meson install -C build)
+        mkdir -p '{{.CHROOT_DIR}}'
+        cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
+
   ffmpeg:
     label: ffmpeg-{{.OS}}-{{.ARCH}}
     internal: true
@@ -421,6 +462,13 @@ tasks:
     deps:
       - tools
       - downloads
+      - task: libressl
+        vars:
+          SOURCES_DIR: '{{.SOURCES_DIR}}'
+          CHROOT_DIR: '{{.CHROOT_DIR}}'
+          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
+          OS: '{{.OS}}'
+          ARCH: '{{.ARCH}}'
     sources:
       - downloads/ffmpeg-*.tar.*
     generates:
