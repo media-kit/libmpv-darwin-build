@@ -1,7 +1,6 @@
 ## Todo
 
 - [ ] Add cheksum on downloads
-- [ ] Maybe move to `gnutls` (securetransport seems deprecated)
 - [ ] Compare conf with what brew does
 
 ## Resources
