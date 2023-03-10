@@ -13,10 +13,31 @@ The purpose of this build is to be compatible with commercial use
 | libressl | Apache-1.0, BSD-4-Clause, ISC, public domain           |       ✅       |
 | uchardet | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 
+## Dependency graph
+
+```mermaid
+flowchart LR
+
+A(mpv) --> B(ffmpeg)
+A(mpv) --> C(libass)
+A(mpv) -.-> D(uchardet)
+
+B -.-> H(libressl)
+
+C --> E(freetype)
+C --> F(harfbuzz)
+C --> G(fribidi)
+
+subgraph Legend
+    direction LR
+
+    x -- required --> y
+    xx -. optional .-> yy
+end
+```
+
 ## Todo
 
-- [ ] Add uchardet
-- [ ] Add dependencies graph (mermaid)
 - [ ] Improving dependencies flags
 - [ ] Compare conf with what brew does
 
