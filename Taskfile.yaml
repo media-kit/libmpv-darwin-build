@@ -541,7 +541,7 @@ tasks:
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
           --prefix="{{.CHROOT_DIR}}" \
           `# booleans` \
-          -Dgpl=true             `# GPL (version 2 or later) build` \
+          -Dgpl=false            `# GPL (version 2 or later) build` \
           -Dcplayer=false        `# mpv CLI player` \
           -Dlibmpv=true          `# libmpv library` \
           -Dbuild-date=true      `# whether to include binary compile time` \

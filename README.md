@@ -1,6 +1,22 @@
+## Commercial use
+
+The purpose of this build is to be compatible with commercial use
+
+| Nom      | Licence                                                | Commercial use |
+| -------- | ------------------------------------------------------ | :------------: |
+| mpv      | LGPL-2.1 (`-Dgpl=false`)                               |       ✅       |
+| ffmpeg   | LGPL-2.1 (`--enable-gpl` & `--enable-nonfree` omitted) |       ✅       |
+| libass   | ISC                                                    |       ✅       |
+| freetype | FreeType                                               |       ✅       |
+| harfbuzz | MIT                                                    |       ✅       |
+| fribidi  | LGPL-2.1                                               |       ✅       |
+| libressl | Apache-1.0, BSD-4-Clause, ISC, public domain           |       ✅       |
+| uchardet | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
+
 ## Todo
 
-- [ ] Add cheksum on downloads
+- [ ] Add uchardet
+- [ ] Improving dependencies flags
 - [ ] Compare conf with what brew does
 
 ## Resources

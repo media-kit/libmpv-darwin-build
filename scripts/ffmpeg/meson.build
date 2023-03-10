@@ -22,26 +22,28 @@ c_link_args = get_option('c_link_args')
 p = mod.add_project('configure',
     configure_options : [
         '--prefix=@PREFIX@',
+        '--disable-static',
+        '--enable-shared',
+        # '--enable-gpl', # uncomment it to include GPL code
+        # '--enable-nonfree', # uncomment it to include unredistributable code
         '--disable-lzma',
         '--disable-securetransport',
-        '--enable-libtls', # libressl (https support)
         '--disable-sdl2',
         '--disable-debug',
         '--disable-programs',
         '--disable-doc',
         '--disable-avdevice',
         '--disable-postproc',
-        '--enable-pic',
-        '--disable-static',
-        '--enable-shared',
         '--disable-x86asm',
         '--disable-xlib',
         '--disable-libxcb',
         '--disable-libxcb-shm',
         '--disable-libxcb-xfixes',
         '--disable-libxcb-shape',
+        '--enable-libtls', # libressl (https support)
         '--enable-videotoolbox',
         '--enable-neon',
+        '--enable-pic',
     ],
     cross_configure_options: [
         '--enable-cross-compile',
