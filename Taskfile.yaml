@@ -242,6 +242,13 @@ tasks:
     deps:
       - tools
       - downloads
+      - task: harfbuzz
+        vars:
+          SOURCES_DIR: '{{.SOURCES_DIR}}'
+          CHROOT_DIR: '{{.CHROOT_DIR}}'
+          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
+          OS: '{{.OS}}'
+          ARCH: '{{.ARCH}}'
     sources:
       - downloads/freetype-*.tar.*
     generates:
@@ -265,7 +272,7 @@ tasks:
           --prefix="{{.CHROOT_DIR}}" \
           -Dbrotli=disabled \
           -Dbzip2=disabled \
-          -Dharfbuzz=disabled \
+          -Dharfbuzz=enabled \
           -Dmmap=disabled \
           -Dpng=disabled \
           -Dtests=disabled \
@@ -347,7 +354,7 @@ tasks:
           -Dfreetype=disabled \
           -Dgdi=disabled \
           -Ddirectwrite=disabled \
-          -Dcoretext=disabled \
+          -Dcoretext=enabled \
           -Dtests=disabled \
           -Dintrospection=disabled \
           -Ddocs=disabled \
@@ -618,7 +625,7 @@ tasks:
           \
           `# misc features` \
           -Dcdda=disabled                    `# cdda support (libcdio)` \
-          -Dcplugins=auto                    `# C plugins` \
+          -Dcplugins=disabled                `# C plugins` \
           -Ddvbin=disabled                   `# DVB input module` \
           -Ddvdnav=disabled                  `# dvdnav support` \
           -Diconv=enabled                    `# iconv` \

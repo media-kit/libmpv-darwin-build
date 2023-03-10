@@ -28,6 +28,8 @@ C --> E(freetype)
 C --> F(harfbuzz)
 C --> G(fribidi)
 
+E -.-> F
+
 subgraph Legend
     direction LR
 
@@ -38,8 +40,9 @@ end
 
 ## Todo
 
-- [ ] Improving dependencies flags
-- [ ] Compare conf with what brew does
+- [ ] Add task to update `.tool-versions`
+- [ ] Clean code layout
+- [ ] Deploy to GitHub Actions
 
 ## Resources
 
