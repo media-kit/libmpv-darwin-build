@@ -16,6 +16,7 @@ The purpose of this build is to be compatible with commercial use
 ## Todo
 
 - [ ] Add uchardet
+- [ ] Add dependencies graph (mermaid)
 - [ ] Improving dependencies flags
 - [ ] Compare conf with what brew does
 

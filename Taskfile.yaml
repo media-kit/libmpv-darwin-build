@@ -26,6 +26,7 @@ tasks:
       DEPS:
         pkg-config
         mpv
+          uchardet
           libass
             freetype
             harfbuzz
@@ -164,6 +165,7 @@ tasks:
       BINARIES:
         meson
         ninja
+        cmake
     status:
       - |
         set -e
@@ -498,6 +500,65 @@ tasks:
         mkdir -p '{{.CHROOT_DIR}}'
         cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
 
+  uchardet:
+    label: uchardet-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    deps:
+      - tools
+      - downloads
+    sources:
+      - downloads/uchardet-*.tar.*
+    generates:
+      - '{{.CHROOT_DIR}}/lib/libuchardet.dylib'
+    cmds:
+      - rm -rf '{{.SOURCES_DIR}}/uchardet'
+      - task: extract-pkg
+        vars:
+          PKG_NAME: uchardet
+          TARGET_DIR: '{{.SOURCES_DIR}}/uchardet/subprojects/uchardet'
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+        export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
+
+        cd {{.SOURCES_DIR}}/uchardet
+
+        # cross build with meson
+        cp {{.PROJECT_DIR}}/scripts/uchardet/meson.build ./meson.build
+        meson setup build_cross \
+          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
+          --prefix='{{.CHROOT_DIR}}'
+        meson compile -C build_cross uchardet
+        
+        # native build with cmake
+        cmake ./subprojects/uchardet \
+          -B build_native \
+          -DCMAKE_INSTALL_PREFIX='{{.CHROOT_DIR}}' \
+          -DBUILD_STATIC=OFF
+        make -C build_native
+        DESTDIR=$PWD/dist make -C build_native install
+
+        # remove unecessary files
+        rm -rf 'dist/{{.CHROOT_DIR}}/bin'
+        rm -rf 'dist/{{.CHROOT_DIR}}/lib/cmake'
+        rm -rf 'dist/{{.CHROOT_DIR}}/share'
+
+        # get dylib id
+        DYLIB_FILE=$(find 'dist{{.CHROOT_DIR}}/lib' -type f -name '*.dylib')
+        DYLIB_ID=$(otool -l "$DYLIB_FILE" | grep ' name ' | cut -d ' ' -f 11 | head -n +1)
+
+        # replace native dylib by cross dylib & update id
+        cp 'build_cross/subprojects/uchardet/liblibuchardet.dylib' "$DYLIB_FILE"
+        install_name_tool -id "$DYLIB_ID" "$DYLIB_FILE"
+
+        # manual install to preserve symlinks
+        mkdir -p '{{.CHROOT_DIR}}'
+        cp -R dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
+
   mpv:
     label: mpv-{{.OS}}-{{.ARCH}}
     internal: true
@@ -513,6 +574,13 @@ tasks:
           OS: '{{.OS}}'
           ARCH: '{{.ARCH}}'
       - task: ffmpeg
+        vars:
+          SOURCES_DIR: '{{.SOURCES_DIR}}'
+          CHROOT_DIR: '{{.CHROOT_DIR}}'
+          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
+          OS: '{{.OS}}'
+          ARCH: '{{.ARCH}}'
+      - task: uchardet
         vars:
           SOURCES_DIR: '{{.SOURCES_DIR}}'
           CHROOT_DIR: '{{.CHROOT_DIR}}'
@@ -553,7 +621,7 @@ tasks:
           -Dcplugins=auto                    `# C plugins` \
           -Ddvbin=disabled                   `# DVB input module` \
           -Ddvdnav=disabled                  `# dvdnav support` \
-          -Diconv=disabled                   `# iconv` \
+          -Diconv=enabled                    `# iconv` \
           -Djavascript=disabled              `# Javascript (MuJS backend)` \
           -Dlcms2=disabled                   `# LCMS2 support` \
           -Dlibarchive=disabled              `# libarchive wrapper for reading zip files and more` \
@@ -565,7 +633,7 @@ tasks:
           -Dsdl2=disabled                    `# SDL2` \
           -Dsdl2-gamepad=disabled            `# SDL2 gamepad input` \
           -Dstdatomic=disabled               `# C11 stdatomic.h` \
-          -Duchardet=disabled                `# uchardet support` \
+          -Duchardet=enabled                 `# uchardet support` \
           -Duwp=disabled                     `# Universal Windows Platform` \
           -Dvapoursynth=disabled             `# VapourSynth filter bridge` \
           -Dvector=disabled                  `# GCC vector instructions` \
