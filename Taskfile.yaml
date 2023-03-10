@@ -20,7 +20,7 @@ tasks:
     deps:
       - build-darwin
 
-  lock:
+  update:
     run: once
     vars:
       DEPS:
@@ -32,9 +32,8 @@ tasks:
             fribidi
           ffmpeg
             libressl
-
     cmds:
-      - go run cmd/lock/lock.go {{.DEPS}} > downloads.lock
+      - go run cmd/update/update.go {{.DEPS}} > downloads.lock
 
   build-darwin:
     run: once
