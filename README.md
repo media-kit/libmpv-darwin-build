@@ -114,7 +114,7 @@ future:
 │           │   ├── include
 │           │   └── lib
 │           ├── libs          # cleaned libs from `chroot/lib`.
-│           └── packages      # zip & tar.gz or `libs`
+│           └── packages      # zip & tar.gz of `libs`
 └── ...
 ```
 
