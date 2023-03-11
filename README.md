@@ -1,4 +1,4 @@
-# libmpv build
+# libmpv Build
 
 Provides builds of [libmpv](https://github.com/mpv-player/mpv) for macOS, usable
 by [media_kit](https://github.com/alexmercerind/media_kit), compatible with
@@ -64,7 +64,7 @@ E -.-> F
 - **[uchardet](https://www.freedesktop.org/wiki/Software/uchardet/)
   (optional)**: A C++ port of the Universal Character Encoding Detector (used by Mozilla Firefox and Thunderbird) for detecting the encoding of input text
 
-## Commercial use
+## Commercial Use
 
 | Dependency | Licence                                                | Commercial use |
 | ---------- | ------------------------------------------------------ | :------------: |
@@ -90,6 +90,33 @@ future:
   reading various archive formats, including tar and zip, with support for
   compression and metadata, and a flexible API for reading and extracting
   archive contents
+
+## Project Layout
+
+```
+.
+├── ...
+├── cmd                       # golang scripts
+├── pkg                       # golang packages
+├── downloads                 # dependencies archives are downloaded here
+├── downloads.lock            # lock file of dependencies archives
+├── Taskfile.yaml             # main build script
+├── tasks                     # secondary build scripts
+├── cross-files               # cross build files used by meson
+├── build
+│   ├── tools                 # "sanboxed" tools & pkg-config are stored here
+│   └── darwin
+│       ├── universal         # amd64 & arm64 builds are merge here with lipo
+│       ├── amd64
+│       └── arm64
+│           ├── sources       # archives are extracted here
+│           ├── chroot        # cross built files
+│           │   ├── include
+│           │   └── lib
+│           ├── libs          # cleaned libs from `chroot/lib`.
+│           └── packages      # zip & tar.gz or `libs`
+└── ...
+```
 
 ## Todo
 
