@@ -91,10 +91,12 @@ future:
   compression and metadata, and a flexible API for reading and extracting
   archive contents
 
+We use `meson` as much as possible in order to simplify cross-compilation, at
+the cost of some heaviness regarding legacy packages.
+
 ## Todo
 
-- [ ] Add task to update `.tool-versions`
-- [ ] Clean code layout
+- [ ] Add package rules
 - [ ] Deploy to GitHub Actions
 
 ## Project Layout
@@ -107,7 +109,7 @@ future:
 ├── downloads                 # dependencies archives are downloaded here
 ├── downloads.lock            # lock file of dependencies archives
 ├── Taskfile.yaml             # main build script
-├── tasks                     # secondary build scripts
+├── scripts                   # build scripts
 ├── cross-files               # cross build files used by meson
 ├── build
 │   ├── tools                 # "sanboxed" tools & pkg-config are stored here

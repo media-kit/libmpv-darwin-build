@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   PWD:
@@ -8,56 +8,60 @@ vars:
   UNSETENV: |
     # unset all env vars
     for i in $(env | awk -F"=" '{print $1}') ; do unset $i ; done
-  PROJECT_DIR: '{{.PWD}}'
-  BUILD_DIR: '{{.PROJECT_DIR}}/build'
-  TOOLS_DIR: '{{.BUILD_DIR}}/tools'
-  TOOLS_CHROOT_DIR: '{{.TOOLS_DIR}}/chroot'
-  TOOLS_SOURCES_DIR: '{{.TOOLS_DIR}}/sources'
-  PATH: /bin:/usr/bin:{{.TOOLS_CHROOT_DIR}}/bin
+  PROJECT_DIR: "{{.PWD}}"
+  BUILD_DIR: "{{.PROJECT_DIR}}/build"
+  TOOLS_DIR: "{{.BUILD_DIR}}/tools"
+  TOOLS_PREFIX: "{{.TOOLS_DIR}}/chroot"
+  TOOLS_SOURCES_DIR: "{{.TOOLS_DIR}}/sources"
+  PATH: /bin:/usr/bin:{{.TOOLS_PREFIX}}/bin
 
 tasks:
   default:
     deps:
       - build-darwin
 
-  update:
-    run: once
-    vars:
-      DEPS:
-        pkg-config
-        mpv
-          uchardet
-          libass
-            freetype
-            harfbuzz
-            fribidi
-          ffmpeg
-            libressl
-    cmds:
-      - go run cmd/update/update.go {{.DEPS}} > downloads.lock
-
   build-darwin:
     run: once
     platforms:
       - darwin
+    deps:
+      - libs-darwin
+
+  build-darwin-amd64:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - libs-darwin-amd64
+
+  build-darwin-arm64:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - libs-darwin-arm64
+
+  libs-darwin:
+    internal: true
+    desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
+    run: once
     vars:
       OS: darwin
-      TARGET_DIR: '{{.BUILD_DIR}}/{{.OS}}'
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
       ARHC1: amd64
       ARHC2: arm64
       ARHC3: universal
-      PACKAGE_ARHC1_DIR: '{{.TARGET_DIR}}/{{.ARHC1}}/package'
-      PACKAGE_ARHC2_DIR: '{{.TARGET_DIR}}/{{.ARHC2}}/package'
-      PACKAGE_ARHC3_DIR: '{{.TARGET_DIR}}/{{.ARHC3}}/package'
-    desc: build {{.ARHC1}} & {{.ARHC2}} packages and merge to {{.ARHC3}}
+      LIBS_ARHC1_DIR: "{{.TARGET_DIR}}/{{.ARHC1}}/libs"
+      LIBS_ARHC2_DIR: "{{.TARGET_DIR}}/{{.ARHC2}}/libs"
+      LIBS_ARHC3_DIR: "{{.TARGET_DIR}}/{{.ARHC3}}/libs"
     deps:
-      - build-darwin-amd64
-      - build-darwin-arm64
+      - libs-darwin-amd64
+      - libs-darwin-arm64
     sources:
-      - '{{.PACKAGE_ARHC1_DIR}}/*.dylib'
-      - '{{.PACKAGE_ARHC2_DIR}}/*.dylib'
+      - "{{.LIBS_ARHC1_DIR}}/*.dylib"
+      - "{{.LIBS_ARHC2_DIR}}/*.dylib"
     generates:
-      - '{{.PACKAGE_ARHC3_DIR}}/*.dylib'
+      - "{{.LIBS_ARHC3_DIR}}/*.dylib"
     cmds:
       - |
         set -e
@@ -66,9 +70,9 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        mkdir -p "{{.PACKAGE_ARHC3_DIR}}"
+        mkdir -p "{{.LIBS_ARHC3_DIR}}"
 
-        find "{{.PACKAGE_ARHC1_DIR}}" \
+        find "{{.LIBS_ARHC1_DIR}}" \
           -type f -name '*.dylib' \
           -exec \
           sh -c ' \
@@ -81,52 +85,89 @@ tasks:
           ' \
         \;
 
-  build-darwin-amd64:
+  libs-darwin-amd64:
+    internal: true
     run: once
-    platforms:
-      - darwin
     vars:
       OS: darwin
-      TARGET_DIR: '{{.BUILD_DIR}}/{{.OS}}'
+      ARCH: amd64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
-      - task: build
+      - task: libs
         vars:
-          OS: '{{.OS}}'
-          ARCH: amd64
-          TARGET_DIR: '{{.TARGET_DIR}}'
-  
-  build-darwin-arm64:
-    run: once
-    platforms:
-      - darwin
-    vars:
-      OS: darwin
-      TARGET_DIR: '{{.BUILD_DIR}}/{{.OS}}'
-    deps:
-      - task: build
-        vars:
-          OS: '{{.OS}}'
-          ARCH: arm64
-          TARGET_DIR: '{{.TARGET_DIR}}'
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
 
-  build:
-    label: build-{{.OS}}-{{.ARCH}}
+  libs-darwin-arm64:
+    internal: true
+    run: once
+    platforms:
+      - darwin
+    vars:
+      OS: darwin
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - task: libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  libs:
+    desc: cleanup libs from `chroot/libs``
+    label: libs-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     vars:
-      PACKAGE_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/package'
-      SOURCES_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/sources'
-      CHROOT_DIR: '{{.TARGET_DIR}}/{{.ARCH}}/chroot'
-      PKG_CONFIG_PATH: '{{.CHROOT_DIR}}/lib/pkgconfig'
+      LIBS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/libs"
+      SOURCES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/sources"
+      PREFIX: "{{.TARGET_DIR}}/{{.ARCH}}/chroot"
+      PKG_CONFIG_PATH: "{{.PREFIX}}/lib/pkgconfig"
     deps:
-      - task: package
+      - task: mpv
         vars:
-          PACKAGE_DIR: '{{.PACKAGE_DIR}}'
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+    sources:
+      - "{{.PREFIX}}/lib/*.dylib"
+    generates:
+      - "{{.LIBS_DIR}}/*.dylib"
+    cmds:
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+        export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
+
+        rm -rf "{{.LIBS_DIR}}"
+        mkdir -p "{{.LIBS_DIR}}"
+
+        # copy dylibs except '*-subset.*.dylib'
+        find "{{.PREFIX}}/lib" \
+          -type f -name '*.dylib' \
+          ! -name '*-subset.*.dylib' \
+          -exec \
+          cp "{}" "{{.LIBS_DIR}}" \
+        \;
+
+        # libfoo.100.99.88.dylib -> libfoo.100.dylib
+        find {{.LIBS_DIR}} -type f -name '*.dylib' -exec \
+          sh -c 'mv "{}" $(echo "{}" | sed -r "s|([0-9]+)(\.[0-9]+)*|\1|g")' \
+        \;
+
+        mv "{{.LIBS_DIR}}"/libmpv.*.dylib "{{.LIBS_DIR}}/libmpv.dylib"
+        install_name_tool -id @rpath/libmpv.dylib "{{.LIBS_DIR}}/libmpv.dylib"
+
+        ./scripts/libs/relink_dylibs.sh "{{.PREFIX}}/lib" "{{.LIBS_DIR}}"
+
+        codesign --remove "{{.LIBS_DIR}}"/*.dylib
 
   downloads:
     run: once
@@ -141,15 +182,14 @@ tasks:
         rm -f downloads/.*.tmp
         rm -f downloads/*.tar.*
         go run cmd/download/download.go downloads.lock downloads
-  
-  extract-pkg:
+
+  extract:
     internal: true
     run: when_changed
     cmds:
       - |
         set -e
 
-        rm -rf {{.TARGET_DIR}}
         mkdir -p {{.TARGET_DIR}}
         find downloads -type f -name '{{.PKG_NAME}}-*.tar.*' -exec \
           tar \
@@ -157,28 +197,27 @@ tasks:
             --strip-components 1 \
             -C {{.TARGET_DIR}} \
         \;
-  
+
   links:
     internal: true
     run: when_changed
     vars:
-      BINARIES:
-        meson
+      BINARIES: meson
         ninja
         cmake
     status:
       - |
         set -e
-        
-        # check BINARY presence in \$TOOLS_CHROOT_DIR/bin
+
+        # check BINARY presence in \$TOOLS_PREFIX/bin
         for BINARY in {{.BINARIES}} ; do \
-          test -f {{.TOOLS_CHROOT_DIR}}/bin/$BINARY ; \
+          test -f {{.TOOLS_PREFIX}}/bin/$BINARY ; \
         done
     cmds:
       - |
         set -e
 
-        mkdir -p {{.TOOLS_CHROOT_DIR}}/bin
+        mkdir -p {{.TOOLS_PREFIX}}/bin
 
         # check BINARY presence in PATH
         for BINARY in {{.BINARIES}} ; do \
@@ -189,8 +228,8 @@ tasks:
 
         # sym link BINARY
         for BINARY in {{.BINARIES}} ; do \
-          [ ! -h {{.TOOLS_CHROOT_DIR}}/bin/$BINARY ] \
-            && ln -s $(which $BINARY) {{.TOOLS_CHROOT_DIR}}/bin/$BINARY \
+          [ ! -h {{.TOOLS_PREFIX}}/bin/$BINARY ] \
+            && ln -s $(which $BINARY) {{.TOOLS_PREFIX}}/bin/$BINARY \
             || true ; \
         done
 
@@ -202,12 +241,13 @@ tasks:
     sources:
       - downloads/pkg-config-*.tar.*
     generates:
-      - '{{.TOOLS_CHROOT_DIR}}/bin/pkg-config'
+      - "{{.TOOLS_PREFIX}}/bin/pkg-config"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.TOOLS_SOURCES_DIR}}/pkg-config"
+      - task: extract
         vars:
           PKG_NAME: pkg-config
-          TARGET_DIR: '{{.TOOLS_SOURCES_DIR}}/pkg-config'
+          TARGET_DIR: "{{.TOOLS_SOURCES_DIR}}/pkg-config"
       - |
         set -e
 
@@ -220,13 +260,13 @@ tasks:
         cp {{.PROJECT_DIR}}/scripts/pkg-config/meson.build ./meson.build
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{OS}}-{{ARCH}}.ini \
-          --prefix="{{.TOOLS_CHROOT_DIR}}"
+          --prefix="{{.TOOLS_PREFIX}}"
 
         meson compile -C build pkg-config
 
         # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.TOOLS_CHROOT_DIR}}'
-        cp -R build/dist'{{.TOOLS_CHROOT_DIR}}'/* '{{.TOOLS_CHROOT_DIR}}'/
+        mkdir -p '{{.TOOLS_PREFIX}}'
+        cp -R build/dist'{{.TOOLS_PREFIX}}'/* '{{.TOOLS_PREFIX}}'/
 
   tools:
     internal: true
@@ -244,20 +284,21 @@ tasks:
       - downloads
       - task: harfbuzz
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
     sources:
       - downloads/freetype-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libfreetype.dylib'
+      - "{{.PREFIX}}/lib/libfreetype.dylib"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/freetype"
+      - task: extract
         vars:
           PKG_NAME: freetype
-          TARGET_DIR: '{{.SOURCES_DIR}}/freetype'
+          TARGET_DIR: "{{.SOURCES_DIR}}/freetype"
       - |
         set -e
 
@@ -269,7 +310,7 @@ tasks:
         cd {{.SOURCES_DIR}}/freetype
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.CHROOT_DIR}}" \
+          --prefix="{{.PREFIX}}" \
           -Dbrotli=disabled \
           -Dbzip2=disabled \
           -Dharfbuzz=enabled \
@@ -290,12 +331,13 @@ tasks:
     sources:
       - downloads/fribidi-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libfribidi.dylib'
+      - "{{.PREFIX}}/lib/libfribidi.dylib"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/fribidi"
+      - task: extract
         vars:
           PKG_NAME: fribidi
-          TARGET_DIR: '{{.SOURCES_DIR}}/fribidi'
+          TARGET_DIR: "{{.SOURCES_DIR}}/fribidi"
       - |
         set -e
 
@@ -307,7 +349,7 @@ tasks:
         cd {{.SOURCES_DIR}}/fribidi
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.CHROOT_DIR}}" \
+          --prefix="{{.PREFIX}}" \
           -Ddeprecated=false \
           -Ddocs=false \
           -Dbin=false \
@@ -326,12 +368,13 @@ tasks:
     sources:
       - downloads/harfbuzz-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libharfbuzz.dylib'
+      - "{{.PREFIX}}/lib/libharfbuzz.dylib"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/harfbuzz"
+      - task: extract
         vars:
           PKG_NAME: harfbuzz
-          TARGET_DIR: '{{.SOURCES_DIR}}/harfbuzz'
+          TARGET_DIR: "{{.SOURCES_DIR}}/harfbuzz"
       - |
         set -e
 
@@ -343,7 +386,7 @@ tasks:
         cd {{.SOURCES_DIR}}/harfbuzz
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.CHROOT_DIR}}" \
+          --prefix="{{.PREFIX}}" \
           -Dglib=disabled \
           -Dgobject=disabled \
           -Dcairo=disabled \
@@ -375,34 +418,35 @@ tasks:
       - downloads
       - task: freetype
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
       - task: fribidi
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
       - task: harfbuzz
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
     sources:
       - downloads/libass-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libass.dylib'
+      - "{{.PREFIX}}/lib/libass.dylib"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/libass"
+      - task: extract
         vars:
           PKG_NAME: libass
-          TARGET_DIR: '{{.SOURCES_DIR}}/libass'
+          TARGET_DIR: "{{.SOURCES_DIR}}/libass"
       - |
         set -e
 
@@ -416,13 +460,13 @@ tasks:
         cp {{.PROJECT_DIR}}/scripts/libass/meson.build ./meson.build
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.CHROOT_DIR}}"
+          --prefix="{{.PREFIX}}"
 
         meson compile -C build libass
 
         # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.CHROOT_DIR}}'
-        cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
+        mkdir -p '{{.PREFIX}}'
+        cp -R build/dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
 
   libressl:
     label: libressl-{{.OS}}-{{.ARCH}}
@@ -434,14 +478,15 @@ tasks:
     sources:
       - downloads/libressl-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libcrypto.dylib'
-      - '{{.CHROOT_DIR}}/lib/libssl.dylib'
-      - '{{.CHROOT_DIR}}/lib/libtls.dylib'
+      - "{{.PREFIX}}/lib/libcrypto.dylib"
+      - "{{.PREFIX}}/lib/libssl.dylib"
+      - "{{.PREFIX}}/lib/libtls.dylib"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/libressl"
+      - task: extract
         vars:
           PKG_NAME: libressl
-          TARGET_DIR: '{{.SOURCES_DIR}}/libressl'
+          TARGET_DIR: "{{.SOURCES_DIR}}/libressl"
       - |
         set -e
 
@@ -455,13 +500,13 @@ tasks:
         cp {{.PROJECT_DIR}}/scripts/libressl/meson.build ./meson.build
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.CHROOT_DIR}}"
+          --prefix="{{.PREFIX}}"
 
         meson compile -C build libressl
 
         # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.CHROOT_DIR}}'
-        cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
+        mkdir -p '{{.PREFIX}}'
+        cp -R build/dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
 
   ffmpeg:
     label: ffmpeg-{{.OS}}-{{.ARCH}}
@@ -472,20 +517,21 @@ tasks:
       - downloads
       - task: libressl
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
     sources:
       - downloads/ffmpeg-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libavcodec.dylib'
+      - "{{.PREFIX}}/lib/libavcodec.dylib"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/ffmpeg"
+      - task: extract
         vars:
           PKG_NAME: ffmpeg
-          TARGET_DIR: '{{.SOURCES_DIR}}/ffmpeg'
+          TARGET_DIR: "{{.SOURCES_DIR}}/ffmpeg"
       - |
         set -e
 
@@ -499,13 +545,13 @@ tasks:
         cp {{.PROJECT_DIR}}/scripts/ffmpeg/meson.build ./meson.build
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.CHROOT_DIR}}"
+          --prefix="{{.PREFIX}}"
 
         meson compile -C build ffmpeg
 
         # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.CHROOT_DIR}}'
-        cp -R build/dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
+        mkdir -p '{{.PREFIX}}'
+        cp -R build/dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
 
   uchardet:
     label: uchardet-{{.OS}}-{{.ARCH}}
@@ -517,13 +563,13 @@ tasks:
     sources:
       - downloads/uchardet-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libuchardet.dylib'
+      - "{{.PREFIX}}/lib/libuchardet.dylib"
     cmds:
-      - rm -rf '{{.SOURCES_DIR}}/uchardet'
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/uchardet"
+      - task: extract
         vars:
           PKG_NAME: uchardet
-          TARGET_DIR: '{{.SOURCES_DIR}}/uchardet/subprojects/uchardet'
+          TARGET_DIR: "{{.SOURCES_DIR}}/uchardet/subprojects/uchardet"
       - |
         set -e
 
@@ -538,24 +584,24 @@ tasks:
         cp {{.PROJECT_DIR}}/scripts/uchardet/meson.build ./meson.build
         meson setup build_cross \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix='{{.CHROOT_DIR}}'
+          --prefix='{{.PREFIX}}'
         meson compile -C build_cross uchardet
-        
+
         # native build with cmake
         cmake ./subprojects/uchardet \
           -B build_native \
-          -DCMAKE_INSTALL_PREFIX='{{.CHROOT_DIR}}' \
+          -DCMAKE_INSTALL_PREFIX='{{.PREFIX}}' \
           -DBUILD_STATIC=OFF
         make -C build_native
         DESTDIR=$PWD/dist make -C build_native install
 
         # remove unecessary files
-        rm -rf 'dist/{{.CHROOT_DIR}}/bin'
-        rm -rf 'dist/{{.CHROOT_DIR}}/lib/cmake'
-        rm -rf 'dist/{{.CHROOT_DIR}}/share'
+        rm -rf 'dist/{{.PREFIX}}/bin'
+        rm -rf 'dist/{{.PREFIX}}/lib/cmake'
+        rm -rf 'dist/{{.PREFIX}}/share'
 
         # get dylib id
-        DYLIB_FILE=$(find 'dist{{.CHROOT_DIR}}/lib' -type f -name '*.dylib')
+        DYLIB_FILE=$(find 'dist{{.PREFIX}}/lib' -type f -name '*.dylib')
         DYLIB_ID=$(otool -l "$DYLIB_FILE" | grep ' name ' | cut -d ' ' -f 11 | head -n +1)
 
         # replace native dylib by cross dylib & update id
@@ -563,8 +609,8 @@ tasks:
         install_name_tool -id "$DYLIB_ID" "$DYLIB_FILE"
 
         # manual install to preserve symlinks
-        mkdir -p '{{.CHROOT_DIR}}'
-        cp -R dist'{{.CHROOT_DIR}}'/* '{{.CHROOT_DIR}}'/
+        mkdir -p '{{.PREFIX}}'
+        cp -R dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
 
   mpv:
     label: mpv-{{.OS}}-{{.ARCH}}
@@ -575,34 +621,35 @@ tasks:
       - downloads
       - task: libass
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
       - task: ffmpeg
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
       - task: uchardet
         vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
+          SOURCES_DIR: "{{.SOURCES_DIR}}"
+          PREFIX: "{{.PREFIX}}"
+          PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
     sources:
       - downloads/mpv-*.tar.*
     generates:
-      - '{{.CHROOT_DIR}}/lib/libmpv.dylib'
+      - "{{.PREFIX}}/lib/libmpv.dylib"
     cmds:
-      - task: extract-pkg
+      - rm -rf "{{.SOURCES_DIR}}/mpv"
+      - task: extract
         vars:
           PKG_NAME: mpv
-          TARGET_DIR: '{{.SOURCES_DIR}}/mpv'
+          TARGET_DIR: "{{.SOURCES_DIR}}/mpv"
       - |
         set -e
 
@@ -614,7 +661,7 @@ tasks:
         cd {{.SOURCES_DIR}}/mpv
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.CHROOT_DIR}}" \
+          --prefix="{{.PREFIX}}" \
           `# booleans` \
           -Dgpl=false            `# GPL (version 2 or later) build` \
           -Dcplayer=false        `# mpv CLI player` \
@@ -730,60 +777,48 @@ tasks:
         meson compile -C build
         meson install -C build
 
-  package:
-    label: package-{{.OS}}-{{.ARCH}}
-    internal: true
-    run: when_changed
-    deps:
-      - task: mpv
-        vars:
-          SOURCES_DIR: '{{.SOURCES_DIR}}'
-          CHROOT_DIR: '{{.CHROOT_DIR}}'
-          PKG_CONFIG_PATH: '{{.PKG_CONFIG_PATH}}'
-          OS: '{{.OS}}'
-          ARCH: '{{.ARCH}}'
-    sources:
-      - '{{.CHROOT_DIR}}/lib/*.dylib'
-    generates:
-      - '{{.PACKAGE_DIR}}/*.dylib'
+  update-downloads-lock:
+    run: once
+    vars:
+      DEPS: pkg-config
+        mpv
+        uchardet
+        libass
+        freetype
+        harfbuzz
+        fribidi
+        ffmpeg
+        libressl
     cmds:
-      - echo build {{.OS}}/{{.ARCH}}
+      - go run cmd/update/update.go {{.DEPS}} > downloads.lock
+
+  update-tools-versions:
+    run: once
+    cmds:
       - |
         set -e
 
-        {{.UNSETENV}}
-        export PATH={{.PATH}}
-        export TERM={{.TERM}}
-        export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
+        CLANG_VERSION=$(clang --version | head -n1 | cut -d ' ' -f 4)
+        CMAKE_VERSION=$(cmake --version | head -n1 | cut -d ' ' -f 3)
+        GOLANG_VERSION=$(go version | cut -d ' ' -f 3 | sed 's/go//g')
+        MESON_VERSION=$(meson --version)
+        NINJA_VERSION=$(ninja --version)
+        TASK_VERSION=$(task --version | cut -d ' ' -f 3 | sed 's/v//g')
 
-        rm -rf "{{.PACKAGE_DIR}}"
-        mkdir -p "{{.PACKAGE_DIR}}"
-
-        # copy dylibs except '*-subset.*.dylib'
-        find "{{.CHROOT_DIR}}/lib" \
-          -type f -name '*.dylib' \
-          ! -name '*-subset.*.dylib' \
-          -exec \
-          cp "{}" "{{.PACKAGE_DIR}}" \
-        \;
-
-        # libfoo.100.99.88.dylib -> libfoo.100.dylib
-        find {{.PACKAGE_DIR}} -type f -name '*.dylib' -exec \
-          sh -c 'mv "{}" $(echo "{}" | sed -r "s|([0-9]+)(\.[0-9]+)*|\1|g")' \
-        \;
-
-        mv "{{.PACKAGE_DIR}}"/libmpv.*.dylib "{{.PACKAGE_DIR}}/libmpv.dylib"
-        install_name_tool -id @rpath/libmpv.dylib "{{.PACKAGE_DIR}}/libmpv.dylib"
-
-        ./scripts/relink_dylibs.sh "{{.CHROOT_DIR}}/lib" "{{.PACKAGE_DIR}}"
-
-        codesign --remove "{{.PACKAGE_DIR}}"/*.dylib
+        cat << EOF > .tool-versions
+        clang $CLANG_VERSION
+        cmake $CMAKE_VERSION
+        golang $GOLANG_VERSION
+        meson $MESON_VERSION
+        ninja $NINJA_VERSION
+        task $TASK_VERSION
+        EOF
 
   clean:
     run: once
     cmds:
       - rm -rf build
-  
+
   clear:
     run: once
     deps:

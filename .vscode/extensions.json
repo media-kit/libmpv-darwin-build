@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "redhat.vscode-yaml",
-        "bierner.markdown-mermaid"
+        "bierner.markdown-mermaid",
+        "foxundermoon.shell-format"
     ]
 }
