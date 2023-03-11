@@ -91,6 +91,12 @@ future:
   compression and metadata, and a flexible API for reading and extracting
   archive contents
 
+## Todo
+
+- [ ] Add task to update `.tool-versions`
+- [ ] Clean code layout
+- [ ] Deploy to GitHub Actions
+
 ## Project Layout
 
 ```
@@ -117,12 +123,6 @@ future:
 │           └── packages      # zip & tar.gz of `libs`
 └── ...
 ```
-
-## Todo
-
-- [ ] Add task to update `.tool-versions`
-- [ ] Clean code layout
-- [ ] Deploy to GitHub Actions
 
 ## Resources
 
