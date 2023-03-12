@@ -20,9 +20,8 @@ vars:
 tasks:
   default:
     deps:
-      # - build-darwin
-      # - release-note
-      - links
+      - build-darwin
+      - release-note
 
   build-darwin:
     run: once
