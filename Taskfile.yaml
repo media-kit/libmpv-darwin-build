@@ -5,6 +5,8 @@ vars:
     sh: pwd
   TERM:
     sh: echo $TERM
+  VERSION:
+    sh: echo $VERSION
   UNSETENV: |
     # unset all env vars
     for i in $(env | awk -F"=" '{print $1}') ; do unset $i ; done
@@ -25,23 +27,108 @@ tasks:
     platforms:
       - darwin
     deps:
-      - libs-darwin
+      - packages-darwin-universal
+      - packages-darwin-amd64
+      - packages-darwin-arm64
+
+  build-darwin-universal:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - packages-darwin-universal
 
   build-darwin-amd64:
     run: once
     platforms:
       - darwin
     deps:
-      - libs-darwin-amd64
+      - packages-darwin-amd64
 
   build-darwin-arm64:
     run: once
     platforms:
       - darwin
     deps:
-      - libs-darwin-arm64
+      - packages-darwin-arm64
 
-  libs-darwin:
+  packages-darwin-universal:
+    internal: true
+    run: once
+    vars:
+      OS: darwin
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-darwin-universal
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-darwin-amd64:
+    internal: true
+    run: once
+    vars:
+      OS: darwin
+      ARCH: amd64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-darwin-amd64
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-darwin-arm64:
+    internal: true
+    run: once
+    vars:
+      OS: darwin
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-darwin-arm64
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages:
+    label: packages-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    vars:
+      LIBS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/libs"
+      PACKAGES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/packages"
+    sources:
+      - "{{.LIBS_DIR}}/*.dylib"
+    generates:
+      - "{{.PACKAGES_DIR}}/*.tar.gz"
+    cmds:
+      - |
+        set -e
+
+        if [ -z "{{.VERSION}}" ]; then \
+          echo "package creation skipped for {{.OS}}/{{.ARCH}} (env var VERSION required)" ; \
+          exit 0; \
+        fi
+
+        NAME=libmpv-{{.VERSION}}-{{.OS}}-{{.ARCH}}
+
+        mkdir -p "{{.PACKAGES_DIR}}/$NAME"
+        cp -r "{{.LIBS_DIR}}"/*.dylib "{{.PACKAGES_DIR}}"/$NAME/
+
+        cd "{{.PACKAGES_DIR}}"
+        tar -czvf $NAME.tar.gz $NAME
+
+  libs-darwin-universal:
     internal: true
     desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
     run: once
@@ -102,8 +189,6 @@ tasks:
   libs-darwin-arm64:
     internal: true
     run: once
-    platforms:
-      - darwin
     vars:
       OS: darwin
       ARCH: arm64

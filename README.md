@@ -17,6 +17,8 @@ libass.9.dylib
 libavcodec.59.dylib
 libavfilter.8.dylib
 ...
+$ ls build/darwin/universal/packages
+libmpv-0.0.1-darwin-universal.tar.gz
 ```
 
 ## Dependencies
@@ -96,7 +98,6 @@ the cost of some heaviness regarding legacy packages.
 
 ## Todo
 
-- [ ] Add package rules
 - [ ] Deploy to GitHub Actions
 
 ## Project Layout
