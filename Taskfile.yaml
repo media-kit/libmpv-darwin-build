@@ -880,7 +880,7 @@ tasks:
     cmds:
       - go run cmd/update/update.go {{.DEPS}} > downloads.lock
 
-  update-tools-versions:
+  tools-versions:
     run: once
     cmds:
       - |
@@ -893,7 +893,7 @@ tasks:
         NINJA_VERSION=$(ninja --version)
         TASK_VERSION=$(task --version | cut -d ' ' -f 3 | sed 's/v//g')
 
-        cat << EOF > .tool-versions
+        cat << EOF
         clang $CLANG_VERSION
         cmake $CMAKE_VERSION
         golang $GOLANG_VERSION
