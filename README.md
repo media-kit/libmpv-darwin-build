@@ -96,10 +96,6 @@ future:
 We use `meson` as much as possible in order to simplify cross-compilation, at
 the cost of some heaviness regarding legacy packages.
 
-## Todo
-
-- [ ] Deploy to GitHub Actions
-
 ## Project Layout
 
 ```
