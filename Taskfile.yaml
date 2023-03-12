@@ -282,6 +282,7 @@ tasks:
             -xvf {} \
             --strip-components 1 \
             -C {{.TARGET_DIR}} \
+            2>&1 \
         \;
 
   links:
