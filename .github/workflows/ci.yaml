@@ -23,7 +23,7 @@ jobs:
         run: echo "version=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: Build
-        run: VERSION=${{ steps.version.outputs.version }} task --concurrency 2
+        run: VERSION=${{ steps.version.outputs.version }} task --concurrency 1
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
