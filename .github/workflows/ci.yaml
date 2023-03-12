@@ -30,12 +30,15 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
-          path: build/**/*.tar.gz
+          path: |
+            build/tool-versions.lock
+            build/**/*.tar.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           fail_on_unmatched_files: true
-          body_path: build/release-note.md
-          files: build/**/*.tar.gz
+          files: |
+            build/tool-versions.lock
+            build/**/*.tar.gz

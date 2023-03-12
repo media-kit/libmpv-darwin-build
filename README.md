@@ -109,7 +109,7 @@ the cost of some heaviness regarding legacy packages.
 ├── scripts                   # build scripts
 ├── cross-files               # cross build files used by meson
 ├── build
-│   ├── release-note.md
+│   ├── tool-versions.lock    # versions of tools used during build
 │   ├── tools                 # "sanboxed" tools & pkg-config are stored here
 │   └── darwin
 │       ├── universal         # amd64 & arm64 builds are merge here with lipo

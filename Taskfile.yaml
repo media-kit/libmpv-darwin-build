@@ -21,13 +21,13 @@ tasks:
   default:
     deps:
       - build-darwin
-      - release-note
 
   build-darwin:
     run: once
     platforms:
       - darwin
     deps:
+      - tool-versions-lock
       - packages-darwin-universal
       - packages-darwin-amd64
       - packages-darwin-arm64
@@ -37,6 +37,7 @@ tasks:
     platforms:
       - darwin
     deps:
+      - tool-versions-lock
       - packages-darwin-universal
 
   build-darwin-amd64:
@@ -44,6 +45,7 @@ tasks:
     platforms:
       - darwin
     deps:
+      - tool-versions-lock
       - packages-darwin-amd64
 
   build-darwin-arm64:
@@ -51,7 +53,18 @@ tasks:
     platforms:
       - darwin
     deps:
+      - tool-versions-lock
       - packages-darwin-arm64
+
+  tool-versions-lock:
+    internal: true
+    run: once
+    cmds:
+      - |
+        set -e
+
+        CONTENT=$(go run cmd/tool-versions/main.go)
+        echo "$CONTENT" > "{{.BUILD_DIR}}"/tool-versions.lock
 
   packages-darwin-universal:
     internal: true
@@ -886,15 +899,6 @@ tasks:
     run: once
     cmds:
       - go run cmd/tool-versions/main.go
-
-  release-note:
-    run: once
-    cmds:
-      - |
-        set -e
-
-        mkdir -p "{{.BUILD_DIR}}"
-        go run cmd/release-note/main.go downloads.lock > "{{.BUILD_DIR}}"/release-note.md
 
   clean:
     run: once
