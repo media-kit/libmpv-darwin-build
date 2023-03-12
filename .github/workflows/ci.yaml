@@ -32,7 +32,8 @@ jobs:
       - name: Build
         run: |
           task downloads
-          VERSION=${{ steps.version.outputs.version }} task --concurrency 1
+          VERSION=${{ steps.version.outputs.version }} task --concurrency 1 build-darwin-amd64
+          # VERSION=${{ steps.version.outputs.version }} task --concurrency 1
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
