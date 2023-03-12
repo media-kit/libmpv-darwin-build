@@ -21,6 +21,7 @@ tasks:
   default:
     deps:
       - build-darwin
+      - release-note
 
   build-darwin:
     run: once
@@ -880,27 +881,15 @@ tasks:
     cmds:
       - go run cmd/update/update.go {{.DEPS}} > downloads.lock
 
-  tools-versions:
+  tool-versions:
     run: once
     cmds:
-      - |
-        set -e
+      - go run cmd/tool-versions/main.go
 
-        CLANG_VERSION=$(clang --version | head -n1 | cut -d ' ' -f 4)
-        CMAKE_VERSION=$(cmake --version | head -n1 | cut -d ' ' -f 3)
-        GOLANG_VERSION=$(go version | cut -d ' ' -f 3 | sed 's/go//g')
-        MESON_VERSION=$(meson --version)
-        NINJA_VERSION=$(ninja --version)
-        TASK_VERSION=$(task --version | cut -d ' ' -f 3 | sed 's/v//g')
-
-        cat << EOF
-        clang $CLANG_VERSION
-        cmake $CMAKE_VERSION
-        golang $GOLANG_VERSION
-        meson $MESON_VERSION
-        ninja $NINJA_VERSION
-        task $TASK_VERSION
-        EOF
+  release-note:
+    run: once
+    cmds:
+      - go run cmd/release-note/main.go downloads.lock > {{.BUILD_DIR}}/release-note.md
 
   clean:
     run: once

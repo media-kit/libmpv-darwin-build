@@ -11,14 +11,14 @@ Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 
 ```shell
 $ brew install cmake golang go-task meson ninja
-$ VERSION=0.0.1 task
+$ VERSION=v0.0.1 task
 $ ls build/darwin/universal/libs
 libass.9.dylib
 libavcodec.59.dylib
 libavfilter.8.dylib
 ...
 $ ls build/darwin/universal/packages
-libmpv-0.0.1-darwin-universal.tar.gz
+libmpv-v0.0.1-darwin-universal.tar.gz
 ```
 
 ## Dependencies
@@ -113,6 +113,7 @@ the cost of some heaviness regarding legacy packages.
 ├── scripts                   # build scripts
 ├── cross-files               # cross build files used by meson
 ├── build
+│   ├── release-note.md
 │   ├── tools                 # "sanboxed" tools & pkg-config are stored here
 │   └── darwin
 │       ├── universal         # amd64 & arm64 builds are merge here with lipo

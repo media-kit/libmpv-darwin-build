@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/birros/libmpv-build-wip/pkg/models"
+	"github.com/birros/libmpv-build-wip/pkg/lock"
 	"gopkg.in/yaml.v3"
 )
 
@@ -29,8 +29,8 @@ func main() {
 	fmt.Println(text)
 }
 
-func newLock(packages ...string) (models.Lock, error) {
-	var lock models.Lock = models.Lock{}
+func newLock(packages ...string) (lock.Lock, error) {
+	var lock lock.Lock = lock.Lock{}
 
 	for _, name := range packages {
 		dep, err := newDep(name)
@@ -44,7 +44,7 @@ func newLock(packages ...string) (models.Lock, error) {
 	return lock, nil
 }
 
-func newDep(packageName string) (*models.Dep, error) {
+func newDep(packageName string) (*lock.Dep, error) {
 	info, err := brewInfo(packageName)
 	if err != nil {
 		return nil, fmt.Errorf("newDep: %w", err)
@@ -94,15 +94,15 @@ type brewInfoResponse struct {
 	} `json:"urls"`
 }
 
-func depFromBrewInfo(info *brewInfoResponse) *models.Dep {
-	return &models.Dep{
+func depFromBrewInfo(info *brewInfoResponse) *lock.Dep {
+	return &lock.Dep{
 		Version: info.Versions.Stable,
 		URL:     info.Urls.Stable.URL,
 		Sha256:  info.Urls.Stable.Checksum,
 	}
 }
 
-func marshalLock(lock models.Lock) (string, error) {
+func marshalLock(lock lock.Lock) (string, error) {
 	var buf bytes.Buffer
 	e := yaml.NewEncoder(&buf)
 	e.SetIndent(2)

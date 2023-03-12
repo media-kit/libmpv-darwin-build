@@ -11,15 +11,14 @@ import (
 	"path"
 	"strings"
 
-	"github.com/birros/libmpv-build-wip/pkg/models"
-	"gopkg.in/yaml.v3"
+	"github.com/birros/libmpv-build-wip/pkg/lock"
 )
 
 func main() {
 	lockFile := os.Args[1:][0]
 	destDir := os.Args[1:][1]
 
-	lock, err := parseLock(lockFile)
+	lock, err := lock.ParseLock(lockFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,26 +70,6 @@ func reverse[T comparable](s []T) []T {
 		r = append(r, s[i])
 	}
 	return r
-}
-
-func parseLock(path string) (models.Lock, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("parseLock: %w", err)
-	}
-
-	data, err := io.ReadAll(f)
-	if err != nil {
-		return nil, fmt.Errorf("parseLock: %w", err)
-	}
-
-	var lock models.Lock
-	err = yaml.Unmarshal(data, &lock)
-	if err != nil {
-		return nil, fmt.Errorf("parseLock: %w", err)
-	}
-
-	return lock, nil
 }
 
 func download(url, path string) error {
