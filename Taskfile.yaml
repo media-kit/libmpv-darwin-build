@@ -889,7 +889,11 @@ tasks:
   release-note:
     run: once
     cmds:
-      - go run cmd/release-note/main.go downloads.lock > {{.BUILD_DIR}}/release-note.md
+      - |
+        set -e
+
+        mkdir -p "{{.BUILD_DIR}}"
+        go run cmd/release-note/main.go downloads.lock > "{{.BUILD_DIR}}"/release-note.md
 
   clean:
     run: once
