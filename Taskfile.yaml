@@ -280,7 +280,7 @@ tasks:
 
         rm -f downloads/.*.tmp
         rm -f downloads/*.tar.*
-        go run cmd/download/download.go downloads.lock downloads
+        go run cmd/downloads/main.go downloads.lock downloads
 
   extract:
     internal: true
@@ -893,7 +893,7 @@ tasks:
         ffmpeg
         libressl
     cmds:
-      - go run cmd/update/update.go {{.DEPS}} > downloads.lock
+      - go run cmd/update-downloads-lock/main.go {{.DEPS}} > downloads.lock
 
   tool-versions:
     run: once
