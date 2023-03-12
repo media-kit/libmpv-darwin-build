@@ -64,8 +64,8 @@ func parseExt(filename string, count int) string {
 	return strings.Join(reverse(exts), "")
 }
 
-func reverse[T comparable](s []T) []T {
-	var r []T
+func reverse(s []string) []string {
+	var r []string
 	for i := len(s) - 1; i >= 0; i-- {
 		r = append(r, s[i])
 	}
