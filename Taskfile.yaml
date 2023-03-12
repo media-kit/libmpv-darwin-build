@@ -212,8 +212,7 @@ tasks:
       PREFIX: "{{.TARGET_DIR}}/{{.ARCH}}/chroot"
       PKG_CONFIG_PATH: "{{.PREFIX}}/lib/pkgconfig"
     deps:
-      # - task: mpv
-      - task: libressl
+      - task: mpv
         vars:
           SOURCES_DIR: "{{.SOURCES_DIR}}"
           PREFIX: "{{.PREFIX}}"
