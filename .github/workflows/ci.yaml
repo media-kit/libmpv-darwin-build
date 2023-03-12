@@ -29,6 +29,9 @@ jobs:
         id: version
         run: echo "version=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
+      - name: Preloading of go modules
+        run: go mod download
+
       - name: Build
         run: VERSION=${{ steps.version.outputs.version }} task --concurrency 1
 
