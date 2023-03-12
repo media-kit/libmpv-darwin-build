@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	tool_versions "github.com/birros/libmpv-build-wip/pkg/tool-versions"
-	"github.com/birros/libmpv-build-wip/pkg/utils"
-	"github.com/birros/libmpv-build-wip/pkg/versions"
+	tool_versions "github.com/birros/libmpv-build/pkg/tool-versions"
+	"github.com/birros/libmpv-build/pkg/utils"
+	"github.com/birros/libmpv-build/pkg/versions"
 )
 
 func main() {

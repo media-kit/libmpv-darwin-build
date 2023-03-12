@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/birros/libmpv-build-wip/pkg/versions"
+	"github.com/birros/libmpv-build/pkg/versions"
 )
 
 func BuildToolVersions() (versions.VersionsMap, error) {

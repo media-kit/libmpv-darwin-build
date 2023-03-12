@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/birros/libmpv-build-wip/pkg/lock"
-	tool_versions "github.com/birros/libmpv-build-wip/pkg/tool-versions"
-	"github.com/birros/libmpv-build-wip/pkg/versions"
+	"github.com/birros/libmpv-build/pkg/lock"
+	tool_versions "github.com/birros/libmpv-build/pkg/tool-versions"
+	"github.com/birros/libmpv-build/pkg/versions"
 )
 
 var templ = `## Dependencies

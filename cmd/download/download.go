@@ -11,7 +11,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/birros/libmpv-build-wip/pkg/lock"
+	"github.com/birros/libmpv-build/pkg/lock"
 )
 
 func main() {

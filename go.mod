@@ -1,4 +1,4 @@
-module github.com/birros/libmpv-build-wip
+module github.com/birros/libmpv-build
 
 go 1.20
 
