@@ -12,6 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Setup golang with cache
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: "path/to/go.mod"
+          check-latest: true
+          cache-dependency-path: subdir/go.sum
+
       - name: Install requirements
         run: brew install go-task meson ninja
 
