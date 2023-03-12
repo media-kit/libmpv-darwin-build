@@ -12,13 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup golang with cache
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: go.mod
-          check-latest: true
-          cache-dependency-path: go.sum
-
       - name: Install requirements
         run: brew install go-task meson ninja
 
@@ -31,8 +24,7 @@ jobs:
 
       - name: Build
         run: |
-          task downloads
-          VERSION=${{ steps.version.outputs.version }} task --verbose
+          VERSION=${{ steps.version.outputs.version }} task
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
