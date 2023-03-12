@@ -11,7 +11,7 @@ Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 
 ```shell
 $ brew install cmake golang go-task meson ninja
-$ task
+$ VERSION=0.0.1 task
 $ ls build/darwin/universal/libs
 libass.9.dylib
 libavcodec.59.dylib
