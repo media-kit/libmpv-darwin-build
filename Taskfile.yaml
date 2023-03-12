@@ -20,7 +20,7 @@ vars:
 tasks:
   default:
     deps:
-      - build-darwin
+      # - build-darwin
       - release-note
 
   build-darwin:
