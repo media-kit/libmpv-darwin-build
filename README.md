@@ -1,8 +1,8 @@
 # libmpv Build
 
-Provides builds of [libmpv](https://github.com/mpv-player/mpv) for macOS, usable
-by [media_kit](https://github.com/alexmercerind/media_kit), compatible with
-commercial use.
+Provides builds of [libmpv](https://github.com/mpv-player/mpv) for macOS & iOS,
+usable by [media_kit](https://github.com/alexmercerind/media_kit), compatible
+with commercial use.
 
 Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 [IINA](https://github.com/iina/iina).
@@ -111,7 +111,8 @@ the cost of some heaviness regarding legacy packages.
 ├── build
 │   ├── tool-versions.lock    # versions of tools used during build
 │   ├── tools                 # "sanboxed" tools & pkg-config are stored here
-│   └── darwin
+│   ├── darwin
+│   └── ios
 │       ├── universal         # amd64 & arm64 builds are merge here with lipo
 │       ├── amd64
 │       └── arm64
