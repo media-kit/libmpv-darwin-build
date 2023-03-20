@@ -1,0 +1,17 @@
+diff --git a/libavcodec/videotoolbox.c b/libavcodec/videotoolbox.c
+index d61d310..f340ad5 100644
+--- a/libavcodec/videotoolbox.c
++++ b/libavcodec/videotoolbox.c
+@@ -1166,7 +1166,12 @@ static enum AVPixelFormat videotoolbox_best_pixel_format(AVCodecContext *avctx)
+ #endif
+ #if HAVE_KCVPIXELFORMATTYPE_420YPCBCR10BIPLANARVIDEORANGE
+     if (depth > 8) {
++#if TARGET_OS_IPHONE
++        /* iOS doesn't support 10 bit textures in GLES (@tmm1) */
++        return AV_PIX_FMT_BGRA;
++#else
+         return AV_PIX_FMT_P010;
++#endif
+     }
+ #endif
+ 

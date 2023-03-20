@@ -800,6 +800,8 @@ tasks:
 
         cd {{.SOURCES_DIR}}/ffmpeg
 
+        patch -p1 < {{.PROJECT_DIR}}/patches/ffmpeg-fix-ios-hdr-texture.patch
+
         cp {{.PROJECT_DIR}}/scripts/ffmpeg/meson.build ./meson.build
         meson setup build \
           --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
