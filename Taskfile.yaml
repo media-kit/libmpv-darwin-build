@@ -22,6 +22,7 @@ tasks:
     deps:
       - build-macos
       - build-ios
+      - build-iossimulator
 
   build-macos:
     run: once
@@ -63,25 +64,7 @@ tasks:
       - darwin
     deps:
       - tool-versions-lock
-      - packages-ios-universal
-      - packages-ios-amd64
       - packages-ios-arm64
-
-  build-ios-universal:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - packages-ios-universal
-
-  build-ios-amd64:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - packages-ios-amd64
 
   build-ios-arm64:
     run: once
@@ -90,6 +73,40 @@ tasks:
     deps:
       - tool-versions-lock
       - packages-ios-arm64
+
+  build-iossimulator:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-universal
+      - packages-iossimulator-amd64
+      - packages-iossimulator-arm64
+
+  build-iossimulator-universal:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-universal
+
+  build-iossimulator-amd64:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-amd64
+
+  build-iossimulator-arm64:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-arm64
 
   tool-versions-lock:
     internal: true
@@ -149,38 +166,6 @@ tasks:
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  packages-ios-universal:
-    internal: true
-    run: once
-    vars:
-      OS: ios
-      ARCH: universal
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - libs-ios-universal
-    cmds:
-      - task: packages
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
-
-  packages-ios-amd64:
-    internal: true
-    run: once
-    vars:
-      OS: ios
-      ARCH: amd64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - libs-ios-amd64
-    cmds:
-      - task: packages
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
-
   packages-ios-arm64:
     internal: true
     run: once
@@ -190,6 +175,54 @@ tasks:
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
       - libs-ios-arm64
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-iossimulator-universal:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-universal
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-iossimulator-amd64:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: amd64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-amd64
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-iossimulator-arm64:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-arm64
     cmds:
       - task: packages
         vars:
@@ -297,12 +330,26 @@ tasks:
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  libs-ios-universal:
+  libs-ios-arm64:
+    internal: true
+    run: once
+    vars:
+      OS: ios
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - task: libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  libs-iossimulator-universal:
     internal: true
     desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
     run: once
     vars:
-      OS: ios
+      OS: iossimulator
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
       ARHC1: amd64
       ARHC2: arm64
@@ -311,8 +358,8 @@ tasks:
       LIBS_ARHC2_DIR: "{{.TARGET_DIR}}/{{.ARHC2}}/libs"
       LIBS_ARHC3_DIR: "{{.TARGET_DIR}}/{{.ARHC3}}/libs"
     deps:
-      - libs-ios-amd64
-      - libs-ios-arm64
+      - libs-iossimulator-amd64
+      - libs-iossimulator-arm64
     sources:
       - "{{.LIBS_ARHC1_DIR}}/*.dylib"
       - "{{.LIBS_ARHC2_DIR}}/*.dylib"
@@ -341,11 +388,11 @@ tasks:
           ' \
         \;
 
-  libs-ios-amd64:
+  libs-iossimulator-amd64:
     internal: true
     run: once
     vars:
-      OS: ios
+      OS: iossimulator
       ARCH: amd64
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
@@ -355,11 +402,11 @@ tasks:
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  libs-ios-arm64:
+  libs-iossimulator-arm64:
     internal: true
     run: once
     vars:
-      OS: ios
+      OS: iossimulator
       ARCH: arm64
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
