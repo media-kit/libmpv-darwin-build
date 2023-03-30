@@ -12,13 +12,13 @@ Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 ```shell
 $ brew install cmake golang go-task meson ninja
 $ VERSION=v0.0.1 task
-$ ls build/darwin/universal/libs
+$ ls build/macos/universal/libs
 libass.9.dylib
 libavcodec.59.dylib
 libavfilter.8.dylib
 ...
-$ ls build/darwin/universal/packages
-libmpv-v0.0.1-darwin-universal.tar.gz
+$ ls build/macos/universal/packages
+libmpv-v0.0.1-macos-universal.tar.gz
 ```
 
 ## Dependencies
@@ -111,7 +111,7 @@ the cost of some heaviness regarding legacy packages.
 ├── build
 │   ├── tool-versions.lock    # versions of tools used during build
 │   ├── tools                 # "sanboxed" tools & pkg-config are stored here
-│   ├── darwin
+│   ├── macos
 │   └── ios
 │       ├── universal         # amd64 & arm64 builds are merge here with lipo
 │       ├── amd64

@@ -20,42 +20,43 @@ vars:
 tasks:
   default:
     deps:
-      - build-darwin
+      - build-macos
       - build-ios
+      - build-iossimulator
 
-  build-darwin:
+  build-macos:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - packages-darwin-universal
-      - packages-darwin-amd64
-      - packages-darwin-arm64
+      - packages-macos-universal
+      - packages-macos-amd64
+      - packages-macos-arm64
 
-  build-darwin-universal:
+  build-macos-universal:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - packages-darwin-universal
+      - packages-macos-universal
 
-  build-darwin-amd64:
+  build-macos-amd64:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - packages-darwin-amd64
+      - packages-macos-amd64
 
-  build-darwin-arm64:
+  build-macos-arm64:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - packages-darwin-arm64
+      - packages-macos-arm64
 
   build-ios:
     run: once
@@ -63,25 +64,7 @@ tasks:
       - darwin
     deps:
       - tool-versions-lock
-      - packages-ios-universal
-      - packages-ios-amd64
       - packages-ios-arm64
-
-  build-ios-universal:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - packages-ios-universal
-
-  build-ios-amd64:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - packages-ios-amd64
 
   build-ios-arm64:
     run: once
@@ -90,6 +73,40 @@ tasks:
     deps:
       - tool-versions-lock
       - packages-ios-arm64
+
+  build-iossimulator:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-universal
+      - packages-iossimulator-amd64
+      - packages-iossimulator-arm64
+
+  build-iossimulator-universal:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-universal
+
+  build-iossimulator-amd64:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-amd64
+
+  build-iossimulator-arm64:
+    run: once
+    platforms:
+      - darwin
+    deps:
+      - tool-versions-lock
+      - packages-iossimulator-arm64
 
   tool-versions-lock:
     internal: true
@@ -101,15 +118,15 @@ tasks:
         CONTENT=$(go run cmd/tool-versions/main.go)
         echo "$CONTENT" > "{{.BUILD_DIR}}"/tool-versions.lock
 
-  packages-darwin-universal:
+  packages-macos-universal:
     internal: true
     run: once
     vars:
-      OS: darwin
+      OS: macos
       ARCH: universal
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
-      - libs-darwin-universal
+      - libs-macos-universal
     cmds:
       - task: packages
         vars:
@@ -117,15 +134,15 @@ tasks:
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  packages-darwin-amd64:
+  packages-macos-amd64:
     internal: true
     run: once
     vars:
-      OS: darwin
+      OS: macos
       ARCH: amd64
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
-      - libs-darwin-amd64
+      - libs-macos-amd64
     cmds:
       - task: packages
         vars:
@@ -133,47 +150,15 @@ tasks:
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  packages-darwin-arm64:
+  packages-macos-arm64:
     internal: true
     run: once
     vars:
-      OS: darwin
+      OS: macos
       ARCH: arm64
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
-      - libs-darwin-arm64
-    cmds:
-      - task: packages
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
-
-  packages-ios-universal:
-    internal: true
-    run: once
-    vars:
-      OS: ios
-      ARCH: universal
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - libs-ios-universal
-    cmds:
-      - task: packages
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
-
-  packages-ios-amd64:
-    internal: true
-    run: once
-    vars:
-      OS: ios
-      ARCH: amd64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - libs-ios-amd64
+      - libs-macos-arm64
     cmds:
       - task: packages
         vars:
@@ -190,6 +175,54 @@ tasks:
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
       - libs-ios-arm64
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-iossimulator-universal:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-universal
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-iossimulator-amd64:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: amd64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-amd64
+    cmds:
+      - task: packages
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-iossimulator-arm64:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-arm64
     cmds:
       - task: packages
         vars:
@@ -225,12 +258,12 @@ tasks:
         cd "{{.PACKAGES_DIR}}"
         tar -czvf $NAME.tar.gz $NAME
 
-  libs-darwin-universal:
+  libs-macos-universal:
     internal: true
     desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
     run: once
     vars:
-      OS: darwin
+      OS: macos
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
       ARHC1: amd64
       ARHC2: arm64
@@ -239,8 +272,8 @@ tasks:
       LIBS_ARHC2_DIR: "{{.TARGET_DIR}}/{{.ARHC2}}/libs"
       LIBS_ARHC3_DIR: "{{.TARGET_DIR}}/{{.ARHC3}}/libs"
     deps:
-      - libs-darwin-amd64
-      - libs-darwin-arm64
+      - libs-macos-amd64
+      - libs-macos-arm64
     sources:
       - "{{.LIBS_ARHC1_DIR}}/*.dylib"
       - "{{.LIBS_ARHC2_DIR}}/*.dylib"
@@ -269,11 +302,11 @@ tasks:
           ' \
         \;
 
-  libs-darwin-amd64:
+  libs-macos-amd64:
     internal: true
     run: once
     vars:
-      OS: darwin
+      OS: macos
       ARCH: amd64
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
@@ -283,70 +316,12 @@ tasks:
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  libs-darwin-arm64:
+  libs-macos-arm64:
     internal: true
     run: once
     vars:
-      OS: darwin
+      OS: macos
       ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - task: libs
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
-
-  libs-ios-universal:
-    internal: true
-    desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
-    run: once
-    vars:
-      OS: ios
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-      ARHC1: amd64
-      ARHC2: arm64
-      ARHC3: universal
-      LIBS_ARHC1_DIR: "{{.TARGET_DIR}}/{{.ARHC1}}/libs"
-      LIBS_ARHC2_DIR: "{{.TARGET_DIR}}/{{.ARHC2}}/libs"
-      LIBS_ARHC3_DIR: "{{.TARGET_DIR}}/{{.ARHC3}}/libs"
-    deps:
-      - libs-ios-amd64
-      - libs-ios-arm64
-    sources:
-      - "{{.LIBS_ARHC1_DIR}}/*.dylib"
-      - "{{.LIBS_ARHC2_DIR}}/*.dylib"
-    generates:
-      - "{{.LIBS_ARHC3_DIR}}/*.dylib"
-    cmds:
-      - |
-        set -e
-
-        {{.UNSETENV}}
-        export PATH={{.PATH}}
-        export TERM={{.TERM}}
-
-        mkdir -p "{{.LIBS_ARHC3_DIR}}"
-
-        find "{{.LIBS_ARHC1_DIR}}" \
-          -type f -name '*.dylib' \
-          -exec \
-          sh -c ' \
-            lipo \
-              -create \
-                "{}" \
-                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC2}}|g") \
-              -output \
-                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC3}}|g") \
-          ' \
-        \;
-
-  libs-ios-amd64:
-    internal: true
-    run: once
-    vars:
-      OS: ios
-      ARCH: amd64
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
       - task: libs
@@ -360,6 +335,78 @@ tasks:
     run: once
     vars:
       OS: ios
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - task: libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  libs-iossimulator-universal:
+    internal: true
+    desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
+    run: once
+    vars:
+      OS: iossimulator
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      ARHC1: amd64
+      ARHC2: arm64
+      ARHC3: universal
+      LIBS_ARHC1_DIR: "{{.TARGET_DIR}}/{{.ARHC1}}/libs"
+      LIBS_ARHC2_DIR: "{{.TARGET_DIR}}/{{.ARHC2}}/libs"
+      LIBS_ARHC3_DIR: "{{.TARGET_DIR}}/{{.ARHC3}}/libs"
+    deps:
+      - libs-iossimulator-amd64
+      - libs-iossimulator-arm64
+    sources:
+      - "{{.LIBS_ARHC1_DIR}}/*.dylib"
+      - "{{.LIBS_ARHC2_DIR}}/*.dylib"
+    generates:
+      - "{{.LIBS_ARHC3_DIR}}/*.dylib"
+    cmds:
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+
+        mkdir -p "{{.LIBS_ARHC3_DIR}}"
+
+        find "{{.LIBS_ARHC1_DIR}}" \
+          -type f -name '*.dylib' \
+          -exec \
+          sh -c ' \
+            lipo \
+              -create \
+                "{}" \
+                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC2}}|g") \
+              -output \
+                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC3}}|g") \
+          ' \
+        \;
+
+  libs-iossimulator-amd64:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: amd64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - task: libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  libs-iossimulator-arm64:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
       ARCH: arm64
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
@@ -514,7 +561,7 @@ tasks:
 
         cp {{.PROJECT_DIR}}/scripts/pkg-config/meson.build ./meson.build
         meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{OS}}-{{ARCH}}.ini \
+          --cross-file {{.PROJECT_DIR}}/cross-files/macos-{{ARCH}}.ini \
           --prefix="{{.TOOLS_PREFIX}}"
 
         meson compile -C build pkg-config
@@ -932,7 +979,7 @@ tasks:
           -Dplain-gl=enabled `# OpenGL without platform-specific code (e.g. for libmpv)` \
         )
 
-        DARWIN_OPTIONS=(\
+        MACOS_OPTIONS=(\
           `# audio output features` \
           -Dcoreaudio=enabled `# CoreAudio audio output` \
           \
@@ -960,8 +1007,8 @@ tasks:
         OPTIONS=()
         OPTIONS+=("${COMMON_OPTIONS[@]}")
 
-        if [ "{{.OS}}" == "darwin" ]; then \
-          OPTIONS+=("${DARWIN_OPTIONS[@]}") ; \
+        if [ "{{.OS}}" == "macos" ]; then \
+          OPTIONS+=("${MACOS_OPTIONS[@]}") ; \
         elif [ "{{.OS}}" == "ios" ]; then \
           OPTIONS+=("${IOS_OPTIONS[@]}") ; \
         fi
