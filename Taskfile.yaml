@@ -514,7 +514,7 @@ tasks:
 
         cp {{.PROJECT_DIR}}/scripts/pkg-config/meson.build ./meson.build
         meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{OS}}-{{ARCH}}.ini \
+          --cross-file {{.PROJECT_DIR}}/cross-files/macos-{{ARCH}}.ini \
           --prefix="{{.TOOLS_PREFIX}}"
 
         meson compile -C build pkg-config
