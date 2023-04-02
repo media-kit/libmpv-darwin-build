@@ -120,8 +120,10 @@ the cost of some heaviness regarding legacy packages.
 │           ├── chroot        # cross built files
 │           │   ├── include
 │           │   └── lib
-│           ├── libs          # cleaned libs from `chroot/lib`.
-│           └── packages      # zip & tar.gz of `libs`
+│           ├── libs          # cleaned libs from `chroot/lib`
+│           ├── frameworks    # `.framework` collection from `libs`
+│           ├── xcframeworks  # `.xcframework` collection from `frameworks`
+│           └── packages      # zip & tar.gz of `libs` & `xcframeworks`
 └── ...
 ```
 
