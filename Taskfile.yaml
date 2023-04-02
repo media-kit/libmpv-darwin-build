@@ -465,6 +465,10 @@ tasks:
 
         codesign --remove "{{.LIBS_DIR}}"/*.dylib
 
+        if [ "{{.OS}}" == "iossimulator" ] && [ "{{.ARCH}}" == "arm64" ]; then \
+          sh "{{.PROJECT_DIR}}/scripts/libs/fix_iossimulator_arm64.sh" "{{.LIBS_DIR}}"; \
+        fi
+
   downloads:
     run: once
     sources:
