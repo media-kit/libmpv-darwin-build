@@ -23,6 +23,9 @@ tasks:
       - build-macos
       - build-ios
       - build-iossimulator
+      # - frameworks-macos-universal
+      # - frameworks-ios-arm64
+      # - frameworks-iossimulator-universal
 
   build-macos:
     run: once
@@ -252,6 +255,78 @@ tasks:
 
         cd "{{.PACKAGES_DIR}}"
         tar -czvf $NAME.tar.gz $NAME
+
+  frameworks-macos-universal:
+    internal: true
+    run: once
+    vars:
+      OS: macos
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-macos-universal
+    cmds:
+      - task: frameworks
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  frameworks-ios-arm64:
+    internal: true
+    run: once
+    vars:
+      OS: ios
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-ios-arm64
+    cmds:
+      - task: frameworks
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  frameworks-iossimulator-universal:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-universal
+    cmds:
+      - task: frameworks
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  frameworks:
+    label: frameworks-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    vars:
+      LIBS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/libs"
+      FRAMEWORKS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/frameworks"
+    sources:
+      - "{{.LIBS_DIR}}/*.dylib"
+    generates:
+      - "{{.FRAMEWORKS_DIR}}/*.framework/*"
+    cmds:
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+
+        sh "{{.PROJECT_DIR}}/scripts/frameworks/create_frameworks.sh" \
+          "{{.OS}}" \
+          "{{.LIBS_DIR}}" \
+          "{{.FRAMEWORKS_DIR}}"
 
   libs-macos-universal:
     internal: true
