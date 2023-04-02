@@ -335,7 +335,7 @@ tasks:
       XCFRAMEWORKS_DIR: "{{.BUILD_DIR}}/ios/universal/xcframeworks"
     deps:
       - frameworks-ios-arm64
-      - frameworks-macos-universal
+      - frameworks-iossimulator-universal
     sources:
       - "{{.FRAMEWORKS_IOS_DIR}}/*.framework/*"
       - "{{.FRAMEWORKS_IOSSIMULATOR_DIR}}/*.framework/*"
