@@ -6,7 +6,7 @@ vars:
   TERM:
     sh: echo $TERM
   VERSION:
-    sh: echo $VERSION
+    sh: echo ${VERSION:-develop}
   UNSETENV: |
     # unset all env vars
     for i in $(env | awk -F"=" '{print $1}') ; do unset $i ; done
