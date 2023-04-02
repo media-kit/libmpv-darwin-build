@@ -101,29 +101,31 @@ the cost of some heaviness regarding legacy packages.
 ```
 .
 ├── ...
-├── cmd                       # golang scripts
-├── pkg                       # golang packages
-├── downloads                 # dependencies archives are downloaded here
-├── downloads.lock            # lock file of dependencies archives
-├── Taskfile.yaml             # main build script
-├── scripts                   # build scripts
-├── cross-files               # cross build files used by meson
+├── cmd                          # golang scripts
+├── pkg                          # golang packages
+├── downloads                    # dependencies archives are downloaded here
+├── downloads.lock               # lock file of dependencies archives
+├── Taskfile.yaml                # main build script
+├── scripts                      # build scripts
+├── cross-files                  # cross build files used by meson
 ├── build
-│   ├── tool-versions.lock    # versions of tools used during build
-│   ├── tools                 # "sanboxed" tools & pkg-config are stored here
+│   ├── tool-versions.lock       # versions of tools used during build
+│   ├── tools                    # "sanboxed" tools & pkg-config are stored here
 │   ├── macos
 │   └── ios
-│       ├── universal         # amd64 & arm64 builds are merge here with lipo
+│       ├── universal            # amd64 & arm64 builds are merge here with lipo
 │       ├── amd64
 │       └── arm64
-│           ├── sources       # archives are extracted here
-│           ├── chroot        # cross built files
+│           ├── sources          # archives are extracted here
+│           ├── chroot           # cross built files
 │           │   ├── include
 │           │   └── lib
-│           ├── libs          # cleaned libs from `chroot/lib`
-│           ├── frameworks    # `.framework` collection from `libs`
-│           ├── xcframeworks  # `.xcframework` collection from `frameworks`
-│           └── packages      # zip & tar.gz of `libs` & `xcframeworks`
+│           ├── libs             # cleaned libs from `chroot/lib`
+│           ├── frameworks       # `.framework` collection from `libs`
+│           ├── xcframeworks     # `.xcframework` collection from `frameworks`
+│           └── packages
+│               ├──libs          # tar.gz of `libs`
+│               └──xcframeworks  # tar.gz of `xcframeworks`
 └── ...
 ```
 

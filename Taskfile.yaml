@@ -33,7 +33,6 @@ tasks:
       - packages-macos-universal
       - packages-macos-amd64
       - packages-macos-arm64
-      - xcframeworks-macos-universal
 
   build-macos-universal:
     run: once
@@ -65,8 +64,8 @@ tasks:
       - darwin
     deps:
       - tool-versions-lock
+      - packages-ios-universal
       - packages-ios-arm64
-      - xcframeworks-ios-universal
 
   build-ios-arm64:
     run: once
@@ -129,8 +128,14 @@ tasks:
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
       - libs-macos-universal
+      - xcframeworks-macos-universal
     cmds:
-      - task: packages
+      - task: packages-libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+      - task: packages-xcframeworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -146,7 +151,7 @@ tasks:
     deps:
       - libs-macos-amd64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -162,7 +167,23 @@ tasks:
     deps:
       - libs-macos-arm64
     cmds:
-      - task: packages
+      - task: packages-libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-ios-universal:
+    internal: true
+    run: once
+    vars:
+      OS: ios
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - xcframeworks-ios-universal
+    cmds:
+      - task: packages-xcframeworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -178,7 +199,7 @@ tasks:
     deps:
       - libs-ios-arm64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -194,7 +215,7 @@ tasks:
     deps:
       - libs-iossimulator-universal
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -210,7 +231,7 @@ tasks:
     deps:
       - libs-iossimulator-amd64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -226,24 +247,49 @@ tasks:
     deps:
       - libs-iossimulator-arm64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  packages:
-    label: packages-{{.OS}}-{{.ARCH}}
+  packages-xcframeworks:
+    label: packages-xcframeworks-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    vars:
+      XCFRAMEWORKS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/xcframeworks"
+      PACKAGES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/packages/xcframeworks"
+    sources:
+      - "{{.XCFRAMEWORKS_DIR}}/*.xcframework/*"
+    generates:
+      - "{{.PACKAGES_DIR}}/*.tar.gz"
+    cmds:
+      - rm -rf "{{.PACKAGES_DIR}}"
+      - |
+        set -e
+
+        NAME=libmpv-xcframeworks-{{.VERSION}}-{{.OS}}-{{.ARCH}}
+
+        mkdir -p "{{.PACKAGES_DIR}}/$NAME"
+        cp -r "{{.XCFRAMEWORKS_DIR}}"/*.xcframework "{{.PACKAGES_DIR}}"/$NAME/
+
+        cd "{{.PACKAGES_DIR}}"
+        tar -czvf $NAME.tar.gz $NAME
+
+  packages-libs:
+    label: packages-libs-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     vars:
       LIBS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/libs"
-      PACKAGES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/packages"
+      PACKAGES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/packages/libs"
     sources:
       - "{{.LIBS_DIR}}/*.dylib"
     generates:
       - "{{.PACKAGES_DIR}}/*.tar.gz"
     cmds:
+      - rm -rf "{{.PACKAGES_DIR}}"
       - |
         set -e
 
