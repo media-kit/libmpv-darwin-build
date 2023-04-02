@@ -245,11 +245,6 @@ tasks:
       - |
         set -e
 
-        if [ -z "{{.VERSION}}" ]; then \
-          echo "package creation skipped for {{.OS}}/{{.ARCH}} (env var VERSION required)" ; \
-          exit 0; \
-        fi
-
         NAME=libmpv-{{.VERSION}}-{{.OS}}-{{.ARCH}}
 
         mkdir -p "{{.PACKAGES_DIR}}/$NAME"
