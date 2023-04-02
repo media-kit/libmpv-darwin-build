@@ -1,6 +1,7 @@
-clang 14.0.0
-cmake 3.25.3
+clang 14.0.3
+cmake 3.26.2
 golang 1.17
 meson 1.0.1
 ninja 1.11.1
 task 3.21.0
+xcode 14.3
