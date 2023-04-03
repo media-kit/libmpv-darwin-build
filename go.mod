@@ -1,4 +1,4 @@
-module github.com/birros/libmpv-build
+module github.com/flutter-media-kit/libmpv-darwin-build
 
 go 1.17
 
