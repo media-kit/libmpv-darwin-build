@@ -17,7 +17,7 @@ libass.9.dylib
 libavcodec.59.dylib
 libavfilter.8.dylib
 ...
-$ ls build/macos/universal/packages
+$ ls build/macos/universal/packages/libs
 libmpv-v0.0.1-macos-universal.tar.gz
 ```
 
