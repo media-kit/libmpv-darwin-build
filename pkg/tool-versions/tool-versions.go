@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/birros/libmpv-build/pkg/versions"
+	"github.com/flutter-media-kit/libmpv-darwin-build/pkg/versions"
 )
 
 func BuildToolVersions() (versions.VersionsMap, error) {
