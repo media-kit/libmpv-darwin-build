@@ -6,7 +6,7 @@ vars:
   TERM:
     sh: echo $TERM
   VERSION:
-    sh: echo $VERSION
+    sh: echo ${VERSION:-develop}
   UNSETENV: |
     # unset all env vars
     for i in $(env | awk -F"=" '{print $1}') ; do unset $i ; done
@@ -64,6 +64,7 @@ tasks:
       - darwin
     deps:
       - tool-versions-lock
+      - packages-ios-universal
       - packages-ios-arm64
 
   build-ios-arm64:
@@ -127,8 +128,14 @@ tasks:
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
     deps:
       - libs-macos-universal
+      - xcframeworks-macos-universal
     cmds:
-      - task: packages
+      - task: packages-libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+      - task: packages-xcframeworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -144,7 +151,7 @@ tasks:
     deps:
       - libs-macos-amd64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -160,7 +167,23 @@ tasks:
     deps:
       - libs-macos-arm64
     cmds:
-      - task: packages
+      - task: packages-libs
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  packages-ios-universal:
+    internal: true
+    run: once
+    vars:
+      OS: ios
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - xcframeworks-ios-universal
+    cmds:
+      - task: packages-xcframeworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -176,7 +199,7 @@ tasks:
     deps:
       - libs-ios-arm64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -192,7 +215,7 @@ tasks:
     deps:
       - libs-iossimulator-universal
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -208,7 +231,7 @@ tasks:
     deps:
       - libs-iossimulator-amd64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
@@ -224,31 +247,51 @@ tasks:
     deps:
       - libs-iossimulator-arm64
     cmds:
-      - task: packages
+      - task: packages-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
 
-  packages:
-    label: packages-{{.OS}}-{{.ARCH}}
+  packages-xcframeworks:
+    label: packages-xcframeworks-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    vars:
+      XCFRAMEWORKS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/xcframeworks"
+      PACKAGES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/packages/xcframeworks"
+    sources:
+      - "{{.XCFRAMEWORKS_DIR}}/*.xcframework/*"
+    generates:
+      - "{{.PACKAGES_DIR}}/*.tar.gz"
+    cmds:
+      - rm -rf "{{.PACKAGES_DIR}}"
+      - |
+        set -e
+
+        NAME=libmpv-xcframeworks-{{.VERSION}}-{{.OS}}-{{.ARCH}}
+
+        mkdir -p "{{.PACKAGES_DIR}}/$NAME"
+        cp -r "{{.XCFRAMEWORKS_DIR}}"/*.xcframework "{{.PACKAGES_DIR}}"/$NAME/
+
+        cd "{{.PACKAGES_DIR}}"
+        tar -czvf $NAME.tar.gz $NAME
+
+  packages-libs:
+    label: packages-libs-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     vars:
       LIBS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/libs"
-      PACKAGES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/packages"
+      PACKAGES_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/packages/libs"
     sources:
       - "{{.LIBS_DIR}}/*.dylib"
     generates:
       - "{{.PACKAGES_DIR}}/*.tar.gz"
     cmds:
+      - rm -rf "{{.PACKAGES_DIR}}"
       - |
         set -e
-
-        if [ -z "{{.VERSION}}" ]; then \
-          echo "package creation skipped for {{.OS}}/{{.ARCH}} (env var VERSION required)" ; \
-          exit 0; \
-        fi
 
         NAME=libmpv-{{.VERSION}}-{{.OS}}-{{.ARCH}}
 
@@ -257,6 +300,132 @@ tasks:
 
         cd "{{.PACKAGES_DIR}}"
         tar -czvf $NAME.tar.gz $NAME
+
+  xcframeworks-macos-universal:
+    internal: true
+    run: once
+    vars:
+      FRAMEWORKS_MACOS_DIR: "{{.BUILD_DIR}}/macos/universal/frameworks"
+      XCFRAMEWORKS_DIR: "{{.BUILD_DIR}}/macos/universal/xcframeworks"
+    deps:
+      - frameworks-macos-universal
+    sources:
+      - "{{.FRAMEWORKS_MACOS_DIR}}/*.framework/*"
+    generates:
+      - "{{.XCFRAMEWORKS_DIR}}/*.xcframework/*"
+    cmds:
+      - rm -rf "{{.XCFRAMEWORKS_DIR}}"
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+
+        sh "{{.PROJECT_DIR}}/scripts/xcframeworks/macos/create_xcframeworks.sh" \
+          "{{.FRAMEWORKS_MACOS_DIR}}" \
+          "{{.XCFRAMEWORKS_DIR}}"
+
+  xcframeworks-ios-universal:
+    internal: true
+    run: once
+    vars:
+      FRAMEWORKS_IOS_DIR: "{{.BUILD_DIR}}/ios/arm64/frameworks"
+      FRAMEWORKS_IOSSIMULATOR_DIR: "{{.BUILD_DIR}}/iossimulator/universal/frameworks"
+      XCFRAMEWORKS_DIR: "{{.BUILD_DIR}}/ios/universal/xcframeworks"
+    deps:
+      - frameworks-ios-arm64
+      - frameworks-iossimulator-universal
+    sources:
+      - "{{.FRAMEWORKS_IOS_DIR}}/*.framework/*"
+      - "{{.FRAMEWORKS_IOSSIMULATOR_DIR}}/*.framework/*"
+    generates:
+      - "{{.XCFRAMEWORKS_DIR}}/*.xcframework/*"
+    cmds:
+      - rm -rf "{{.XCFRAMEWORKS_DIR}}"
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+
+        sh "{{.PROJECT_DIR}}/scripts/xcframeworks/ios/create_xcframeworks.sh" \
+          "{{.FRAMEWORKS_IOS_DIR}}" \
+          "{{.FRAMEWORKS_IOSSIMULATOR_DIR}}" \
+          "{{.XCFRAMEWORKS_DIR}}"
+
+  frameworks-macos-universal:
+    internal: true
+    run: once
+    vars:
+      OS: macos
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-macos-universal
+    cmds:
+      - task: frameworks
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  frameworks-ios-arm64:
+    internal: true
+    run: once
+    vars:
+      OS: ios
+      ARCH: arm64
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-ios-arm64
+    cmds:
+      - task: frameworks
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  frameworks-iossimulator-universal:
+    internal: true
+    run: once
+    vars:
+      OS: iossimulator
+      ARCH: universal
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+    deps:
+      - libs-iossimulator-universal
+    cmds:
+      - task: frameworks
+        vars:
+          OS: "{{.OS}}"
+          ARCH: "{{.ARCH}}"
+          TARGET_DIR: "{{.TARGET_DIR}}"
+
+  frameworks:
+    label: frameworks-{{.OS}}-{{.ARCH}}
+    internal: true
+    run: when_changed
+    vars:
+      LIBS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/libs"
+      FRAMEWORKS_DIR: "{{.TARGET_DIR}}/{{.ARCH}}/frameworks"
+    sources:
+      - "{{.LIBS_DIR}}/*.dylib"
+    generates:
+      - "{{.FRAMEWORKS_DIR}}/*.framework/*"
+    cmds:
+      - |
+        set -e
+
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+
+        sh "{{.PROJECT_DIR}}/scripts/frameworks/create_frameworks.sh" \
+          "{{.OS}}" \
+          "{{.LIBS_DIR}}" \
+          "{{.FRAMEWORKS_DIR}}"
 
   libs-macos-universal:
     internal: true
@@ -469,6 +638,10 @@ tasks:
         ./scripts/libs/relink_dylibs.sh "{{.PREFIX}}/lib" "{{.LIBS_DIR}}"
 
         codesign --remove "{{.LIBS_DIR}}"/*.dylib
+
+        if [ "{{.OS}}" == "iossimulator" ] && [ "{{.ARCH}}" == "arm64" ]; then \
+          sh "{{.PROJECT_DIR}}/scripts/libs/fix_iossimulator_arm64.sh" "{{.LIBS_DIR}}"; \
+        fi
 
   downloads:
     run: once

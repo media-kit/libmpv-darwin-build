@@ -30,6 +30,7 @@ var toolVersionsCMDs = map[string]string{
 	"meson":  "meson --version",
 	"ninja":  "ninja --version",
 	"task":   "task --version | cut -d ' ' -f 3 | sed 's/v//g'",
+	"xcode":  "xcodebuild -version | head -n1 | cut -d ' ' -f 2",
 }
 
 func shellCommand(cmd string) (string, error) {
