@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	tool_versions "github.com/flutter-media-kit/libmpv-darwin-build/pkg/tool-versions"
-	"github.com/flutter-media-kit/libmpv-darwin-build/pkg/utils"
-	"github.com/flutter-media-kit/libmpv-darwin-build/pkg/versions"
+	tool_versions "github.com/media-kit/libmpv-darwin-build/pkg/tool-versions"
+	"github.com/media-kit/libmpv-darwin-build/pkg/utils"
+	"github.com/media-kit/libmpv-darwin-build/pkg/versions"
 )
 
 func main() {

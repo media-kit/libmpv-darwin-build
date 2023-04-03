@@ -11,7 +11,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/flutter-media-kit/libmpv-darwin-build/pkg/lock"
+	"github.com/media-kit/libmpv-darwin-build/pkg/lock"
 )
 
 func main() {
