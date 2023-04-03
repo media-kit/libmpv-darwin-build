@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/flutter-media-kit/libmpv-darwin-build/pkg/lock"
+	"github.com/media-kit/libmpv-darwin-build/pkg/lock"
 	"gopkg.in/yaml.v3"
 )
 
