@@ -272,7 +272,7 @@ tasks:
         NAME=libmpv-xcframeworks-{{.VERSION}}-{{.OS}}-{{.ARCH}}
 
         mkdir -p "{{.PACKAGES_DIR}}/$NAME"
-        cp -r "{{.XCFRAMEWORKS_DIR}}"/*.xcframework "{{.PACKAGES_DIR}}"/$NAME/
+        cp -R "{{.XCFRAMEWORKS_DIR}}"/*.xcframework "{{.PACKAGES_DIR}}"/$NAME/
 
         cd "{{.PACKAGES_DIR}}"
         tar -czvf $NAME.tar.gz $NAME
@@ -296,7 +296,7 @@ tasks:
         NAME=libmpv-{{.VERSION}}-{{.OS}}-{{.ARCH}}
 
         mkdir -p "{{.PACKAGES_DIR}}/$NAME"
-        cp -r "{{.LIBS_DIR}}"/*.dylib "{{.PACKAGES_DIR}}"/$NAME/
+        cp -R "{{.LIBS_DIR}}"/*.dylib "{{.PACKAGES_DIR}}"/$NAME/
 
         cd "{{.PACKAGES_DIR}}"
         tar -czvf $NAME.tar.gz $NAME
