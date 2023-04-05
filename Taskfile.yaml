@@ -422,10 +422,15 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        sh "{{.PROJECT_DIR}}/scripts/frameworks/create_frameworks.sh" \
-          "{{.OS}}" \
-          "{{.LIBS_DIR}}" \
-          "{{.FRAMEWORKS_DIR}}"
+        if [ "{{.OS}}" == "macos" ]; then \
+          sh "{{.PROJECT_DIR}}/scripts/frameworks/macos/create_frameworks.sh" \
+            "{{.LIBS_DIR}}" \
+            "{{.FRAMEWORKS_DIR}}"; \
+        elif [ "{{.OS}}" == "ios" ] || [ "{{.OS}}" == "iossimulator" ]; then \
+          sh "{{.PROJECT_DIR}}/scripts/frameworks/ios/create_frameworks.sh" \
+            "{{.LIBS_DIR}}" \
+            "{{.FRAMEWORKS_DIR}}"; \
+        fi
 
   libs-macos-universal:
     internal: true
