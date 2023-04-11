@@ -269,13 +269,17 @@ tasks:
       - |
         set -e
 
-        NAME=libmpv-xcframeworks-{{.VERSION}}-{{.OS}}-{{.ARCH}}
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
 
-        mkdir -p "{{.PACKAGES_DIR}}/$NAME"
-        cp -R "{{.XCFRAMEWORKS_DIR}}"/*.xcframework "{{.PACKAGES_DIR}}"/$NAME/
-
-        cd "{{.PACKAGES_DIR}}"
-        tar -czvf $NAME.tar.gz $NAME
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export VERSION={{.VERSION}}
+        export TYPE=xcframeworks
+        export FILES_DIR={{.XCFRAMEWORKS_DIR}}
+        export ARCHIVES_DIR={{.PACKAGES_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/archives/build.sh"
 
   packages-libs:
     label: packages-libs-{{.OS}}-{{.ARCH}}
@@ -293,13 +297,17 @@ tasks:
       - |
         set -e
 
-        NAME=libmpv-{{.VERSION}}-{{.OS}}-{{.ARCH}}
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
 
-        mkdir -p "{{.PACKAGES_DIR}}/$NAME"
-        cp -R "{{.LIBS_DIR}}"/*.dylib "{{.PACKAGES_DIR}}"/$NAME/
-
-        cd "{{.PACKAGES_DIR}}"
-        tar -czvf $NAME.tar.gz $NAME
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export VERSION={{.VERSION}}
+        export TYPE=libs
+        export FILES_DIR={{.LIBS_DIR}}
+        export ARCHIVES_DIR={{.PACKAGES_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/archives/build.sh"
 
   xcframeworks-macos-universal:
     internal: true
@@ -322,9 +330,9 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        sh "{{.PROJECT_DIR}}/scripts/xcframeworks/macos/create_xcframeworks.sh" \
-          "{{.FRAMEWORKS_MACOS_DIR}}" \
-          "{{.XCFRAMEWORKS_DIR}}"
+        export FRAMEWORKS_MACOS_DIR={{.FRAMEWORKS_MACOS_DIR}}
+        export XCFRAMEWORKS_DIR={{.XCFRAMEWORKS_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/xcframeworks/macos/create_xcframeworks.sh"
 
   xcframeworks-ios-universal:
     internal: true
@@ -350,10 +358,10 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        sh "{{.PROJECT_DIR}}/scripts/xcframeworks/ios/create_xcframeworks.sh" \
-          "{{.FRAMEWORKS_IOS_DIR}}" \
-          "{{.FRAMEWORKS_IOSSIMULATOR_DIR}}" \
-          "{{.XCFRAMEWORKS_DIR}}"
+        export FRAMEWORKS_IOS_DIR={{.FRAMEWORKS_IOS_DIR}}
+        export FRAMEWORKS_IOSSIMULATOR_DIR={{.FRAMEWORKS_IOSSIMULATOR_DIR}}
+        export XCFRAMEWORKS_DIR={{.XCFRAMEWORKS_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/xcframeworks/ios/create_xcframeworks.sh"
 
   frameworks-macos-universal:
     internal: true
@@ -422,37 +430,32 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        if [ "{{.OS}}" == "macos" ]; then \
-          sh "{{.PROJECT_DIR}}/scripts/frameworks/macos/create_frameworks.sh" \
-            "{{.LIBS_DIR}}" \
-            "{{.FRAMEWORKS_DIR}}"; \
-        elif [ "{{.OS}}" == "ios" ] || [ "{{.OS}}" == "iossimulator" ]; then \
-          sh "{{.PROJECT_DIR}}/scripts/frameworks/ios/create_frameworks.sh" \
-            "{{.LIBS_DIR}}" \
-            "{{.FRAMEWORKS_DIR}}"; \
-        fi
+        export OS={{.OS}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export LIBS_DIR={{.LIBS_DIR}}
+        export FRAMEWORKS_DIR={{.FRAMEWORKS_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/frameworks/build.sh"
 
   libs-macos-universal:
     internal: true
-    desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
+    desc: merge {{.ARCH1}} & {{.ARCH2}} libs to universal
     run: once
     vars:
       OS: macos
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-      ARHC1: amd64
-      ARHC2: arm64
-      ARHC3: universal
-      LIBS_ARHC1_DIR: "{{.TARGET_DIR}}/{{.ARHC1}}/libs"
-      LIBS_ARHC2_DIR: "{{.TARGET_DIR}}/{{.ARHC2}}/libs"
-      LIBS_ARHC3_DIR: "{{.TARGET_DIR}}/{{.ARHC3}}/libs"
+      ARCH1: amd64
+      ARCH2: arm64
+      LIBS_ARCH1_DIR: "{{.TARGET_DIR}}/{{.ARCH1}}/libs"
+      LIBS_ARCH2_DIR: "{{.TARGET_DIR}}/{{.ARCH2}}/libs"
+      LIBS_UNIVERSAL_DIR: "{{.TARGET_DIR}}/universal/libs"
     deps:
       - libs-macos-amd64
       - libs-macos-arm64
     sources:
-      - "{{.LIBS_ARHC1_DIR}}/*.dylib"
-      - "{{.LIBS_ARHC2_DIR}}/*.dylib"
+      - "{{.LIBS_ARCH1_DIR}}/*.dylib"
+      - "{{.LIBS_ARCH2_DIR}}/*.dylib"
     generates:
-      - "{{.LIBS_ARHC3_DIR}}/*.dylib"
+      - "{{.LIBS_UNIVERSAL_DIR}}/*.dylib"
     cmds:
       - |
         set -e
@@ -461,20 +464,11 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        mkdir -p "{{.LIBS_ARHC3_DIR}}"
-
-        find "{{.LIBS_ARHC1_DIR}}" \
-          -type f -name '*.dylib' \
-          -exec \
-          sh -c ' \
-            lipo \
-              -create \
-                "{}" \
-                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC2}}|g") \
-              -output \
-                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC3}}|g") \
-          ' \
-        \;
+        export ARCH1={{.ARCH1}}
+        export ARCH2={{.ARCH2}}
+        export LIBS_ARCH1_DIR={{.LIBS_ARCH1_DIR}}
+        export LIBS_UNIVERSAL_DIR={{.LIBS_UNIVERSAL_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/libs/build-universal.sh"
 
   libs-macos-amd64:
     internal: true
@@ -520,25 +514,24 @@ tasks:
 
   libs-iossimulator-universal:
     internal: true
-    desc: merge {{.ARHC1}} & {{.ARHC2}} libs to {{.ARHC3}}
+    desc: merge {{.ARCH1}} & {{.ARCH2}} libs to universal
     run: once
     vars:
       OS: iossimulator
       TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-      ARHC1: amd64
-      ARHC2: arm64
-      ARHC3: universal
-      LIBS_ARHC1_DIR: "{{.TARGET_DIR}}/{{.ARHC1}}/libs"
-      LIBS_ARHC2_DIR: "{{.TARGET_DIR}}/{{.ARHC2}}/libs"
-      LIBS_ARHC3_DIR: "{{.TARGET_DIR}}/{{.ARHC3}}/libs"
+      ARCH1: amd64
+      ARCH2: arm64
+      LIBS_ARCH1_DIR: "{{.TARGET_DIR}}/{{.ARCH1}}/libs"
+      LIBS_ARCH2_DIR: "{{.TARGET_DIR}}/{{.ARCH2}}/libs"
+      LIBS_UNIVERSAL_DIR: "{{.TARGET_DIR}}/universal/libs"
     deps:
       - libs-iossimulator-amd64
       - libs-iossimulator-arm64
     sources:
-      - "{{.LIBS_ARHC1_DIR}}/*.dylib"
-      - "{{.LIBS_ARHC2_DIR}}/*.dylib"
+      - "{{.LIBS_ARCH1_DIR}}/*.dylib"
+      - "{{.LIBS_ARCH2_DIR}}/*.dylib"
     generates:
-      - "{{.LIBS_ARHC3_DIR}}/*.dylib"
+      - "{{.LIBS_UNIVERSAL_DIR}}/*.dylib"
     cmds:
       - |
         set -e
@@ -547,20 +540,11 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        mkdir -p "{{.LIBS_ARHC3_DIR}}"
-
-        find "{{.LIBS_ARHC1_DIR}}" \
-          -type f -name '*.dylib' \
-          -exec \
-          sh -c ' \
-            lipo \
-              -create \
-                "{}" \
-                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC2}}|g") \
-              -output \
-                $(echo "{}" | sed -r "s|{{.ARHC1}}|{{.ARHC3}}|g") \
-          ' \
-        \;
+        export ARCH1={{.ARCH1}}
+        export ARCH2={{.ARCH2}}
+        export LIBS_ARCH1_DIR={{.LIBS_ARCH1_DIR}}
+        export LIBS_UNIVERSAL_DIR={{.LIBS_UNIVERSAL_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/libs/build-universal.sh"
 
   libs-iossimulator-amd64:
     internal: true
@@ -619,34 +603,13 @@ tasks:
         {{.UNSETENV}}
         export PATH={{.PATH}}
         export TERM={{.TERM}}
-        export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        rm -rf "{{.LIBS_DIR}}"
-        mkdir -p "{{.LIBS_DIR}}"
-
-        # copy dylibs except '*-subset.*.dylib'
-        find "{{.PREFIX}}/lib" \
-          -type f -name '*.dylib' \
-          ! -name '*-subset.*.dylib' \
-          -exec \
-          cp "{}" "{{.LIBS_DIR}}" \
-        \;
-
-        # libfoo.100.99.88.dylib -> libfoo.100.dylib
-        find {{.LIBS_DIR}} -type f -name '*.dylib' -exec \
-          sh -c 'mv "{}" $(echo "{}" | sed -r "s|([0-9]+)(\.[0-9]+)*|\1|g")' \
-        \;
-
-        mv "{{.LIBS_DIR}}"/libmpv.*.dylib "{{.LIBS_DIR}}/libmpv.dylib"
-        install_name_tool -id @rpath/libmpv.dylib "{{.LIBS_DIR}}/libmpv.dylib"
-
-        ./scripts/libs/relink_dylibs.sh "{{.PREFIX}}/lib" "{{.LIBS_DIR}}"
-
-        codesign --remove "{{.LIBS_DIR}}"/*.dylib
-
-        if [ "{{.OS}}" == "iossimulator" ] && [ "{{.ARCH}}" == "arm64" ]; then \
-          sh "{{.PROJECT_DIR}}/scripts/libs/fix_iossimulator_arm64.sh" "{{.LIBS_DIR}}"; \
-        fi
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export LIBS_DIR={{.LIBS_DIR}}
+        export PREFIX={{.PREFIX}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/libs/build.sh"
 
   downloads:
     run: once
@@ -669,14 +632,13 @@ tasks:
       - |
         set -e
 
-        mkdir -p {{.TARGET_DIR}}
-        find downloads -type f -name '{{.PKG_NAME}}-*.tar.*' -exec \
-          tar \
-            -xvf {} \
-            --strip-components 1 \
-            -C {{.TARGET_DIR}} \
-            2>&1 \
-        \;
+        {{.UNSETENV}}
+        export PATH={{.PATH}}
+        export TERM={{.TERM}}
+
+        export PKG_NAME={{.PKG_NAME}}
+        export TARGET_DIR={{.TARGET_DIR}}
+        sh "{{.PROJECT_DIR}}/scripts/extract/build.sh"
 
   links:
     internal: true
@@ -689,29 +651,16 @@ tasks:
       - |
         set -e
 
-        # check BINARY presence in \$TOOLS_PREFIX/bin
-        for BINARY in {{.BINARIES}} ; do \
-          test -f {{.TOOLS_PREFIX}}/bin/$BINARY ; \
-        done
+        export BINARIES="{{.BINARIES}}"
+        export TOOLS_PREFIX={{.TOOLS_PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/links/status.sh"
     cmds:
       - |
         set -e
 
-        mkdir -p {{.TOOLS_PREFIX}}/bin
-
-        # check BINARY presence in PATH
-        for BINARY in {{.BINARIES}} ; do \
-          [ -z $(which $BINARY) ] \
-            && echo $BINARY not found in \$PATH \
-            && false || true ; \
-        done
-
-        # sym link BINARY
-        for BINARY in {{.BINARIES}} ; do \
-          [ ! -h {{.TOOLS_PREFIX}}/bin/$BINARY ] \
-            && ln -s $(which $BINARY) {{.TOOLS_PREFIX}}/bin/$BINARY \
-            || true ; \
-        done
+        export BINARIES="{{.BINARIES}}"
+        export TOOLS_PREFIX={{.TOOLS_PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/links/build.sh"
 
   pkg-config:
     internal: true
@@ -735,18 +684,12 @@ tasks:
         export PATH={{.PATH}}
         export TERM={{.TERM}}
 
-        cd {{.TOOLS_SOURCES_DIR}}/pkg-config
-
-        cp {{.PROJECT_DIR}}/scripts/pkg-config/meson.build ./meson.build
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/macos-{{ARCH}}.ini \
-          --prefix="{{.TOOLS_PREFIX}}"
-
-        meson compile -C build pkg-config
-
-        # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.TOOLS_PREFIX}}'
-        cp -R build/dist'{{.TOOLS_PREFIX}}'/* '{{.TOOLS_PREFIX}}'/
+        export OS=macos
+        export ARCH={{ARCH}}
+        export TOOLS_SOURCES_DIR={{.TOOLS_SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export TOOLS_PREFIX={{.TOOLS_PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/pkg-config/build.sh"
 
   tools:
     internal: true
@@ -787,19 +730,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        cd {{.SOURCES_DIR}}/freetype
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.PREFIX}}" \
-          -Dbrotli=disabled \
-          -Dbzip2=disabled \
-          -Dharfbuzz=enabled \
-          -Dmmap=disabled \
-          -Dpng=disabled \
-          -Dtests=disabled \
-          -Dzlib=disabled
-        meson compile -C build
-        meson install -C build
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/freetype/build.sh"
 
   fribidi:
     label: fribidi-{{.OS}}-{{.ARCH}}
@@ -826,17 +762,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        cd {{.SOURCES_DIR}}/fribidi
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.PREFIX}}" \
-          -Ddeprecated=false \
-          -Ddocs=false \
-          -Dbin=false \
-          -Dtests=false \
-          -Dfuzzer_ldflags=
-        meson compile -C build
-        meson install -C build
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/fribidi/build.sh"
 
   harfbuzz:
     label: harfbuzz-{{.OS}}-{{.ARCH}}
@@ -863,31 +794,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        cd {{.SOURCES_DIR}}/harfbuzz
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.PREFIX}}" \
-          -Dglib=disabled \
-          -Dgobject=disabled \
-          -Dcairo=disabled \
-          -Dchafa=disabled \
-          -Dicu=disabled \
-          -Dgraphite=disabled \
-          -Dgraphite2=disabled \
-          -Dfreetype=disabled \
-          -Dgdi=disabled \
-          -Ddirectwrite=disabled \
-          -Dcoretext=enabled \
-          -Dtests=disabled \
-          -Dintrospection=disabled \
-          -Ddocs=disabled \
-          -Dbenchmark=disabled \
-          -Dicu_builtin=false \
-          -Dexperimental_api=false \
-          -Dragel_subproject=false \
-          -Dfuzzer_ldflags=
-        meson compile -C build
-        meson install -C build
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/harfbuzz/build.sh"
 
   libass:
     label: libass-{{.OS}}-{{.ARCH}}
@@ -935,18 +847,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        cd {{.SOURCES_DIR}}/libass
-
-        cp {{.PROJECT_DIR}}/scripts/libass/meson.build ./meson.build
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.PREFIX}}"
-
-        meson compile -C build libass
-
-        # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.PREFIX}}'
-        cp -R build/dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/libass/build.sh"
 
   libressl:
     label: libressl-{{.OS}}-{{.ARCH}}
@@ -975,21 +881,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        cd {{.SOURCES_DIR}}/libressl
-
-        cp {{.PROJECT_DIR}}/scripts/libressl/meson.build ./meson.build
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.PREFIX}}"
-
-        meson compile -C build libressl
-
-        # fix file permissions
-        chmod 755 build/dist'{{.PREFIX}}'/lib/*
-
-        # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.PREFIX}}'
-        cp -R build/dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/libressl/build.sh"
 
   ffmpeg:
     label: ffmpeg-{{.OS}}-{{.ARCH}}
@@ -1023,20 +920,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        cd {{.SOURCES_DIR}}/ffmpeg
-
-        patch -p1 < {{.PROJECT_DIR}}/patches/ffmpeg-fix-ios-hdr-texture.patch
-
-        cp {{.PROJECT_DIR}}/scripts/ffmpeg/meson.build ./meson.build
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.PREFIX}}"
-
-        meson compile -C build ffmpeg
-
-        # manual install to preserve symlinks (meson install -C build)
-        mkdir -p '{{.PREFIX}}'
-        cp -R build/dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/ffmpeg/build.sh"
 
   uchardet:
     label: uchardet-{{.OS}}-{{.ARCH}}
@@ -1063,39 +952,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        cd {{.SOURCES_DIR}}/uchardet
-
-        # cross build with meson
-        cp {{.PROJECT_DIR}}/scripts/uchardet/meson.build ./meson.build
-        meson setup build_cross \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix='{{.PREFIX}}'
-        meson compile -C build_cross uchardet
-
-        # native build with cmake
-        cmake ./subprojects/uchardet \
-          -B build_native \
-          -DCMAKE_INSTALL_PREFIX='{{.PREFIX}}' \
-          -DBUILD_STATIC=OFF
-        make -C build_native
-        DESTDIR=$PWD/dist make -C build_native install
-
-        # remove unecessary files
-        rm -rf 'dist/{{.PREFIX}}/bin'
-        rm -rf 'dist/{{.PREFIX}}/lib/cmake'
-        rm -rf 'dist/{{.PREFIX}}/share'
-
-        # get dylib id
-        DYLIB_FILE=$(find 'dist{{.PREFIX}}/lib' -type f -name '*.dylib')
-        DYLIB_ID=$(otool -l "$DYLIB_FILE" | grep ' name ' | cut -d ' ' -f 11 | head -n +1)
-
-        # replace native dylib by cross dylib & update id
-        cp 'build_cross/subprojects/uchardet/liblibuchardet.dylib' "$DYLIB_FILE"
-        install_name_tool -id "$DYLIB_ID" "$DYLIB_FILE"
-
-        # manual install to preserve symlinks
-        mkdir -p '{{.PREFIX}}'
-        cp -R dist'{{.PREFIX}}'/* '{{.PREFIX}}'/
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/uchardet/build.sh"
 
   mpv:
     label: mpv-{{.OS}}-{{.ARCH}}
@@ -1143,174 +1005,12 @@ tasks:
         export TERM={{.TERM}}
         export PKG_CONFIG_PATH={{.PKG_CONFIG_PATH}}
 
-        COMMON_OPTIONS=(\
-          `# booleans` \
-          -Dlibmpv=true     `# libmpv library` \
-          -Dbuild-date=true `# whether to include binary compile time` \
-          \
-          `# misc features` \
-          -Diconv=enabled    `# iconv` \
-          -Duchardet=enabled `# uchardet support` \
-          \
-          `# video output features` \
-          -Dgl=enabled       `# OpenGL context support` \
-          -Dplain-gl=enabled `# OpenGL without platform-specific code (e.g. for libmpv)` \
-        )
-
-        MACOS_OPTIONS=(\
-          `# audio output features` \
-          -Dcoreaudio=enabled `# CoreAudio audio output` \
-          \
-          `# video output features` \
-          -Dcocoa=enabled    `# Cocoa` \
-          -Dgl-cocoa=enabled `# gl-cocoa` \
-          \
-          `# hwaccel features` \
-          -Dvideotoolbox-gl=enabled `# Videotoolbox with OpenG` \
-          \
-          `# macOS features` \
-          -Dmacos-10-11-features=enabled   `# macOS 10.11 SDK Features` \
-          -Dmacos-10-12-2-features=enabled `# macOS 10.12.2 SDK Features` \
-          -Dmacos-10-14-features=enabled   `# macOS 10.14 SDK Features` \
-        )
-
-        IOS_OPTIONS=(\
-          `# audio output features` \
-          -Daudiounit=enabled  `# AudioUnit output for iOS` \
-          \
-          `# hwaccel features` \
-          -Dios-gl=enabled `# iOS OpenGL ES hardware decoding interop support`\
-        )
-
-        OPTIONS=()
-        OPTIONS+=("${COMMON_OPTIONS[@]}")
-
-        if [ "{{.OS}}" == "macos" ]; then \
-          OPTIONS+=("${MACOS_OPTIONS[@]}") ; \
-        elif [ "{{.OS}}" == "ios" ]; then \
-          OPTIONS+=("${IOS_OPTIONS[@]}") ; \
-        fi
-
-        cd {{.SOURCES_DIR}}/mpv
-        meson setup build \
-          --cross-file {{.PROJECT_DIR}}/cross-files/{{.OS}}-{{.ARCH}}.ini \
-          --prefix="{{.PREFIX}}" \
-          `# booleans` \
-          -Dgpl=false            `# GPL (version 2 or later) build` \
-          -Dcplayer=false        `# mpv CLI player` \
-          -Dlibmpv=false         `# libmpv library` \
-          -Dbuild-date=false     `# whether to include binary compile time` \
-          -Dtests=false          `# unit tests (development only)` \
-          -Dta-leak-report=false `# enable ta leak report by default (development only)` \
-          \
-          `# misc features` \
-          -Dcdda=disabled                    `# cdda support (libcdio)` \
-          -Dcplugins=disabled                `# C plugins` \
-          -Ddvbin=disabled                   `# DVB input module` \
-          -Ddvdnav=disabled                  `# dvdnav support` \
-          -Diconv=disabled                   `# iconv` \
-          -Djavascript=disabled              `# Javascript (MuJS backend)` \
-          -Dlcms2=disabled                   `# LCMS2 support` \
-          -Dlibarchive=disabled              `# libarchive wrapper for reading zip files and more` \
-          -Dlibavdevice=disabled             `# libavdevice` \
-          -Dlibbluray=disabled               `# Bluray support` \
-          -Dlua=disabled                     `# Lua` \
-          -Dpthread-debug=disabled           `# pthread runtime debugging wrappers` \
-          -Drubberband=disabled              `# librubberband support` \
-          -Dsdl2=disabled                    `# SDL2` \
-          -Dsdl2-gamepad=disabled            `# SDL2 gamepad input` \
-          -Dstdatomic=disabled               `# C11 stdatomic.h` \
-          -Duchardet=disabled                `# uchardet support` \
-          -Duwp=disabled                     `# Universal Windows Platform` \
-          -Dvapoursynth=disabled             `# VapourSynth filter bridge` \
-          -Dvector=disabled                  `# GCC vector instructions` \
-          -Dwin32-internal-pthreads=disabled `#internal pthread wrapper for win32 (Vista+)` \
-          -Dzimg=disabled                    `# libzimg support (high quality software scaler)` \
-          -Dzlib=disabled                    `# zlib` \
-          \
-          `# audio output features` \
-          -Dalsa=disabled       `# ALSA audio output` \
-          -Daudiounit=disabled  `# AudioUnit output for iOS` \
-          -Dcoreaudio=disabled  `# CoreAudio audio output` \
-          -Djack=disabled       `# JACK audio output` \
-          -Dopenal=disabled     `# OpenAL audio output` \
-          -Dopensles=disabled   `# OpenSL ES audio output` \
-          -Doss-audio=disabled  `# OSSv4 audio output` \
-          -Dpipewire=disabled   `# PipeWire audio output` \
-          -Dpulse=disabled      `# PulseAudio audio output` \
-          -Dsdl2-audio=disabled `# SDL2 audio output` \
-          -Dsndio=disabled      `# sndio audio output` \
-          -Dwasapi=disabled     `# WASAPI audio output` \
-          \
-          `# video output features` \
-          -Dcaca=disabled            `# CACA` \
-          -Dcocoa=disabled           `# Cocoa` \
-          -Dd3d11=disabled           `# Direct3D 11 video output` \
-          -Ddirect3d=disabled        `# Direct3D support` \
-          -Ddrm=disabled             `# DRM` \
-          -Degl=disabled             `# EGL 1.4` \
-          -Degl-android=disabled     `# Android EGL support` \
-          -Degl-angle=disabled       `# OpenGL ANGLE headers` \
-          -Degl-angle-lib=disabled   `# OpenGL Win32 ANGLE library` \
-          -Degl-angle-win32=disabled `# OpenGL Win32 ANGLE Backend` \
-          -Degl-drm=disabled         `# OpenGL DRM EGL Backend` \
-          -Degl-wayland=disabled     `# OpenGL Wayland Backend` \
-          -Degl-x11=disabled         `# OpenGL X11 EGL Backend` \
-          -Dgbm=disabled             `# GBM` \
-          -Dgl=disabled              `# OpenGL context support` \
-          -Dgl-cocoa=disabled        `# gl-cocoa` \
-          -Dgl-dxinterop=disabled    `# OpenGL/DirectX Interop Backend` \
-          -Dgl-win32=disabled        `# OpenGL Win32 Backend` \
-          -Dgl-x11=disabled          `# OpenGL X11/GLX (deprecated/legacy)` \
-          -Djpeg=disabled            `# JPEG support` \
-          -Dlibplacebo=disabled      `# libplacebo support` \
-          -Drpi=disabled             `# Raspberry Pi support` \
-          -Dsdl2-video=disabled      `# SDL2 video output` \
-          -Dshaderc=disabled         `# libshaderc SPIR-V compiler` \
-          -Dsixel=disabled           `# Sixel` \
-          -Dspirv-cross=disabled     `# SPIRV-Cross SPIR-V shader converter` \
-          -Dplain-gl=disabled        `# OpenGL without platform-specific code (e.g. for libmpv)` \
-          -Dvdpau=disabled           `# VDPAU acceleration` \
-          -Dvdpau-gl-x11=disabled    `# VDPAU with OpenGl/X11` \
-          -Dvaapi=disabled           `# VAAPI acceleration` \
-          -Dvaapi-drm=disabled       `# VAAPI (DRM/EGL support)` \
-          -Dvaapi-wayland=disabled   `# VAAPI (Wayland support)` \
-          -Dvaapi-x11=disabled       `# VAAPI (X11 support)` \
-          -Dvaapi-x-egl=disabled     `# VAAPI EGL on X11` \
-          -Dvulkan=disabled          `# Vulkan context support` \
-          -Dwayland=disabled         `# Wayland` \
-          -Dx11=disabled             `# X11` \
-          -Dxv=disabled              `# Xv video output` \
-          \
-          `# hwaccel features` \
-          -Dandroid-media-ndk=disabled `# Android Media APIs` \
-          -Dcuda-hwaccel=disabled      `# CUDA acceleration` \
-          -Dcuda-interop=disabled      `# CUDA with graphics interop` \
-          -Dd3d-hwaccel=disabled       `# D3D11VA hwaccel` \
-          -Dd3d9-hwaccel=disabled      `# DXVA2 hwaccel` \
-          -Dgl-dxinterop-d3d9=disabled `# OpenGL/DirectX Interop Backend DXVA2 interop` \
-          -Dios-gl=disabled            `# iOS OpenGL ES hardware decoding interop support` \
-          -Drpi-mmal=disabled          `# Raspberry Pi MMAL hwaccel` \
-          -Dvideotoolbox-gl=disabled   `# Videotoolbox with OpenGL` \
-          \
-          `# macOS features` \
-          -Dmacos-10-11-features=disabled   `# macOS 10.11 SDK Features` \
-          -Dmacos-10-12-2-features=disabled `# macOS 10.12.2 SDK Features` \
-          -Dmacos-10-14-features=disabled   `# macOS 10.14 SDK Features` \
-          -Dmacos-cocoa-cb=disabled         `# macOS libmpv backend` \
-          -Dmacos-media-player=disabled     `# macOS Media Player support` \
-          -Dmacos-touchbar=disabled         `# macOS Touch Bar support` \
-          -Dswift-build=disabled            `# macOS Swift build tools` \
-          -Dswift-flags=                    `# Optional Swift compiler flags` \
-          \
-          `# manpages` \
-          -Dhtml-build=disabled    `# html manual generation` \
-          -Dmanpage-build=disabled `# manpage generation` \
-          -Dpdf-build=disabled     `# pdf manual generation` \
-          \
-          "${OPTIONS[@]}"
-        meson compile -C build
-        meson install -C build
+        export OS={{.OS}}
+        export ARCH={{.ARCH}}
+        export SOURCES_DIR={{.SOURCES_DIR}}
+        export PROJECT_DIR={{.PROJECT_DIR}}
+        export PREFIX={{.PREFIX}}
+        sh "{{.PROJECT_DIR}}/scripts/mpv/build.sh"
 
   update-downloads-lock:
     run: once

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # see: VLCKit cocoapods
 # see: https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPFrameworks/Concepts/FrameworkAnatomy.html
@@ -11,7 +11,7 @@ find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
 
     # create framework name: libavcodec.59.dylib -> Avcodec
     FRAMEWORK_NAME=$(basename $DYLIB .dylib | sed 's/\.[0-9]*$//' | sed 's/^lib//')
-    FRAMEWORK_NAME="$(tr '[:lower:]' '[:upper:]' <<< ${FRAMEWORK_NAME:0:1})${FRAMEWORK_NAME:1}"
+    FRAMEWORK_NAME="$(tr '[:lower:]' '[:upper:]' <<<${FRAMEWORK_NAME:0:1})${FRAMEWORK_NAME:1}"
 
     # framework dir
     FRAMEWORK_DIR="${FRAMEWORKS_DIR}/${FRAMEWORK_NAME}.framework"
@@ -33,7 +33,7 @@ find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
     NEW_ID="@rpath/${FRAMEWORK_NAME}.framework/Versions/A/${FRAMEWORK_NAME}"
     install_name_tool \
         -id "${NEW_ID}" "${DYLIB}" \
-        2> /dev/null
+        2>/dev/null
 
     # update dylib dep paths
     otool -l "${DYLIB}" |
@@ -43,7 +43,7 @@ find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
         grep "@rpath" |
         while read DEP; do
             DEP_NAME=$(basename $DEP .dylib | sed 's/\.[0-9]*$//' | sed 's/^lib//')
-            DEP_NAME="$(tr '[:lower:]' '[:upper:]' <<< ${DEP_NAME:0:1})${DEP_NAME:1}"
+            DEP_NAME="$(tr '[:lower:]' '[:upper:]' <<<${DEP_NAME:0:1})${DEP_NAME:1}"
 
             NEW_DEP="@rpath/${DEP_NAME}.framework/Versions/A/${DEP_NAME}"
 
