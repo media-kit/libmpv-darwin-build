@@ -17,8 +17,8 @@ libass.9.dylib
 libavcodec.59.dylib
 libavfilter.8.dylib
 ...
-$ ls build/macos/universal/packages/libs
-libmpv-v0.0.1-macos-universal.tar.gz
+$ ls build/macos/universal/archives/libs
+libmpv-libs-v0.0.1-macos-universal.tar.gz
 ```
 
 ## Dependencies
@@ -123,7 +123,7 @@ the cost of some heaviness regarding legacy packages.
 │           ├── libs             # cleaned libs from `chroot/lib`
 │           ├── frameworks       # `.framework` collection from `libs`
 │           ├── xcframeworks     # `.xcframework` collection from `frameworks`
-│           └── packages
+│           └── archives
 │               ├──libs          # tar.gz of `libs`
 │               └──xcframeworks  # tar.gz of `xcframeworks`
 └── ...
