@@ -20,7 +20,18 @@ jobs:
 
       - name: Determine version
         id: version
-        run: echo "version=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+        run: |
+          case "${GITHUB_REF}" in
+          refs/tags/*)
+            VERSION=${GITHUB_REF#refs/tags/}
+            ;;
+          *)
+            VERSION=develop
+            ;;
+          esac
+
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo ${VERSION}
 
       - name: Build
         run: |
