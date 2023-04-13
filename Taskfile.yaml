@@ -401,6 +401,7 @@ tasks:
     generates:
       - "{{.FRAMEWORKS_DIR}}/*.framework/*"
     cmds:
+      - rm -rf "{{.FRAMEWORKS_DIR}}"
       - |
         set -e
 
@@ -439,6 +440,7 @@ tasks:
     generates:
       - "{{.LIBS_UNIVERSAL_DIR}}/*.dylib"
     cmds:
+      - rm -rf "{{.LIBS_UNIVERSAL_DIR}}"
       - |
         set -e
 
@@ -525,6 +527,7 @@ tasks:
     generates:
       - "{{.LIBS_UNIVERSAL_DIR}}/*.dylib"
     cmds:
+      - rm -rf "{{.LIBS_UNIVERSAL_DIR}}"
       - |
         set -e
 
@@ -593,6 +596,7 @@ tasks:
     generates:
       - "{{.LIBS_DIR}}/*.dylib"
     cmds:
+      - rm -rf "{{.LIBS_DIR}}"
       - |
         set -e
 
