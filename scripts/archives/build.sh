@@ -3,7 +3,7 @@
 rm -rf "${ARCHIVES_DIR}"
 mkdir -p "${ARCHIVES_DIR}"
 
-NAME=libmpv-${TYPE}-${VERSION}-${OS}-${ARCH}
+NAME=libmpv-${TYPE}-${VARIANT}-${VERSION}-${OS}-${ARCH}
 
 cp -R "${FILES_DIR}" "${ARCHIVES_DIR}"/$NAME
 

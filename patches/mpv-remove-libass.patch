@@ -1,0 +1,78 @@
+diff --git a/meson.build b/meson.build
+index acaa39f764..1906329f1f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -23,13 +23,11 @@ libavutil = dependency('libavutil', version: '>= 56.12.100')
+ libswresample = dependency('libswresample', version: '>= 3.0.100')
+ libswscale = dependency('libswscale', version: '>= 5.0.101')
+ 
+-libass = dependency('libass', version: '>= 0.12.2')
+ pthreads = dependency('threads')
+ 
+-# the dependency order of libass -> ffmpeg is necessary due to
++# the dependency order of libavcodec -> ffmpeg is necessary due to
+ # static linking symbol resolution between fontconfig and MinGW
+-dependencies = [libass,
+-                libavcodec,
++dependencies = [libavcodec,
+                 libavfilter,
+                 libavformat,
+                 libavutil,
+@@ -43,7 +41,7 @@ features = {
+     'ffmpeg': true,
+     'gpl': get_option('gpl'),
+     'jpegxl': libavformat.version().version_compare('>= 59.27.100'),
+-    'libass': true,
++    'libass': false,
+     'threads': true,
+ }
+ 
+@@ -179,15 +177,12 @@ sources = files(
+     'stream/stream_slice.c',
+ 
+     ## Subtitles
+-    'sub/ass_mp.c',
+     'sub/dec_sub.c',
+     'sub/draw_bmp.c',
+     'sub/filter_sdh.c',
+     'sub/img_convert.c',
+     'sub/lavc_conv.c',
+     'sub/osd.c',
+-    'sub/osd_libass.c',
+-    'sub/sd_ass.c',
+     'sub/sd_lavc.c',
+ 
+     ## Video
+diff --git a/player/command.c b/player/command.c
+index 2e6b9875d7..90fe30e0a8 100644
+--- a/player/command.c
++++ b/player/command.c
+@@ -27,7 +27,6 @@
+ #include <pthread.h>
+ #include <sys/types.h>
+ 
+-#include <ass/ass.h>
+ #include <libavutil/avstring.h>
+ #include <libavutil/common.h>
+ 
+@@ -3272,12 +3271,6 @@ static int mp_property_ffmpeg(void *ctx, struct m_property *prop,
+     return m_property_strdup_ro(action, arg, av_version_info());
+ }
+ 
+-static int mp_property_libass_version(void *ctx, struct m_property *prop,
+-                                      int action, void *arg)
+-{
+-    return m_property_int64_ro(action, arg, ass_library_version());
+-}
+-
+ static int mp_property_alias(void *ctx, struct m_property *prop,
+                              int action, void *arg)
+ {
+@@ -3737,7 +3730,6 @@ static const struct m_property mp_properties_base[] = {
+     {"mpv-version", mp_property_version},
+     {"mpv-configuration", mp_property_configuration},
+     {"ffmpeg-version", mp_property_ffmpeg},
+-    {"libass-version", mp_property_libass_version},
+ 
+     {"options", mp_property_options},
+     {"file-local-options", mp_property_local_options},

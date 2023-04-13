@@ -2,6 +2,10 @@
 
 cd ${SOURCES_DIR}/mpv
 
+if [ "${VARIANT}" == "audio" ]; then
+    patch -p1 <${PROJECT_DIR}/patches/mpv-remove-libass.patch
+fi
+
 COMMON_OPTIONS=(
     `# booleans`
     -Dlibmpv=true `# libmpv library`
@@ -9,6 +13,10 @@ COMMON_OPTIONS=(
 
     `# misc features`
     -Diconv=enabled `# iconv`
+)
+
+COMMON_VIDEO_OPTIONS=(
+    `# misc features`
     -Duchardet=enabled `# uchardet support`
 
     `# video output features`
@@ -20,34 +28,47 @@ MACOS_OPTIONS=(
     `# audio output features`
     -Dcoreaudio=enabled `# CoreAudio audio output`
 
-    `# video output features`
-    -Dcocoa=enabled `# Cocoa`
-    -Dgl-cocoa=enabled `# gl-cocoa`
-
-    `# hwaccel features`
-    -Dvideotoolbox-gl=enabled `# Videotoolbox with OpenG`
-
     `# macOS features`
     -Dmacos-10-11-features=enabled `# macOS 10.11 SDK Features`
     -Dmacos-10-12-2-features=enabled `# macOS 10.12.2 SDK Features`
     -Dmacos-10-14-features=enabled `# macOS 10.14 SDK Features`
 )
 
+MACOS_VIDEO_OPTIONS=(
+    `# video output features`
+    -Dcocoa=enabled `# Cocoa`
+    -Dgl-cocoa=enabled `# gl-cocoa`
+
+    `# hwaccel features`
+    -Dvideotoolbox-gl=enabled `# Videotoolbox with OpenG`
+)
+
 IOS_OPTIONS=(
     `# audio output features`
     -Daudiounit=enabled `# AudioUnit output for iOS`
+)
 
+IOS_VIDEO_OPTIONS=(
     `# hwaccel features`
     -Dios-gl=enabled `# iOS OpenGL ES hardware decoding interop support`
 )
 
 OPTIONS=()
 OPTIONS+=("${COMMON_OPTIONS[@]}")
+if [ "${VARIANT}" == "video" ]; then
+    OPTIONS+=("${COMMON_VIDEO_OPTIONS[@]}")
+fi
 
 if [ "${OS}" == "macos" ]; then
     OPTIONS+=("${MACOS_OPTIONS[@]}")
+    if [ "${VARIANT}" == "video" ]; then
+        OPTIONS+=("${MACOS_VIDEO_OPTIONS[@]}")
+    fi
 elif [ "${OS}" == "ios" ]; then
     OPTIONS+=("${IOS_OPTIONS[@]}")
+    if [ "${VARIANT}" == "video" ]; then
+        OPTIONS+=("${IOS_VIDEO_OPTIONS[@]}")
+    fi
 fi
 
 meson setup build \

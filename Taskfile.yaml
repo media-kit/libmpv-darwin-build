@@ -19,95 +19,84 @@ vars:
 
 tasks:
   default:
+    run: once
     deps:
       - build-macos
       - build-ios
-      - build-iossimulator
 
   build-macos:
     run: once
     platforms:
       - darwin
     deps:
-      - tool-versions-lock
-      - archives-macos-universal
-      - archives-macos-amd64
-      - archives-macos-arm64
+      - build-macos-audio
+      - build-macos-video
 
-  build-macos-universal:
+  build-macos-audio:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - archives-macos-universal
+      - task: archives-macos-universal
+        vars:
+          VARIANT: audio
+      - task: archives-macos-amd64
+        vars:
+          VARIANT: audio
+      - task: archives-macos-arm64
+        vars:
+          VARIANT: audio
 
-  build-macos-amd64:
+  build-macos-video:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - archives-macos-amd64
-
-  build-macos-arm64:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - archives-macos-arm64
+      - task: archives-macos-universal
+        vars:
+          VARIANT: video
+      - task: archives-macos-amd64
+        vars:
+          VARIANT: video
+      - task: archives-macos-arm64
+        vars:
+          VARIANT: video
 
   build-ios:
     run: once
     platforms:
       - darwin
     deps:
-      - tool-versions-lock
-      - archives-ios-universal
-      - archives-ios-arm64
+      - build-ios-audio
+      - build-ios-video
 
-  build-ios-arm64:
+  build-ios-audio:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - archives-ios-arm64
+      - task: archives-ios-universal
+        vars:
+          VARIANT: audio
+      - task: archives-ios-arm64
+        vars:
+          VARIANT: audio
 
-  build-iossimulator:
+  build-ios-video:
     run: once
     platforms:
       - darwin
     deps:
       - tool-versions-lock
-      - archives-iossimulator-universal
-      - archives-iossimulator-amd64
-      - archives-iossimulator-arm64
-
-  build-iossimulator-universal:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - archives-iossimulator-universal
-
-  build-iossimulator-amd64:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - archives-iossimulator-amd64
-
-  build-iossimulator-arm64:
-    run: once
-    platforms:
-      - darwin
-    deps:
-      - tool-versions-lock
-      - archives-iossimulator-arm64
+      - task: archives-ios-universal
+        vars:
+          VARIANT: video
+      - task: archives-ios-arm64
+        vars:
+          VARIANT: video
 
   tool-versions-lock:
     internal: true
@@ -121,140 +110,110 @@ tasks:
 
   archives-macos-universal:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: macos
       ARCH: universal
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - libs-macos-universal
-      - xcframeworks-macos-universal
+      - task: libs-macos-universal
+        vars:
+          VARIANT: "{{.VARIANT}}"
+      - task: xcframeworks-macos-universal
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: archives-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
       - task: archives-xcframeworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   archives-macos-amd64:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: macos
       ARCH: amd64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - libs-macos-amd64
+      - task: libs-macos-amd64
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: archives-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   archives-macos-arm64:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: macos
       ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - libs-macos-arm64
+      - task: libs-macos-arm64
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: archives-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   archives-ios-universal:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: ios
       ARCH: universal
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - xcframeworks-ios-universal
+      - task: xcframeworks-ios-universal
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: archives-xcframeworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   archives-ios-arm64:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: ios
       ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - libs-ios-arm64
+      - task: libs-ios-arm64
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: archives-libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
-
-  archives-iossimulator-universal:
-    internal: true
-    run: once
-    vars:
-      OS: iossimulator
-      ARCH: universal
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - libs-iossimulator-universal
-    cmds:
-      - task: archives-libs
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
-
-  archives-iossimulator-amd64:
-    internal: true
-    run: once
-    vars:
-      OS: iossimulator
-      ARCH: amd64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - libs-iossimulator-amd64
-    cmds:
-      - task: archives-libs
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
-
-  archives-iossimulator-arm64:
-    internal: true
-    run: once
-    vars:
-      OS: iossimulator
-      ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
-    deps:
-      - libs-iossimulator-arm64
-    cmds:
-      - task: archives-libs
-        vars:
-          OS: "{{.OS}}"
-          ARCH: "{{.ARCH}}"
-          TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   archives-xcframeworks:
-    label: archives-xcframeworks-{{.OS}}-{{.ARCH}}
+    label: archives-xcframeworks-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     vars:
@@ -276,13 +235,14 @@ tasks:
         export OS={{.OS}}
         export ARCH={{.ARCH}}
         export VERSION={{.VERSION}}
+        export VARIANT={{.VARIANT}}
         export TYPE=xcframeworks
         export FILES_DIR={{.XCFRAMEWORKS_DIR}}
         export ARCHIVES_DIR={{.ARCHIVES_DIR}}
         sh "{{.PROJECT_DIR}}/scripts/archives/build.sh"
 
   archives-libs:
-    label: archives-libs-{{.OS}}-{{.ARCH}}
+    label: archives-libs-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     vars:
@@ -304,19 +264,23 @@ tasks:
         export OS={{.OS}}
         export ARCH={{.ARCH}}
         export VERSION={{.VERSION}}
+        export VARIANT={{.VARIANT}}
         export TYPE=libs
         export FILES_DIR={{.LIBS_DIR}}
         export ARCHIVES_DIR={{.ARCHIVES_DIR}}
         sh "{{.PROJECT_DIR}}/scripts/archives/build.sh"
 
   xcframeworks-macos-universal:
+    label: xcframeworks-{{.VARIANT}}-macos-universal
     internal: true
-    run: once
+    run: when_changed
     vars:
-      FRAMEWORKS_MACOS_DIR: "{{.BUILD_DIR}}/macos/universal/frameworks"
-      XCFRAMEWORKS_DIR: "{{.BUILD_DIR}}/macos/universal/xcframeworks"
+      FRAMEWORKS_MACOS_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/macos/universal/frameworks"
+      XCFRAMEWORKS_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/macos/universal/xcframeworks"
     deps:
-      - frameworks-macos-universal
+      - task: frameworks-macos-universal
+        vars:
+          VARIANT: "{{.VARIANT}}"
     sources:
       - "{{.FRAMEWORKS_MACOS_DIR}}/*.framework/*"
     generates:
@@ -335,15 +299,20 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/xcframeworks/macos/create_xcframeworks.sh"
 
   xcframeworks-ios-universal:
+    label: xcframeworks-{{.VARIANT}}-ios-universal
     internal: true
-    run: once
+    run: when_changed
     vars:
-      FRAMEWORKS_IOS_DIR: "{{.BUILD_DIR}}/ios/arm64/frameworks"
-      FRAMEWORKS_IOSSIMULATOR_DIR: "{{.BUILD_DIR}}/iossimulator/universal/frameworks"
-      XCFRAMEWORKS_DIR: "{{.BUILD_DIR}}/ios/universal/xcframeworks"
+      FRAMEWORKS_IOS_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/ios/arm64/frameworks"
+      FRAMEWORKS_IOSSIMULATOR_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/iossimulator/universal/frameworks"
+      XCFRAMEWORKS_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/ios/universal/xcframeworks"
     deps:
-      - frameworks-ios-arm64
-      - frameworks-iossimulator-universal
+      - task: frameworks-ios-arm64
+        vars:
+          VARIANT: "{{.VARIANT}}"
+      - task: frameworks-iossimulator-universal
+        vars:
+          VARIANT: "{{.VARIANT}}"
     sources:
       - "{{.FRAMEWORKS_IOS_DIR}}/*.framework/*"
       - "{{.FRAMEWORKS_IOSSIMULATOR_DIR}}/*.framework/*"
@@ -365,54 +334,63 @@ tasks:
 
   frameworks-macos-universal:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: macos
       ARCH: universal
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - libs-macos-universal
+      - task: libs-macos-universal
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: frameworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   frameworks-ios-arm64:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: ios
       ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - libs-ios-arm64
+      - task: libs-ios-arm64
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: frameworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   frameworks-iossimulator-universal:
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: iossimulator
       ARCH: universal
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
-      - libs-iossimulator-universal
+      - task: libs-iossimulator-universal
+        vars:
+          VARIANT: "{{.VARIANT}}"
     cmds:
       - task: frameworks
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   frameworks:
-    label: frameworks-{{.OS}}-{{.ARCH}}
+    label: frameworks-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     vars:
@@ -437,20 +415,24 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/frameworks/build.sh"
 
   libs-macos-universal:
+    label: libs-{{.VARIANT}}-{{.OS}}-universal
     internal: true
-    desc: merge {{.ARCH1}} & {{.ARCH2}} libs to universal
-    run: once
+    run: when_changed
     vars:
       OS: macos
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
       ARCH1: amd64
       ARCH2: arm64
       LIBS_ARCH1_DIR: "{{.TARGET_DIR}}/{{.ARCH1}}/libs"
       LIBS_ARCH2_DIR: "{{.TARGET_DIR}}/{{.ARCH2}}/libs"
       LIBS_UNIVERSAL_DIR: "{{.TARGET_DIR}}/universal/libs"
     deps:
-      - libs-macos-amd64
-      - libs-macos-arm64
+      - task: libs-macos-amd64
+        vars:
+          VARIANT: "{{.VARIANT}}"
+      - task: libs-macos-arm64
+        vars:
+          VARIANT: "{{.VARIANT}}"
     sources:
       - "{{.LIBS_ARCH1_DIR}}/*.dylib"
       - "{{.LIBS_ARCH2_DIR}}/*.dylib"
@@ -471,62 +453,72 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/libs/build-universal.sh"
 
   libs-macos-amd64:
+    label: libs-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: macos
       ARCH: amd64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
       - task: libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   libs-macos-arm64:
+    label: libs-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: macos
       ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
       - task: libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   libs-ios-arm64:
+    label: libs-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: ios
       ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
       - task: libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   libs-iossimulator-universal:
+    label: libs-{{.VARIANT}}-{{.OS}}-universal
     internal: true
-    desc: merge {{.ARCH1}} & {{.ARCH2}} libs to universal
-    run: once
+    run: when_changed
     vars:
       OS: iossimulator
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
       ARCH1: amd64
       ARCH2: arm64
       LIBS_ARCH1_DIR: "{{.TARGET_DIR}}/{{.ARCH1}}/libs"
       LIBS_ARCH2_DIR: "{{.TARGET_DIR}}/{{.ARCH2}}/libs"
       LIBS_UNIVERSAL_DIR: "{{.TARGET_DIR}}/universal/libs"
     deps:
-      - libs-iossimulator-amd64
-      - libs-iossimulator-arm64
+      - task: libs-iossimulator-amd64
+        vars:
+          VARIANT: "{{.VARIANT}}"
+      - task: libs-iossimulator-arm64
+        vars:
+          VARIANT: "{{.VARIANT}}"
     sources:
       - "{{.LIBS_ARCH1_DIR}}/*.dylib"
       - "{{.LIBS_ARCH2_DIR}}/*.dylib"
@@ -547,36 +539,39 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/libs/build-universal.sh"
 
   libs-iossimulator-amd64:
+    label: libs-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: iossimulator
       ARCH: amd64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
       - task: libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   libs-iossimulator-arm64:
+    label: libs-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
-    run: once
+    run: when_changed
     vars:
       OS: iossimulator
       ARCH: arm64
-      TARGET_DIR: "{{.BUILD_DIR}}/{{.OS}}"
+      TARGET_DIR: "{{.BUILD_DIR}}/{{.VARIANT}}/{{.OS}}"
     deps:
       - task: libs
         vars:
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
           TARGET_DIR: "{{.TARGET_DIR}}"
+          VARIANT: "{{.VARIANT}}"
 
   libs:
-    desc: cleanup libs from `chroot/libs``
-    label: libs-{{.OS}}-{{.ARCH}}
+    label: libs-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     vars:
@@ -592,6 +587,7 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
+          VARIANT: "{{.VARIANT}}"
     sources:
       - "{{.PREFIX}}/lib/*.dylib"
     generates:
@@ -699,7 +695,7 @@ tasks:
       - pkg-config
 
   freetype:
-    label: freetype-{{.OS}}-{{.ARCH}}
+    label: freetype-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
@@ -712,10 +708,9 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
-    sources:
-      - downloads/freetype-*.tar.*
-    generates:
-      - "{{.PREFIX}}/lib/libfreetype.dylib"
+          VARIANT: "{{.VARIANT}}"
+    status:
+      - "[ {{.VARIANT}} == audio ] || test -f '{{.PREFIX}}/lib/libfreetype.dylib'"
     cmds:
       - rm -rf "{{.SOURCES_DIR}}/freetype"
       - task: extract
@@ -738,16 +733,14 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/freetype/build.sh"
 
   fribidi:
-    label: fribidi-{{.OS}}-{{.ARCH}}
+    label: fribidi-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
       - tools
       - downloads
-    sources:
-      - downloads/fribidi-*.tar.*
-    generates:
-      - "{{.PREFIX}}/lib/libfribidi.dylib"
+    status:
+      - "[ {{.VARIANT}} == audio ] || test -f '{{.PREFIX}}/lib/libfribidi.dylib'"
     cmds:
       - rm -rf "{{.SOURCES_DIR}}/fribidi"
       - task: extract
@@ -770,16 +763,14 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/fribidi/build.sh"
 
   harfbuzz:
-    label: harfbuzz-{{.OS}}-{{.ARCH}}
+    label: harfbuzz-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
       - tools
       - downloads
-    sources:
-      - downloads/harfbuzz-*.tar.*
-    generates:
-      - "{{.PREFIX}}/lib/libharfbuzz.dylib"
+    status:
+      - "[ {{.VARIANT}} == audio ] || test -f '{{.PREFIX}}/lib/libharfbuzz.dylib'"
     cmds:
       - rm -rf "{{.SOURCES_DIR}}/harfbuzz"
       - task: extract
@@ -802,7 +793,7 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/harfbuzz/build.sh"
 
   libass:
-    label: libass-{{.OS}}-{{.ARCH}}
+    label: libass-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
@@ -815,6 +806,7 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
+          VARIANT: "{{.VARIANT}}"
       - task: fribidi
         vars:
           SOURCES_DIR: "{{.SOURCES_DIR}}"
@@ -822,6 +814,7 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
+          VARIANT: "{{.VARIANT}}"
       - task: harfbuzz
         vars:
           SOURCES_DIR: "{{.SOURCES_DIR}}"
@@ -829,10 +822,9 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
-    sources:
-      - downloads/libass-*.tar.*
-    generates:
-      - "{{.PREFIX}}/lib/libass.dylib"
+          VARIANT: "{{.VARIANT}}"
+    status:
+      - "[ {{.VARIANT}} == audio ] || test -f '{{.PREFIX}}/lib/libass.dylib'"
     cmds:
       - rm -rf "{{.SOURCES_DIR}}/libass"
       - task: extract
@@ -855,7 +847,7 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/libass/build.sh"
 
   libressl:
-    label: libressl-{{.OS}}-{{.ARCH}}
+    label: libressl-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
@@ -889,7 +881,7 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/libressl/build.sh"
 
   ffmpeg:
-    label: ffmpeg-{{.OS}}-{{.ARCH}}
+    label: ffmpeg-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
@@ -902,6 +894,7 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
+          VARIANT: "{{.VARIANT}}"
     sources:
       - downloads/ffmpeg-*.tar.*
     generates:
@@ -922,22 +915,21 @@ tasks:
 
         export OS={{.OS}}
         export ARCH={{.ARCH}}
+        export VARIANT={{.VARIANT}}
         export SOURCES_DIR={{.SOURCES_DIR}}
         export PROJECT_DIR={{.PROJECT_DIR}}
         export PREFIX={{.PREFIX}}
         sh "{{.PROJECT_DIR}}/scripts/ffmpeg/build.sh"
 
   uchardet:
-    label: uchardet-{{.OS}}-{{.ARCH}}
+    label: uchardet-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
       - tools
       - downloads
-    sources:
-      - downloads/uchardet-*.tar.*
-    generates:
-      - "{{.PREFIX}}/lib/libuchardet.dylib"
+    status:
+      - "[ {{.VARIANT}} == audio ] || test -f '{{.PREFIX}}/lib/libuchardet.dylib'"
     cmds:
       - rm -rf "{{.SOURCES_DIR}}/uchardet"
       - task: extract
@@ -960,7 +952,7 @@ tasks:
         sh "{{.PROJECT_DIR}}/scripts/uchardet/build.sh"
 
   mpv:
-    label: mpv-{{.OS}}-{{.ARCH}}
+    label: mpv-{{.VARIANT}}-{{.OS}}-{{.ARCH}}
     internal: true
     run: when_changed
     deps:
@@ -973,6 +965,7 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
+          VARIANT: "{{.VARIANT}}"
       - task: ffmpeg
         vars:
           SOURCES_DIR: "{{.SOURCES_DIR}}"
@@ -980,6 +973,7 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
+          VARIANT: "{{.VARIANT}}"
       - task: uchardet
         vars:
           SOURCES_DIR: "{{.SOURCES_DIR}}"
@@ -987,6 +981,7 @@ tasks:
           PKG_CONFIG_PATH: "{{.PKG_CONFIG_PATH}}"
           OS: "{{.OS}}"
           ARCH: "{{.ARCH}}"
+          VARIANT: "{{.VARIANT}}"
     sources:
       - downloads/mpv-*.tar.*
     generates:
@@ -1007,6 +1002,7 @@ tasks:
 
         export OS={{.OS}}
         export ARCH={{.ARCH}}
+        export VARIANT={{.VARIANT}}
         export SOURCES_DIR={{.SOURCES_DIR}}
         export PROJECT_DIR={{.PROJECT_DIR}}
         export PREFIX={{.PREFIX}}

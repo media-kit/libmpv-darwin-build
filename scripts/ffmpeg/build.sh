@@ -4,7 +4,12 @@ cd ${SOURCES_DIR}/ffmpeg
 
 patch -p1 <${PROJECT_DIR}/patches/ffmpeg-fix-ios-hdr-texture.patch
 
-cp ${PROJECT_DIR}/scripts/ffmpeg/meson.build ./meson.build
+if [ "${VARIANT}" == "audio" ]; then
+    cp ${PROJECT_DIR}/scripts/ffmpeg/audio/meson.build ./meson.build
+elif [ "${VARIANT}" == "video" ]; then
+    cp ${PROJECT_DIR}/scripts/ffmpeg/video/meson.build ./meson.build
+fi
+
 meson setup build \
     --cross-file ${PROJECT_DIR}/cross-files/${OS}-${ARCH}.ini \
     --prefix="${PREFIX}"

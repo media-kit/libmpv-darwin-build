@@ -12,13 +12,13 @@ Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 ```shell
 $ brew install cmake golang go-task meson ninja
 $ VERSION=v0.0.1 task
-$ ls build/macos/universal/libs
+$ ls build/video/macos/universal/libs
 libass.9.dylib
 libavcodec.59.dylib
 libavfilter.8.dylib
 ...
-$ ls build/macos/universal/archives/libs
-libmpv-libs-v0.0.1-macos-universal.tar.gz
+$ ls build/video/macos/universal/archives/libs
+libmpv-libs-video-v0.0.1-macos-universal.tar.gz
 ```
 
 ## Dependencies
@@ -101,33 +101,43 @@ the cost of some heaviness regarding legacy packages.
 ```
 .
 ├── ...
-├── cmd                          # golang scripts
-├── pkg                          # golang packages
-├── downloads                    # dependencies archives are downloaded here
-├── downloads.lock               # lock file of dependencies archives
-├── Taskfile.yaml                # main build script
-├── scripts                      # build scripts
-├── cross-files                  # cross build files used by meson
+├── cmd                              # golang scripts
+├── pkg                              # golang packages
+├── downloads                        # dependencies archives files
+├── downloads.lock                   # lock file of dependencies archives
+├── Taskfile.yaml                    # main build script
+├── scripts                          # build scripts
+├── cross-files                      # cross build files used by meson
 ├── build
-│   ├── tool-versions.lock       # versions of tools used during build
-│   ├── tools                    # "sanboxed" tools & pkg-config are stored here
-│   ├── macos
-│   └── ios
-│       ├── universal            # amd64 & arm64 builds are merge here with lipo
-│       ├── amd64
-│       └── arm64
-│           ├── sources          # archives are extracted here
-│           ├── chroot           # cross built files
-│           │   ├── include
-│           │   └── lib
-│           ├── libs             # cleaned libs from `chroot/lib`
-│           ├── frameworks       # `.framework` collection from `libs`
-│           ├── xcframeworks     # `.xcframework` collection from `frameworks`
-│           └── archives
-│               ├──libs          # tar.gz of `libs`
-│               └──xcframeworks  # tar.gz of `xcframeworks`
+│   ├── tool-versions.lock           # versions of tools used during build
+│   ├── tools                        # "sanboxed" tools & pkg-config
+│   ├── audio
+│   └── video
+│       ├── macos
+│       └── ios
+│           ├── universal            # amd64 & arm64 libs merged with lipo
+│           ├── amd64
+│           └── arm64
+│               ├── sources          # archives are extracted here
+│               ├── chroot           # cross built files
+│               │   ├── include
+│               │   └── lib
+│               ├── libs             # cleaned libs from `chroot/lib`
+│               ├── frameworks       # `.framework` built from `libs`
+│               ├── xcframeworks     # `.xcframework` built from `frameworks`
+│               └── archives
+│                   ├──libs          # tar.gz of `libs`
+│                   └──xcframeworks  # tar.gz of `xcframeworks`
 └── ...
 ```
+
+## TODO
+
+- [ ] **libressl**: mutualise the build between audio and video variants,
+      currently built twice
+- [ ] **ffmpeg**: improve variant configuration scripts, like what is done for
+      **mpv**
+- [ ] looking for a better build automation tool than Taskfile (if it exists)
 
 ## Resources
 
