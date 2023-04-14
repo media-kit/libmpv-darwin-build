@@ -28,22 +28,24 @@ index acaa39f764..32cc0bf066 100644
  }
  
 diff --git a/player/command.c b/player/command.c
-index 2e6b9875d7..ba5576f047 100644
+index 2e6b9875d7..d358d6dae4 100644
 --- a/player/command.c
 +++ b/player/command.c
-@@ -27,7 +27,6 @@
+@@ -27,7 +27,7 @@
  #include <pthread.h>
  #include <sys/types.h>
  
 -#include <ass/ass.h>
++// #include <ass/ass.h>
  #include <libavutil/avstring.h>
  #include <libavutil/common.h>
  
-@@ -3275,7 +3274,7 @@ static int mp_property_ffmpeg(void *ctx, struct m_property *prop,
+@@ -3275,7 +3275,8 @@ static int mp_property_ffmpeg(void *ctx, struct m_property *prop,
  static int mp_property_libass_version(void *ctx, struct m_property *prop,
                                        int action, void *arg)
  {
 -    return m_property_int64_ro(action, arg, ass_library_version());
++    // return m_property_int64_ro(action, arg, ass_library_version());
 +    return m_property_int64_ro(action, arg, 0);
  }
  
@@ -867,29 +869,32 @@ index 0000000000..05d97fb7d2
 +
 +#endif /* LIBASS_ASS_H */
 diff --git a/sub/ass_mp.c b/sub/ass_mp.c
-index 8d0ab96e7d..156beebd41 100644
+index 8d0ab96e7d..70f8a99b92 100644
 --- a/sub/ass_mp.c
 +++ b/sub/ass_mp.c
-@@ -25,9 +25,6 @@
+@@ -25,8 +25,8 @@
  #include <assert.h>
  #include <math.h>
  
 -#include <ass/ass.h>
 -#include <ass/ass_types.h>
--
++// #include <ass/ass.h>
++// #include <ass/ass_types.h>
+ 
  #include "common/common.h"
  #include "common/global.h"
- #include "common/msg.h"
 diff --git a/sub/ass_mp.h b/sub/ass_mp.h
-index f4488bf8c7..761171be04 100644
+index f4488bf8c7..0e60b854aa 100644
 --- a/sub/ass_mp.h
 +++ b/sub/ass_mp.h
-@@ -23,8 +23,8 @@
+@@ -23,8 +23,10 @@
  #include <stdint.h>
  #include <stdbool.h>
  
 -#include <ass/ass.h>
 -#include <ass/ass_types.h>
++// #include <ass/ass.h>
++// #include <ass/ass_types.h>
 +#include "ass.h"
 +#include "ass_types.h"
  
@@ -1232,18 +1237,19 @@ index 7bb0471610..dd88b9eec4 100644
  
  static void destroy_ass_renderer(struct ass_state *ass)
 diff --git a/sub/sd_ass.c b/sub/sd_ass.c
-index ec79bda10b..77d6b18934 100644
+index ec79bda10b..a6e35f2168 100644
 --- a/sub/sd_ass.c
 +++ b/sub/sd_ass.c
-@@ -22,7 +22,6 @@
+@@ -22,7 +22,7 @@
  #include <limits.h>
  
  #include <libavutil/common.h>
 -#include <ass/ass.h>
++// #include <ass/ass.h>
  
  #include "mpv_talloc.h"
  
-@@ -203,41 +202,41 @@ static void enable_output(struct sd *sd, bool enable)
+@@ -203,41 +203,41 @@ static void enable_output(struct sd *sd, bool enable)
  
  static void assobjects_init(struct sd *sd)
  {
