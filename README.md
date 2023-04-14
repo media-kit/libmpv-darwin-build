@@ -12,13 +12,13 @@ Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 ```shell
 $ brew install cmake golang go-task meson ninja
 $ VERSION=v0.0.1 task
-$ ls build/macos/universal/libs
+$ ls build/video/macos/universal/libs
 libass.9.dylib
 libavcodec.59.dylib
 libavfilter.8.dylib
 ...
-$ ls build/macos/universal/packages/libs
-libmpv-v0.0.1-macos-universal.tar.gz
+$ ls build/video/macos/universal/archives/libs
+libmpv-libs-video-v0.0.1-macos-universal.tar.gz
 ```
 
 ## Dependencies
@@ -27,7 +27,7 @@ libmpv-v0.0.1-macos-universal.tar.gz
 flowchart LR
 
 A(mpv) --> B(ffmpeg)
-A(mpv) --> C(libass)
+A(mpv) -.-> C(libass)
 A(mpv) -.-> D(uchardet)
 
 B -.-> H(libressl)
@@ -43,9 +43,9 @@ E -.-> F
   streaming, and recording audio and video, with support for a wide range of
   codecs and formats
 
-- [**libass**](https://github.com/libass/libass): A library for rendering
+- **[libass](https://github.com/libass/libass)(optional)**: A library for rendering
   subtitles in videos, with support for advanced text formatting and positioning
-  features
+  features (made optional with a patch)
 
 - [**fribidi**](https://github.com/fribidi/fribidi): A library for handling
   bidirectional text (such as Arabic or Hebrew) in Unicode strings, with support
@@ -81,6 +81,11 @@ E -.-> F
 
 ## Notes
 
+The minimum versions of macOS and iOS have been chosen for these reasons:
+
+- **macOS**: the arm64 sdk force a minimum version of `11.0`
+- **iOS**: ffmpeg requires a minimum version of `13.0`
+
 Some dependencies, which are not needed at the moment, may be added in the
 future:
 
@@ -101,33 +106,54 @@ the cost of some heaviness regarding legacy packages.
 ```
 .
 ├── ...
-├── cmd                          # golang scripts
-├── pkg                          # golang packages
-├── downloads                    # dependencies archives are downloaded here
-├── downloads.lock               # lock file of dependencies archives
-├── Taskfile.yaml                # main build script
-├── scripts                      # build scripts
-├── cross-files                  # cross build files used by meson
+├── cmd                              # golang scripts
+├── pkg                              # golang packages
+├── downloads                        # dependencies archives files
+├── downloads.lock                   # lock file of dependencies archives
+├── Taskfile.yaml                    # main build script
+├── scripts                          # build scripts
+├── cross-files                      # cross build files used by meson
 ├── build
-│   ├── tool-versions.lock       # versions of tools used during build
-│   ├── tools                    # "sanboxed" tools & pkg-config are stored here
-│   ├── macos
-│   └── ios
-│       ├── universal            # amd64 & arm64 builds are merge here with lipo
-│       ├── amd64
-│       └── arm64
-│           ├── sources          # archives are extracted here
-│           ├── chroot           # cross built files
-│           │   ├── include
-│           │   └── lib
-│           ├── libs             # cleaned libs from `chroot/lib`
-│           ├── frameworks       # `.framework` collection from `libs`
-│           ├── xcframeworks     # `.xcframework` collection from `frameworks`
-│           └── packages
-│               ├──libs          # tar.gz of `libs`
-│               └──xcframeworks  # tar.gz of `xcframeworks`
+│   ├── tool-versions.lock           # versions of tools used during build
+│   ├── tools                        # "sanboxed" tools & pkg-config
+│   ├── audio
+│   └── video
+│       ├── macos
+│       └── ios
+│           ├── universal            # amd64 & arm64 libs merged with lipo
+│           ├── amd64
+│           └── arm64
+│               ├── sources          # archives are extracted here
+│               ├── chroot           # cross built files
+│               │   ├── include
+│               │   └── lib
+│               ├── libs             # cleaned libs from `chroot/lib`
+│               ├── frameworks       # `.framework` built from `libs`
+│               ├── xcframeworks     # `.xcframework` built from `frameworks`
+│               └── archives
+│                   ├──libs          # tar.gz of `libs`
+│                   └──xcframeworks  # tar.gz of `xcframeworks`
 └── ...
 ```
+
+## How the libass optional patch was created
+
+As the dependency of mpv on libass is deeply embedded in the code, the simplest
+solution was to:
+
+1. Remove the dynamic linking in `meson.build`.
+2. Include the `ass/ass.h` and `ass/ass_types.h` headers directly in the code
+3. Remove the call to `ass_library_version` in `player/command.c`
+4. Remove the calls to `ass_library_init`, called by `mp_ass_init`, in
+   `sub/osd_libass.c` and `sub/sd_ass.c`
+
+## TODO
+
+- [ ] **libressl**: mutualise the build between audio and video variants,
+      currently built twice
+- [ ] **ffmpeg**: improve variant configuration scripts, like what is done for
+      **mpv**
+- [ ] looking for a better build automation tool than Taskfile (if it exists)
 
 ## Resources
 
