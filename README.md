@@ -27,7 +27,7 @@ libmpv-libs-video-v0.0.1-macos-universal.tar.gz
 flowchart LR
 
 A(mpv) --> B(ffmpeg)
-A(mpv) --> C(libass)
+A(mpv) -.-> C(libass)
 A(mpv) -.-> D(uchardet)
 
 B -.-> H(libressl)
@@ -43,9 +43,9 @@ E -.-> F
   streaming, and recording audio and video, with support for a wide range of
   codecs and formats
 
-- [**libass**](https://github.com/libass/libass): A library for rendering
+- **[libass](https://github.com/libass/libass)(optional)**: A library for rendering
   subtitles in videos, with support for advanced text formatting and positioning
-  features
+  features (made optional with a patch)
 
 - [**fribidi**](https://github.com/fribidi/fribidi): A library for handling
   bidirectional text (such as Arabic or Hebrew) in Unicode strings, with support
@@ -80,6 +80,11 @@ E -.-> F
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 
 ## Notes
+
+The minimum versions of macOS and iOS have been chosen for these reasons:
+
+- **macOS**: the arm64 sdk force a minimum version of `11.0`
+- **iOS**: ffmpeg requires a minimum version of `13.0`
 
 Some dependencies, which are not needed at the moment, may be added in the
 future:
@@ -130,6 +135,17 @@ the cost of some heaviness regarding legacy packages.
 │                   └──xcframeworks  # tar.gz of `xcframeworks`
 └── ...
 ```
+
+## How the libass optional patch was created
+
+As the dependency of mpv on libass is deeply embedded in the code, the simplest
+solution was to:
+
+1. Remove the dynamic linking in `meson.build`.
+2. Include the `ass/ass.h` and `ass/ass_types.h` headers directly in the code
+3. Remove the call to `ass_library_version` in `player/command.c`
+4. Remove the calls to `ass_library_init`, called by `mp_ass_init`, in
+   `sub/osd_libass.c` and `sub/sd_ass.c`
 
 ## TODO
 
