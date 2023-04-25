@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/media-kit/libmpv-darwin-build/pkg/lock"
 	"gopkg.in/yaml.v3"
@@ -36,6 +37,15 @@ func newLock(packages ...string) (lock.Lock, error) {
 		dep, err := newDep(name)
 		if err != nil {
 			return nil, fmt.Errorf("newLock: %w", err)
+		}
+
+		if name == "libressl" {
+			dep.URL = strings.Replace(
+				dep.URL,
+				"https://ftp.openbsd.org",
+				"https://cdn.openbsd.org",
+				1,
+			)
 		}
 
 		lock[name] = *dep
