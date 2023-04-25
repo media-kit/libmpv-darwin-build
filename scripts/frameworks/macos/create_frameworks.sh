@@ -16,9 +16,9 @@ find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
     # framework dir
     FRAMEWORK_DIR="${FRAMEWORKS_DIR}/${FRAMEWORK_NAME}.framework"
 
-    # we get the min supported version from the arm64 version, because it is the
-    # highest
-    MIN_OS_VERSION=$(xcrun vtool -arch arm64 -show "${DYLIB}" | grep minos | cut -d ' ' -f6)
+    # we get the min supported version from the x86_64 version, because it is
+    # the lowest
+    MIN_OS_VERSION=$(xcrun vtool -arch x86_64 -show "${DYLIB}" | grep minos | cut -d ' ' -f6)
 
     # copy dylib
     mkdir -p "${FRAMEWORK_DIR}/Versions/A"
