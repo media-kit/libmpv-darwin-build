@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         run: |
-          VERSION=${{ steps.version.outputs.version }} task
+          VERSION=${{ steps.version.outputs.version }} task build-macos-video
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
