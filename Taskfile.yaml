@@ -21,25 +21,8 @@ tasks:
   default:
     run: once
     deps:
-      - build
-
-  build:
-    run: once
-    platforms:
-      - darwin
-    deps:
       - build-macos
       - build-ios
-
-  build-flat:
-    run: once
-    platforms:
-      - darwin
-    cmds:
-      - task: build-macos-audio
-      - task: build-macos-video
-      - task: build-ios-audio
-      - task: build-ios-video
 
   build-macos:
     run: once
