@@ -35,7 +35,10 @@ jobs:
 
       - name: Build
         run: |
-          VERSION=${{ steps.version.outputs.version }} task
+          VERSION=${{ steps.version.outputs.version }} task build-macos-audio
+          VERSION=${{ steps.version.outputs.version }} task build-macos-video
+          VERSION=${{ steps.version.outputs.version }} task build-ios-audio
+          VERSION=${{ steps.version.outputs.version }} task build-ios-video
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
