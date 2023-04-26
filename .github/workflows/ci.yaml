@@ -34,6 +34,9 @@ jobs:
           echo ${VERSION}
 
       - name: Build
+        # macOS runners have unknown resource limits (timeout or number of open
+        # files…) that prevent the execution of a single Taskfile task that
+        # manages all builds. Concurrent tasks must be limited.
         run: |
           VERSION=${{ steps.version.outputs.version }} task build-macos-audio
           VERSION=${{ steps.version.outputs.version }} task build-macos-video
