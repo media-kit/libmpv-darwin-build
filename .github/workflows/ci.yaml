@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   ci:
     name: ci
-    runs-on: macos-latest
+    runs-on: macos-12
     permissions:
       contents: write
     steps:
@@ -34,8 +34,14 @@ jobs:
           echo ${VERSION}
 
       - name: Build
+        # macOS runners have unknown resource limits (timeout or number of open
+        # files…) that prevent the execution of a single Taskfile task that
+        # manages all builds. Concurrent tasks must be limited.
         run: |
-          VERSION=${{ steps.version.outputs.version }} task
+          VERSION=${{ steps.version.outputs.version }} task build-macos-audio
+          VERSION=${{ steps.version.outputs.version }} task build-macos-video
+          VERSION=${{ steps.version.outputs.version }} task build-ios-audio
+          VERSION=${{ steps.version.outputs.version }} task build-ios-video
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

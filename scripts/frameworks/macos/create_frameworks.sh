@@ -16,9 +16,28 @@ find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
     # framework dir
     FRAMEWORK_DIR="${FRAMEWORKS_DIR}/${FRAMEWORK_NAME}.framework"
 
-    # we get the min supported version from the arm64 version, because it is the
-    # highest
-    MIN_OS_VERSION=$(xcrun vtool -arch arm64 -show "${DYLIB}" | grep minos | cut -d ' ' -f6)
+    # determine archs
+    ARCHS=$(lipo -archs "${DYLIB}")
+
+    # determine lowest min os version across archs
+    for ARCH in ${ARCHS}; do
+        # determine min os version for the current arch
+        ARCH_MIN_OS_VERSION=$(xcrun vtool -arch ${ARCH} -show-build "${DYLIB}" | grep minos | cut -d ' ' -f6)
+        if [ -z "${ARCH_MIN_OS_VERSION}" ]; then
+            ARCH_MIN_OS_VERSION=$(xcrun vtool -arch ${ARCH} -show-build "${DYLIB}" | grep version | cut -d ' ' -f4)
+        fi
+
+        # if not found throw an error
+        if [ -z "${ARCH_MIN_OS_VERSION}" ]; then
+            echo "Unable to find min os version for ${ARCH}"
+            exit 1
+        fi
+
+        # if $MIN_OS_VERSION is null or greater than $ARCH_MIN_OS_VERSION replace it
+        if [ -z "${MIN_OS_VERSION}" ] || (($(bc -l <<<"${MIN_OS_VERSION} > ${ARCH_MIN_OS_VERSION}"))); then
+            MIN_OS_VERSION=${ARCH_MIN_OS_VERSION}
+        fi
+    done
 
     # copy dylib
     mkdir -p "${FRAMEWORK_DIR}/Versions/A"
