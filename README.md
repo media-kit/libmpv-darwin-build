@@ -101,6 +101,10 @@ future:
 We use `meson` as much as possible in order to simplify cross-compilation, at
 the cost of some heaviness regarding legacy packages.
 
+**CI (GitHub Actions)**: macOS runners have unknown resource limits (timeout or
+number of open files…) that prevent the execution of a single Taskfile task that
+manages all builds. Concurrent tasks must be limited.
+
 ## Project Layout
 
 ```
