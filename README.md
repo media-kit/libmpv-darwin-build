@@ -84,7 +84,7 @@ E -.-> F
 The minimum versions of macOS and iOS have been chosen for these reasons:
 
 - **macOS**: uchardet requires a minimum version of `10.9`
-- **iOS**: ffmpeg requires a minimum version of `13.0`
+- **iOS**: ffmpeg requires a minimum version of `9.0`
 
 Some dependencies, which are not needed at the moment, may be added in the
 future:

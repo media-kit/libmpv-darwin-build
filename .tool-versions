@@ -1,8 +1,8 @@
 clang 14.0.3
-cmake 3.26.3
-golang 1.20
-macos 13.3.1
-meson 1.1.0
+cmake 3.26.4
+golang 1.20.5
+macos 13.4.1
+meson 1.1.1
 ninja 1.11.1
-task 3.21.0
-xcode 14.3
+task 3.27.1
+xcode 14.3.1
