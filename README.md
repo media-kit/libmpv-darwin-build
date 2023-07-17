@@ -79,12 +79,48 @@ E -.-> F
 | libressl   | Apache-1.0, BSD-4-Clause, ISC, public domain           |       ✅       |
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 
+## Minimum versions
+
+<table>
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>Arch</th>
+      <th>Min Version</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2"><strong>macOS</strong></td>
+      <td>amd64</td>
+      <td rowspan="2"><code>10.9</code></td>
+      <td rowspan="2">Required by <code>uchardet</code></td>
+    </tr>
+    <tr>
+      <td>arm64</td>
+    </tr>
+    <tr>
+      <td><strong>iOS</strong></td>
+      <td>arm64</td>
+      <td><code>9.0</code></td>
+      <td>Required by <code>ffmpeg</code></td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>iOS Simulator</strong></td>
+      <td>amd64</td>
+      <td><code>9.0</code></td>
+      <td>Required by <code>ffmpeg</code></td>
+    </tr>
+    <tr>
+      <td>arm64</td>
+      <td><code>12.0</code></td>
+      <td>Required by <code>xcodebuild -create-xcframework</code></td>
+    </tr>
+  </tbody>
+</table>
+
 ## Notes
-
-The minimum versions of macOS and iOS have been chosen for these reasons:
-
-- **macOS**: uchardet requires a minimum version of `10.9`
-- **iOS**: ffmpeg requires a minimum version of `13.0`
 
 Some dependencies, which are not needed at the moment, may be added in the
 future:

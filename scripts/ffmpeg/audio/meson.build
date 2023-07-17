@@ -41,8 +41,8 @@ p = mod.add_project('configure',
         '--disable-libxcb-xfixes',
         '--disable-libxcb-shape',
         '--enable-libtls', # libressl (https support)
-        '--enable-videotoolbox',
-        '--enable-neon',
+        '--disable-videotoolbox',
+        '--disable-neon',
         '--enable-pic',
 
         #

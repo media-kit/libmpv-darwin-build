@@ -44,6 +44,7 @@ p = mod.add_project('configure',
         '--enable-videotoolbox',
         '--enable-neon',
         '--enable-pic',
+        '--disable-filter=yadif_videotoolbox',
     ],
     cross_configure_options: [
         '--enable-cross-compile',
