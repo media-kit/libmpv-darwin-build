@@ -13,10 +13,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install requirements
-        run: brew install go-task meson ninja
+        run: brew install meson ninja
 
       - name: Print tool versions
-        run: task tool-versions
+        run: make tool-versions
 
       - name: Determine version
         id: version
@@ -35,8 +35,8 @@ jobs:
 
       - name: Build
         # macOS runners have unknown resource limits (timeout or number of open
-        # files…) that prevent the execution of a single Taskfile task that
-        # manages all builds. Concurrent tasks must be limited.
+        # files…) that prevent the execution of a single Makefile rule that
+        # manages all builds. So the time per rule must be limited.
         run: |
           VERSION=${{ steps.version.outputs.version }}
           make build/output/libmpv-libs_${VERSION}_ios-arm64-audio.tar.gz
@@ -55,8 +55,8 @@ jobs:
         with:
           if-no-files-found: error
           path: |
-            build/tool-versions.lock
-            build/**/*.tar.gz
+            build/output/tool-versions.lock
+            build/output/*.tar.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -64,5 +64,5 @@ jobs:
         with:
           fail_on_unmatched_files: true
           files: |
-            build/tool-versions.lock
-            build/**/*.tar.gz
+            build/output/tool-versions.lock
+            build/output/*.tar.gz

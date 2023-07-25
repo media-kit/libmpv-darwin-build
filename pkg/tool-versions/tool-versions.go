@@ -31,7 +31,6 @@ var toolVersionsCMDs = map[string]string{
 	"make":   "make --version | head -n1 | cut -d ' ' -f 3",
 	"meson":  "meson --version",
 	"ninja":  "ninja --version",
-	"task":   "task --version | cut -d ' ' -f 3 | sed 's/v//g'",
 	"xcode":  "xcodebuild -version | head -n1 | cut -d ' ' -f 2",
 }
 

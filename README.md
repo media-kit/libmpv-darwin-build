@@ -1,7 +1,7 @@
-# libmpv Build
+# libmpv build
 
 Provides builds of [libmpv](https://github.com/mpv-player/mpv) for macOS & iOS,
-usable by [media_kit](https://github.com/alexmercerind/media_kit), compatible
+used by [media_kit](https://github.com/alexmercerind/media_kit), compatible
 with commercial use.
 
 Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
@@ -10,15 +10,19 @@ Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 ## Usage
 
 ```shell
-$ brew install cmake golang go-task meson ninja
-$ VERSION=v0.0.1 task
-$ ls build/video/macos/universal/libs
-libass.9.dylib
-libavcodec.59.dylib
-libavfilter.8.dylib
-...
-$ ls build/video/macos/universal/archives/libs
-libmpv-libs-video-v0.0.1-macos-universal.tar.gz
+$ brew install cmake golang meson ninja
+$ VERSION=v0.0.1 make
+$ ls build/output
+libmpv-libs_v0.0.1_ios-arm64-audio.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-video.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-audio.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-video.tar.gz
+libmpv-libs_v0.0.1_macos-universal-audio.tar.gz
+libmpv-libs_v0.0.1_macos-universal-video.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-audio.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-video.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-audio.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-video.tar.gz
 ```
 
 ## Dependencies
@@ -66,7 +70,7 @@ E -.-> F
 - **[uchardet](https://www.freedesktop.org/wiki/Software/uchardet/)
   (optional)**: A C++ port of the Universal Character Encoding Detector (used by Mozilla Firefox and Thunderbird) for detecting the encoding of input text
 
-## Commercial Use
+## Commercial use
 
 | Dependency | Licence                                                | Commercial use |
 | ---------- | ------------------------------------------------------ | :------------: |
@@ -137,38 +141,44 @@ future:
 We use `meson` as much as possible in order to simplify cross-compilation, at
 the cost of some heaviness regarding legacy packages.
 
-## Project Layout
+## Naming convention
+
+```
+libmpv-<format>_<version>_<os>-<arch>-<variant>.tar.gz
+```
+
+| Component | Notes                        | Value                    |
+| --------- | ---------------------------- | ------------------------ |
+| format    | Output format of built files | libs, xcframeworks       |
+| version   | Semantic version             | v0.0.1, …                |
+| os        | Operating system             | ios, iossimulator, macos |
+| arch      | Architecture                 | arm64, amd64, universal  |
+| variant   | Usage context                | audio, video             |
+
+## Project layout
 
 ```
 .
 ├── ...
-├── cmd                              # golang scripts
-├── pkg                              # golang packages
-├── downloads                        # dependencies archives files
-├── downloads.lock                   # lock file of dependencies archives
-├── Taskfile.yaml                    # main build script
-├── scripts                          # build scripts
-├── cross-files                      # cross build files used by meson
+├── cmd                                   # golang scripts
+├── pkg                                   # golang packages
+├── downloads.lock                        # lock file of dependencies archives
+├── Makefile                              # main build script
+├── scripts                               # build scripts
+├── cross-files                           # cross build files used by meson
 ├── build
-│   ├── tool-versions.lock           # versions of tools used during build
-│   ├── tools                        # "sanboxed" tools & pkg-config
-│   ├── audio
-│   └── video
-│       ├── macos
-│       └── ios
-│           ├── universal            # amd64 & arm64 libs merged with lipo
-│           ├── amd64
-│           └── arm64
-│               ├── sources          # archives are extracted here
-│               ├── chroot           # cross built files
-│               │   ├── include
-│               │   └── lib
-│               ├── libs             # cleaned libs from `chroot/lib`
-│               ├── frameworks       # `.framework` built from `libs`
-│               ├── xcframeworks     # `.xcframework` built from `frameworks`
-│               └── archives
-│                   ├──libs          # tar.gz of `libs`
-│                   └──xcframeworks  # tar.gz of `xcframeworks`
+│   ├── intermediate                      # intermediate build artifacts
+│   │   ├── downloads                     # dependencies archives files
+│   │   ├── links                         # symbolic links to host binaries
+│   │   ├── <rule>_<os>-<arch>-<variant>
+│   │   └── ...
+│   ├── tmp
+│   │   ├── <rule>_<os>-<arch>-<variant>
+│   │   └── ...
+│   └── output
+│       ├── tool-versions.lock            # versions of tools used during build
+│       ├── libmpv-<format>_<version>_<os>-<arch>-<variant>.tar.gz
+│       └── ...
 └── ...
 ```
 
@@ -182,14 +192,6 @@ solution was to:
 3. Remove the call to `ass_library_version` in `player/command.c`
 4. Remove the calls to `ass_library_init`, called by `mp_ass_init`, in
    `sub/osd_libass.c` and `sub/sd_ass.c`
-
-## TODO
-
-- [ ] **libressl**: mutualise the build between audio and video variants,
-      currently built twice
-- [ ] **ffmpeg**: improve variant configuration scripts, like what is done for
-      **mpv**
-- [ ] looking for a better build automation tool than Taskfile (if it exists)
 
 ## Resources
 

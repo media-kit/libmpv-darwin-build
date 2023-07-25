@@ -30,16 +30,20 @@ SPACE = $(NULL) # DONT REMOVE THIS COMMENT!!!
 COLON = :
 
 all: \
-	build/output/libmpv-libs_${VERSION}_ios-arm64-audio.tar.gz \
-	build/output/libmpv-libs_${VERSION}_ios-arm64-video.tar.gz \
-	build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio.tar.gz \
-	build/output/libmpv-libs_${VERSION}_iossimulator-universal-video.tar.gz \
-	build/output/libmpv-libs_${VERSION}_macos-universal-audio.tar.gz \
-	build/output/libmpv-libs_${VERSION}_macos-universal-video.tar.gz \
-	build/output/libmpv-xcframeworks_${VERSION}_ios-universal-audio.tar.gz \
-	build/output/libmpv-xcframeworks_${VERSION}_ios-universal-video.tar.gz \
-	build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio.tar.gz \
-	build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video.tar.gz
+	${OUTPUT_DIR}/tool-versions.lock \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video.tar.gz
+
+${OUTPUT_DIR}/tool-versions.lock:
+	go run cmd/tool-versions/main.go > $@
 
 ${DOWNLOADS_DIR}: \
 	downloads.lock
@@ -679,3 +683,27 @@ ${OUTPUT_DIR}/libmpv-%.tar.gz: \
 
 	mv ${TARGET_OUTPUT_FILE} ${TARGET_FILE}
 	rm -rf ${TARGET_TMP_DIR}
+
+.PHONY: update-downloads-lock
+update-downloads-lock:
+	$(eval DEPS= \
+		pkg-config \
+		mpv \
+		uchardet \
+		libass \
+		freetype \
+		harfbuzz \
+		fribidi \
+		ffmpeg \
+		libressl \
+	)
+
+	go run cmd/update-downloads-lock/main.go ${DEPS} > downloads.lock
+
+.PHONY: tool-versions
+tool-versions:
+	go run cmd/tool-versions/main.go
+
+.PHONY: clean
+clean:
+	rm -rf build
