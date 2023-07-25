@@ -43,6 +43,7 @@ all: \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video.tar.gz
 
 ${OUTPUT_DIR}/tool-versions.lock:
+	mkdir -p ${OUTPUT_DIR}
 	go run cmd/tool-versions/main.go > $@
 
 ${DOWNLOADS_DIR}: \

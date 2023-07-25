@@ -5,6 +5,7 @@ set -u # treat unset variables as an error
 
 cd ${SRC_DIR}
 
+patch -p1 <${PROJECT_DIR}/patches/mpv-fix-missing-objc.patch
 if [ "${VARIANT}" == "audio" ]; then
     patch -p1 <${PROJECT_DIR}/patches/mpv-remove-libass.patch
 fi
@@ -30,11 +31,6 @@ COMMON_VIDEO_OPTIONS=(
 MACOS_OPTIONS=(
     `# audio output features`
     -Dcoreaudio=enabled `# CoreAudio audio output`
-
-    `# macOS features`
-    -Dmacos-10-11-features=enabled `# macOS 10.11 SDK Features`
-    -Dmacos-10-12-2-features=enabled `# macOS 10.12.2 SDK Features`
-    -Dmacos-10-14-features=enabled `# macOS 10.14 SDK Features`
 )
 
 MACOS_VIDEO_OPTIONS=(
@@ -43,7 +39,7 @@ MACOS_VIDEO_OPTIONS=(
     -Dgl-cocoa=enabled `# gl-cocoa`
 
     `# hwaccel features`
-    -Dvideotoolbox-gl=enabled `# Videotoolbox with OpenG`
+    -Dvideotoolbox-gl=enabled `# Videotoolbox with OpenGL`
 )
 
 IOS_OPTIONS=(
