@@ -1,6 +1,9 @@
 #!/bin/bash
 
-cd ${SOURCES_DIR}/mpv
+set -e # exit immediately if a command exits with a non-zero status
+set -u # treat unset variables as an error
+
+cd ${SRC_DIR}
 
 if [ "${VARIANT}" == "audio" ]; then
     patch -p1 <${PROJECT_DIR}/patches/mpv-remove-libass.patch
@@ -73,7 +76,7 @@ fi
 
 meson setup build \
     --cross-file ${PROJECT_DIR}/cross-files/${OS}-${ARCH}.ini \
-    --prefix="${PREFIX}" \
+    --prefix="${OUTPUT_DIR}" \
     `# booleans` \
     -Dgpl=false `# GPL (version 2 or later) build` \
     -Dcplayer=false `# mpv CLI player` \

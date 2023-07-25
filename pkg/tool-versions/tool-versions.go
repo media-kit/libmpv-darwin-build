@@ -28,6 +28,7 @@ var toolVersionsCMDs = map[string]string{
 	"cmake":  "cmake --version | head -n1 | cut -d ' ' -f 3",
 	"golang": "go version | cut -d ' ' -f 3 | sed 's/go//g'",
 	"macos":  "sw_vers -productVersion",
+	"make":   "make --version | head -n1 | cut -d ' ' -f 3",
 	"meson":  "meson --version",
 	"ninja":  "ninja --version",
 	"task":   "task --version | cut -d ' ' -f 3 | sed 's/v//g'",

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+set -e # exit immediately if a command exits with a non-zero status
+set -u # treat unset variables as an error
+
 # The Apple sdk for the arm64 simulator produces dylib whose platform in the
 # headers is `IOS` and not `IOSSIMULATOR`. This is wrong.
 # So, this script replaces the platform header with `IOSSIMULATOR`.

@@ -38,10 +38,17 @@ jobs:
         # files…) that prevent the execution of a single Taskfile task that
         # manages all builds. Concurrent tasks must be limited.
         run: |
-          VERSION=${{ steps.version.outputs.version }} task build-macos-audio
-          VERSION=${{ steps.version.outputs.version }} task build-macos-video
-          VERSION=${{ steps.version.outputs.version }} task build-ios-audio
-          VERSION=${{ steps.version.outputs.version }} task build-ios-video
+          VERSION=${{ steps.version.outputs.version }}
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-audio.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-video.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-video.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-audio.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-video.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-audio.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-video.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video.tar.gz
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
