@@ -126,20 +126,28 @@ E -.-> F
 
 ## Notes
 
-Some dependencies, which are not needed at the moment, may be added in the
-future:
+- Some dependencies, which are not needed at the moment, may be added in the
+  future:
 
-- [**libbluray**](https://code.videolan.org/videolan/libbluray): A library for
-  reading and parsing Blu-ray discs, with support for advanced features such as
-  BD-J menus and seamless branching
+  - [**libbluray**](https://code.videolan.org/videolan/libbluray): A library for
+    reading and parsing Blu-ray discs, with support for advanced features such as
+    BD-J menus and seamless branching
 
-- [**libarchive**](https://github.com/libarchive/libarchive): A library for
-  reading various archive formats, including tar and zip, with support for
-  compression and metadata, and a flexible API for reading and extracting
-  archive contents
+  - [**libarchive**](https://github.com/libarchive/libarchive): A library for
+    reading various archive formats, including tar and zip, with support for
+    compression and metadata, and a flexible API for reading and extracting
+    archive contents
 
-We use `meson` as much as possible in order to simplify cross-compilation, at
-the cost of some heaviness regarding legacy packages.
+- We use `meson` as much as possible in order to simplify cross-compilation, at
+  the cost of some heaviness regarding legacy packages
+
+- If the build freezes, reboot macOS
+
+- Command to visualize the workflow of a Makefile:
+
+  ```
+  $ make -Bnd | make2graph | dot -Grankdir=LR -Tpng -o graph.png
+  ```
 
 ## Naming convention
 
