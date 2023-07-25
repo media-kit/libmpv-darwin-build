@@ -39,6 +39,7 @@ jobs:
         # manages all builds. So the time per rule must be limited.
         run: |
           VERSION=${{ steps.version.outputs.version }}
+          make build/output/tool-versions.lock
           make build/output/libmpv-libs_${VERSION}_ios-arm64-audio.tar.gz
           make build/output/libmpv-libs_${VERSION}_ios-arm64-video.tar.gz
           make build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio.tar.gz
