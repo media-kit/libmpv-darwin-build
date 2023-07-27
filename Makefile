@@ -164,11 +164,10 @@ ${INTERMEDIATE_DIR}/libressl_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
-# ffmpeg_<os>-<arch>-<variant>
-${INTERMEDIATE_DIR}/ffmpeg_%: \
+# libxml2_<os>-<arch>
+${INTERMEDIATE_DIR}/libxml2_%: \
 	${DOWNLOADS_DIR} \
-	${PKGCONFIG_DIR} \
-	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))
+	${PKGCONFIG_DIR}
 
 	@echo "\033[32mRULE\033[0m $@"
 
@@ -184,9 +183,57 @@ ${INTERMEDIATE_DIR}/ffmpeg_%: \
 
 	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
+	mkdir -p ${TARGET_TMP_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		ARCHIVE_FILE=${ARCHIVE_FILE} \
+		TARGET_DIR=${TARGET_SRC_DIR} \
+		sh ${PROJECT_DIR}/scripts/extract/build.sh
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		OS=${TARGET_OS} \
+		ARCH=${TARGET_ARCH} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+
+	rm -rf ${TARGET_TMP_DIR}
+
+# ffmpeg_<os>-<arch>-<variant>
+${INTERMEDIATE_DIR}/ffmpeg_%: \
+	${DOWNLOADS_DIR} \
+	${PKGCONFIG_DIR} \
+	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_DIR=$@)
+	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
+	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
+	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR}/src/${TARGET_PKGNAME})
+	$(eval TARGET_OUTPUT_DIR=${PROJECT_DIR}/${TARGET_DIR})
+
+	$(eval ARCHIVE_FILE=$(firstword $(wildcard ${DOWNLOADS_DIR}/${TARGET_PKGNAME}-*.tar.*)))
+
+	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
 
-	$(eval PKG_CONFIG_PATH=${PROJECT_DIR}/${INTERMEDIATE_DIR}/libressl_${TARGET_OS}-${TARGET_ARCH}/lib/pkgconfig)
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
 
 	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
 	mkdir -p ${TARGET_TMP_DIR}
@@ -300,6 +347,7 @@ ${INTERMEDIATE_DIR}/freetype_%: \
 
 	$(eval TARGET_DIR=$@)
 	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
 	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
 	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
 	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
@@ -311,7 +359,12 @@ ${INTERMEDIATE_DIR}/freetype_%: \
 	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
 
-	$(eval PKG_CONFIG_PATH=${PROJECT_DIR}/${INTERMEDIATE_DIR}/harfbuzz_${TARGET_OS}-${TARGET_ARCH}/lib/pkgconfig)
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
 
 	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
 	mkdir -p ${TARGET_TMP_DIR}
@@ -346,6 +399,7 @@ ${INTERMEDIATE_DIR}/libass_%: \
 
 	$(eval TARGET_DIR=$@)
 	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
 	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
 	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
 	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
@@ -361,6 +415,13 @@ ${INTERMEDIATE_DIR}/libass_%: \
 		${PROJECT_DIR}/${INTERMEDIATE_DIR}/harfbuzz_${TARGET_OS}-${TARGET_ARCH}/lib/pkgconfig:\
 		${PROJECT_DIR}/${INTERMEDIATE_DIR}/fribidi_${TARGET_OS}-${TARGET_ARCH}/lib/pkgconfig:\
 		${PROJECT_DIR}/${INTERMEDIATE_DIR}/freetype_${TARGET_OS}-${TARGET_ARCH}/lib/pkgconfig))
+
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
 
 	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
 	mkdir -p ${TARGET_TMP_DIR}
@@ -415,7 +476,6 @@ ${INTERMEDIATE_DIR}/uchardet_%: \
 	env -i \
 		PATH=${SANDBOX_PATH} \
 		PROJECT_DIR=${PROJECT_DIR} \
-		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
 		OS=${TARGET_OS} \
 		ARCH=${TARGET_ARCH} \
 		SRC_DIR=${TARGET_SRC_DIR} \
@@ -488,6 +548,7 @@ ${INTERMEDIATE_DIR}/libs-arch_%: \
 	${INTERMEDIATE_DIR}/mpv_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/uchardet_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libass_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
@@ -519,7 +580,6 @@ ${INTERMEDIATE_DIR}/libs-arch_%: \
 	env -i \
 		PATH=${SANDBOX_PATH} \
 		PROJECT_DIR=${PROJECT_DIR} \
-		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
 		OS=${TARGET_OS} \
 		ARCH=${TARGET_ARCH} \
 		VARIANT=${TARGET_VARIANT} \
@@ -562,7 +622,6 @@ ${INTERMEDIATE_DIR}/libs_%: \
 	env -i \
 		PATH=${SANDBOX_PATH} \
 		PROJECT_DIR=${PROJECT_DIR} \
-		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
 		OS=${TARGET_OS} \
 		ARCH=${TARGET_ARCH} \
 		VARIANT=${TARGET_VARIANT} \
@@ -600,7 +659,6 @@ ${INTERMEDIATE_DIR}/frameworks_%: \
 	env -i \
 		PATH=${SANDBOX_PATH} \
 		PROJECT_DIR=${PROJECT_DIR} \
-		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
 		OS=${TARGET_OS} \
 		ARCH=${TARGET_ARCH} \
 		VARIANT=${TARGET_VARIANT} \
@@ -643,7 +701,6 @@ ${INTERMEDIATE_DIR}/xcframeworks_%: \
 	env -i \
 		PATH=${SANDBOX_PATH} \
 		PROJECT_DIR=${PROJECT_DIR} \
-		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
 		OS=${TARGET_OS} \
 		ARCH=${TARGET_ARCH} \
 		VARIANT=${TARGET_VARIANT} \
@@ -697,6 +754,7 @@ update-downloads-lock:
 		fribidi \
 		ffmpeg \
 		libressl \
+		libxml2 \
 	)
 
 	go run cmd/update-downloads-lock/main.go ${DEPS} > downloads.lock

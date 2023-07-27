@@ -40,6 +40,7 @@ p = mod.add_project('configure',
         '--disable-libxcb-shm',
         '--disable-libxcb-xfixes',
         '--disable-libxcb-shape',
+        '--enable-libxml2', # dash support
         '--enable-libtls', # libressl (https support)
         '--enable-videotoolbox',
         '--enable-neon',

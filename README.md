@@ -35,6 +35,7 @@ A(mpv) -.-> C(libass)
 A(mpv) -.-> D(uchardet)
 
 B -.-> H(libressl)
+B -.-> I(libxml2)
 
 C --> E(freetype)
 C --> F(harfbuzz)
@@ -67,8 +68,12 @@ E -.-> F
   aims to provide a more secure and auditable implementation of the SSL/TLS
   protocols
 
+- **[libxml2](http://xmlsoft.org/) (optional)**: A library for processing XML
+  data, used by ffmpeg to support the Dash protocol
+
 - **[uchardet](https://www.freedesktop.org/wiki/Software/uchardet/)
-  (optional)**: A C++ port of the Universal Character Encoding Detector (used by Mozilla Firefox and Thunderbird) for detecting the encoding of input text
+  (optional)**: A C++ port of the Universal Character Encoding Detector (used by
+  Mozilla Firefox and Thunderbird) for detecting the encoding of input text
 
 ## Commercial use
 

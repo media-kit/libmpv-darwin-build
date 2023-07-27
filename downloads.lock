@@ -22,6 +22,10 @@ libressl:
   version: 3.7.3
   url: https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.7.3.tar.gz
   sha256: 7948c856a90c825bd7268b6f85674a8dcd254bae42e221781b24e3f8dc335db3
+libxml2:
+  version: 2.11.4
+  url: https://download.gnome.org/sources/libxml2/2.11/libxml2-2.11.4.tar.xz
+  sha256: 737e1d7f8ab3f139729ca13a2494fd17bf30ddb4b7a427cf336252cab57f57f7
 mpv:
   version: 0.36.0
   url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.36.0.tar.gz
