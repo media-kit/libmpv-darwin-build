@@ -87,6 +87,7 @@ E -.-> F
 | fribidi    | LGPL-2.1                                               |       ✅       |
 | libressl   | Apache-1.0, BSD-4-Clause, ISC, public domain           |       ✅       |
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
+| libxml2    | MIT                                                    |       ✅       |
 
 ## Minimum versions
 
