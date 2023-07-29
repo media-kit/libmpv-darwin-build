@@ -13,16 +13,26 @@ Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 $ brew install cmake golang meson ninja
 $ VERSION=v0.0.1 make
 $ ls build/output
-libmpv-libs_v0.0.1_ios-arm64-audio.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-video.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-audio.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-video.tar.gz
-libmpv-libs_v0.0.1_macos-universal-audio.tar.gz
-libmpv-libs_v0.0.1_macos-universal-video.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-audio.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-video.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-audio.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-video.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-audio-default.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-audio-full.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-video-default.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-video-full.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-audio-default.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-audio-full.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-video-default.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-video-full.tar.gz
+libmpv-libs_v0.0.1_macos-universal-audio-default.tar.gz
+libmpv-libs_v0.0.1_macos-universal-audio-full.tar.gz
+libmpv-libs_v0.0.1_macos-universal-video-default.tar.gz
+libmpv-libs_v0.0.1_macos-universal-video-full.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-audio-default.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-audio-full.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-video-default.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-video-full.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-audio-default.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-audio-full.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-video-default.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
 ```
 
 ## Dependencies
@@ -158,16 +168,17 @@ E -.-> F
 ## Naming convention
 
 ```
-libmpv-<format>_<version>_<os>-<arch>-<variant>.tar.gz
+libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 ```
 
-| Component | Notes                        | Value                    |
-| --------- | ---------------------------- | ------------------------ |
-| format    | Output format of built files | libs, xcframeworks       |
-| version   | Semantic version             | v0.0.1, …                |
-| os        | Operating system             | ios, iossimulator, macos |
-| arch      | Architecture                 | arm64, amd64, universal  |
-| variant   | Usage context                | audio, video             |
+| Component | Notes                           | Value                    |
+| --------- | ------------------------------- | ------------------------ |
+| format    | Output format of built files    | libs, xcframeworks       |
+| version   | Semantic version                | v0.0.1, …                |
+| os        | Operating system                | ios, iossimulator, macos |
+| arch      | Architecture                    | arm64, amd64, universal  |
+| variant   | Usage context                   | audio, video             |
+| flavor    | Number of available decoders, … | default, full            |
 
 ## Project layout
 
@@ -195,6 +206,11 @@ libmpv-<format>_<version>_<os>-<arch>-<variant>.tar.gz
 │       └── ...
 └── ...
 ```
+
+## TODO
+
+- [ ] Add `debug.zip` with `tool-versions.lock` and `ffmpeg` configs
+- [ ] Add docs about Makefile syntax
 
 ## How the libass optional patch was created
 

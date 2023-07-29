@@ -40,16 +40,26 @@ jobs:
         run: |
           VERSION=${{ steps.version.outputs.version }}
           make build/output/tool-versions.lock
-          make build/output/libmpv-libs_${VERSION}_ios-arm64-audio.tar.gz
-          make build/output/libmpv-libs_${VERSION}_ios-arm64-video.tar.gz
-          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio.tar.gz
-          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-video.tar.gz
-          make build/output/libmpv-libs_${VERSION}_macos-universal-audio.tar.gz
-          make build/output/libmpv-libs_${VERSION}_macos-universal-video.tar.gz
-          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-audio.tar.gz
-          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-video.tar.gz
-          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio.tar.gz
-          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-audio-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-video-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-video-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-video-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-audio-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-audio-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-video-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-video-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-audio-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-audio-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-video-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-video-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

@@ -31,16 +31,26 @@ COLON = :
 
 all: \
 	${OUTPUT_DIR}/tool-versions.lock \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video.tar.gz
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz
 
 ${OUTPUT_DIR}/tool-versions.lock:
 	mkdir -p ${OUTPUT_DIR}
@@ -204,12 +214,14 @@ ${INTERMEDIATE_DIR}/libxml2_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
-# ffmpeg_<os>-<arch>-<variant>
+# ffmpeg_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/ffmpeg_%: \
 	${DOWNLOADS_DIR} \
 	${PKGCONFIG_DIR} \
 	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
-	${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))
+	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
+		${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	)
 
 	@echo "\033[32mRULE\033[0m $@"
 
@@ -227,6 +239,7 @@ ${INTERMEDIATE_DIR}/ffmpeg_%: \
 	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_FLAVOR=$(word 4, $(subst -, ,${TARGET_PATTERN})))
 
 	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
 		$(if $(findstring downloads,${DEP}),, \
@@ -251,6 +264,7 @@ ${INTERMEDIATE_DIR}/ffmpeg_%: \
 		OS=${TARGET_OS} \
 		ARCH=${TARGET_ARCH} \
 		VARIANT=${TARGET_VARIANT} \
+		FLAVOR=${TARGET_FLAVOR} \
 		SRC_DIR=${TARGET_SRC_DIR} \
 		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
 		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
@@ -484,11 +498,11 @@ ${INTERMEDIATE_DIR}/uchardet_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
-# mpv_<os>-<arch>-<variant>
+# mpv_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/mpv_%: \
 	${DOWNLOADS_DIR} \
 	${PKGCONFIG_DIR} \
-	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/uchardet_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libass_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
@@ -513,6 +527,7 @@ ${INTERMEDIATE_DIR}/mpv_%: \
 	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_FLAVOR=$(word 4, $(subst -, ,${TARGET_PATTERN})))
 
 	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
 		$(if $(findstring downloads,${DEP}),, \
@@ -543,13 +558,13 @@ ${INTERMEDIATE_DIR}/mpv_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
-# libs-arch_<os>-<arch>-<variant>
+# libs-arch_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/libs-arch_%: \
-	${INTERMEDIATE_DIR}/mpv_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
-	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/mpv_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
-	${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
+		${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/uchardet_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libass_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/harfbuzz_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
@@ -590,13 +605,13 @@ ${INTERMEDIATE_DIR}/libs-arch_%: \
 	mv ${TARGET_OUTPUT_DIR} ${TARGET_DIR}
 	rm -rf ${TARGET_TMP_DIR}
 
-# libs_<os>-<arch>-<variant>
+# libs_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/libs_%: \
 	$$(if $$(filter universal, $$(word 2,$$(subst -, ,$$*))), \
-		${INTERMEDIATE_DIR}/libs-arch_$$(word 1,$$(subst -, ,$$*))-arm64-$$(word 3,$$(subst -, ,$$*)) \
-		${INTERMEDIATE_DIR}/libs-arch_$$(word 1,$$(subst -, ,$$*))-amd64-$$(word 3,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/libs-arch_$$(word 1,$$(subst -, ,$$*))-arm64-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/libs-arch_$$(word 1,$$(subst -, ,$$*))-amd64-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	, \
-		${INTERMEDIATE_DIR}/libs-arch_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/libs-arch_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	)
 
 	@echo "\033[32mRULE\033[0m $@"
@@ -632,9 +647,9 @@ ${INTERMEDIATE_DIR}/libs_%: \
 	mv ${TARGET_OUTPUT_DIR} ${TARGET_DIR}
 	rm -rf ${TARGET_TMP_DIR}
 
-# frameworks_<os>-<arch>-<variant>
+# frameworks_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/frameworks_%: \
-	${INTERMEDIATE_DIR}/libs_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))
+	${INTERMEDIATE_DIR}/libs_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*))
 
 	@echo "\033[32mRULE\033[0m $@"
 
@@ -669,13 +684,13 @@ ${INTERMEDIATE_DIR}/frameworks_%: \
 	mv ${TARGET_OUTPUT_DIR} ${TARGET_DIR}
 	rm -rf ${TARGET_TMP_DIR}
 
-# xcframeworks_<os>-<arch>-<variant>
+# xcframeworks_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/xcframeworks_%: \
 	$$(if $$(filter ios, $$(word 1,$$(subst -, ,$$*))), \
-		${INTERMEDIATE_DIR}/frameworks_ios-arm64-$$(word 3,$$(subst -, ,$$*)) \
-		${INTERMEDIATE_DIR}/frameworks_iossimulator-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/frameworks_ios-arm64-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/frameworks_iossimulator-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	, \
-		${INTERMEDIATE_DIR}/frameworks_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/frameworks_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	)
 
 	@echo "\033[32mRULE\033[0m $@"
@@ -711,7 +726,7 @@ ${INTERMEDIATE_DIR}/xcframeworks_%: \
 	mv ${TARGET_OUTPUT_DIR} ${TARGET_DIR}
 	rm -rf ${TARGET_TMP_DIR}
 
-# libmpv-<type>_<version>_<os>-<arch>-<variant>.tar.gz
+# libmpv-<type>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 ${OUTPUT_DIR}/libmpv-%.tar.gz: \
 	${INTERMEDIATE_DIR}/$$(word 1,$$(subst _, ,$$*))_$$(word 3,$$(subst _, ,$$*))
 
