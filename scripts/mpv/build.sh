@@ -31,11 +31,13 @@ COMMON_VIDEO_OPTIONS=(
 MACOS_OPTIONS=(
     `# audio output features`
     -Dcoreaudio=enabled `# CoreAudio audio output`
+
+    `# video output features`
+    -Dcocoa=enabled `# Cocoa` `# BUG: required in audio mode since v0.36.0`
 )
 
 MACOS_VIDEO_OPTIONS=(
     `# video output features`
-    -Dcocoa=enabled `# Cocoa`
     -Dgl-cocoa=enabled `# gl-cocoa`
 
     `# hwaccel features`
