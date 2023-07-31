@@ -53,7 +53,7 @@ SPACE = $(NULL) # DONT REMOVE THIS COMMENT!!!
 COLON = :
 
 all: \
-	${OUTPUT_DIR}/tool-versions.lock \
+	${OUTPUT_DIR}/debug.zip \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz \
@@ -75,8 +75,52 @@ all: \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz
 
-${OUTPUT_DIR}/tool-versions.lock:
-	mkdir -p ${OUTPUT_DIR}
+${OUTPUT_DIR}/debug.zip: \
+	${INTERMEDIATE_DIR}/tool-versions.lock \
+	$$(foreach OS,ios iossimulator macos, \
+		$$(foreach ARCH,amd64 arm64, \
+			$$(foreach VARIANT,audio video, \
+				$$(foreach FLAVOR,default full, \
+					$$(if $$(filter-out ios-amd64, $${OS}-$${ARCH}), \
+						${INTERMEDIATE_DIR}/ffmpeg_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
+						${INTERMEDIATE_DIR}/mpv_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
+					) \
+				) \
+			) \
+		) \
+	)
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_FILE=$@)
+	$(eval TARGET_DEPS=$+)
+	$(eval TARGET_FILENAME=$(notdir ${TARGET_FILE}))
+	$(eval TARGET_NAME=$(basename $(basename ${TARGET_FILENAME})))
+	$(eval TARGET_PKGNAME=${TARGET_NAME})
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR})
+	$(eval TARGET_OUTPUT_FILE=${TARGET_TMP_DIR}/${TARGET_FILENAME})
+
+	$(eval TARGET_ABS_DEPS=$(foreach DEP,${TARGET_DEPS},${PROJECT_DIR}/${DEP}))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_FILE}
+	mkdir -p ${OUTPUT_DIR} ${TARGET_SRC_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		DEPS="${TARGET_ABS_DEPS}" \
+		OUTPUT_FILE=${TARGET_OUTPUT_FILE} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+	
+	mv ${TARGET_OUTPUT_FILE} ${TARGET_FILE}
+	rm -rf ${TARGET_TMP_DIR}
+
+${INTERMEDIATE_DIR}/tool-versions.lock:
+	@echo "\033[32mRULE\033[0m $@"
+
+	mkdir -p ${INTERMEDIATE_DIR}
 	go run cmd/tool-versions/main.go > $@
 
 ${DOWNLOADS_DIR}: \

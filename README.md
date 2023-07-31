@@ -207,10 +207,6 @@ E -.-> F
 └── ...
 ```
 
-## TODO
-
-- [ ] Add `debug.zip` with `tool-versions.lock` and `ffmpeg` configs
-
 ## How the libass optional patch was created
 
 As the dependency of mpv on libass is deeply embedded in the code, the simplest

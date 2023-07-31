@@ -188,7 +188,12 @@ meson setup build \
     -Dmanpage-build=disabled `# manpage generation` \
     -Dpdf-build=disabled `# pdf manual generation` \
     \
-    "${OPTIONS[@]}"
+    "${OPTIONS[@]}" |
+    tee configure.log
 
 meson compile -C build
 meson install -C build
+
+# copy configure.log
+mkdir -p "${OUTPUT_DIR}"/share/mpv
+cp configure.log "${OUTPUT_DIR}"/share/mpv/

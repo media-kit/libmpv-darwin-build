@@ -39,7 +39,6 @@ jobs:
         # manages all builds. So the time per rule must be limited.
         run: |
           VERSION=${{ steps.version.outputs.version }}
-          make build/output/tool-versions.lock
           make build/output/libmpv-libs_${VERSION}_ios-arm64-audio-default.tar.gz
           make build/output/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz
           make build/output/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz
@@ -60,13 +59,14 @@ jobs:
           make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio-full.tar.gz
           make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video-default.tar.gz
           make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz
+          make build/output/debug.zip
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
           path: |
-            build/output/tool-versions.lock
+            build/output/debug.zip
             build/output/*.tar.gz
 
       - name: Release
@@ -75,5 +75,5 @@ jobs:
         with:
           fail_on_unmatched_files: true
           files: |
-            build/output/tool-versions.lock
+            build/output/debug.zip
             build/output/*.tar.gz

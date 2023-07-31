@@ -13,10 +13,14 @@ meson setup build \
     --cross-file ${PROJECT_DIR}/cross-files/${OS}-${ARCH}.ini \
     --prefix="${OUTPUT_DIR}" \
     -Dvariant=${VARIANT} \
-    -Dflavor=${FLAVOR}
+    -Dflavor=${FLAVOR} |
+    tee configure.log
 
 meson compile -C build ffmpeg
 
 # manual install to preserve symlinks (meson install -C build)
 mkdir -p "${OUTPUT_DIR}"
 cp -R build/dist"${OUTPUT_DIR}"/* "${OUTPUT_DIR}"/
+
+# copy configure.log
+cp configure.log "${OUTPUT_DIR}"/share/ffmpeg/
