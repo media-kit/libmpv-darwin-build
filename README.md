@@ -35,6 +35,62 @@ libmpv-xcframeworks_v0.0.1_macos-universal-video-default.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
 ```
 
+## Naming convention
+
+```
+libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
+```
+
+| Component   | Notes                           | Value                    |
+| ----------- | ------------------------------- | ------------------------ |
+| **format**  | Output format of built files    | libs, xcframeworks       |
+| **version** | Semantic version                | v0.0.1, …                |
+| **os**      | Operating system                | ios, iossimulator, macos |
+| **arch**    | Architecture                    | arm64, amd64, universal  |
+| **variant** | Usage context                   | audio, video             |
+| **flavor**  | Number of available decoders, … | default, full            |
+
+## Minimum versions
+
+<table>
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>Arch</th>
+      <th>Min Version</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2"><strong>macOS</strong></td>
+      <td>amd64</td>
+      <td rowspan="2"><code>10.9</code></td>
+      <td rowspan="2">Required by <code>uchardet</code></td>
+    </tr>
+    <tr>
+      <td>arm64</td>
+    </tr>
+    <tr>
+      <td><strong>iOS</strong></td>
+      <td>arm64</td>
+      <td><code>9.0</code></td>
+      <td>Required by <code>ffmpeg</code></td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>iOS Simulator</strong></td>
+      <td>amd64</td>
+      <td><code>9.0</code></td>
+      <td>Required by <code>ffmpeg</code></td>
+    </tr>
+    <tr>
+      <td>arm64</td>
+      <td><code>12.0</code></td>
+      <td>Required by <code>xcodebuild -create-xcframework</code></td>
+    </tr>
+  </tbody>
+</table>
+
 ## Dependencies
 
 ```mermaid
@@ -99,47 +155,6 @@ E -.-> F
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 | libxml2    | MIT                                                    |       ✅       |
 
-## Minimum versions
-
-<table>
-  <thead>
-    <tr>
-      <th>Platform</th>
-      <th>Arch</th>
-      <th>Min Version</th>
-      <th>Notes</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td rowspan="2"><strong>macOS</strong></td>
-      <td>amd64</td>
-      <td rowspan="2"><code>10.9</code></td>
-      <td rowspan="2">Required by <code>uchardet</code></td>
-    </tr>
-    <tr>
-      <td>arm64</td>
-    </tr>
-    <tr>
-      <td><strong>iOS</strong></td>
-      <td>arm64</td>
-      <td><code>9.0</code></td>
-      <td>Required by <code>ffmpeg</code></td>
-    </tr>
-    <tr>
-      <td rowspan="2"><strong>iOS Simulator</strong></td>
-      <td>amd64</td>
-      <td><code>9.0</code></td>
-      <td>Required by <code>ffmpeg</code></td>
-    </tr>
-    <tr>
-      <td>arm64</td>
-      <td><code>12.0</code></td>
-      <td>Required by <code>xcodebuild -create-xcframework</code></td>
-    </tr>
-  </tbody>
-</table>
-
 ## Notes
 
 - Some dependencies, which are not needed at the moment, may be added in the
@@ -164,21 +179,6 @@ E -.-> F
   ```
   $ make -Bnd | make2graph | dot -Grankdir=LR -Tpng -o graph.png
   ```
-
-## Naming convention
-
-```
-libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
-```
-
-| Component | Notes                           | Value                    |
-| --------- | ------------------------------- | ------------------------ |
-| format    | Output format of built files    | libs, xcframeworks       |
-| version   | Semantic version                | v0.0.1, …                |
-| os        | Operating system                | ios, iossimulator, macos |
-| arch      | Architecture                    | arm64, amd64, universal  |
-| variant   | Usage context                   | audio, video             |
-| flavor    | Number of available decoders, … | default, full            |
 
 ## Project layout
 
