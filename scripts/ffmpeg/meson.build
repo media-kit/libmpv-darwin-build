@@ -68,12 +68,6 @@ video_common_options = [
     '--enable-neon', # improve hevc (h265) support on arm
     '--enable-libxml2', # dash support
     '--enable-videotoolbox',
-
-    # TODO: check if required
-    # '--enable-avfoundation',
-    # '--enable-iconv',
-    # '--enable-metal',
-    # '--enable-bzlib',
 ]
 
 # https://github.com/media-kit/libmpv-android-audio-build/blob/main/buildscripts/variants/default.sh
