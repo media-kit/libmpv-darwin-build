@@ -1,3 +1,26 @@
+#
+# Docs about syntax used:
+#
+# ```makefile
+# .SECONDEXPANSION:
+#
+# # pkg3_<os>-<arch>-<variant>
+# pkg3_%: \
+# 	pkg1_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
+# 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
+# 		pkg2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+# 	)
+# ```
+#
+# - `.SECONDEXPANSION:`: Enable var substitution in rule deps
+# - `%`: Variable string of the pattern rule
+# - `$$(word 2,$$(subst -, ,$$*))`: Extract a parameter from the variable
+#   string, in this case `<arch>`
+# - `$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))))`: Conditional
+#   dependency based on the value of the third parameter, in this case check if
+#   `<variant> == video`
+#
+
 # Enable secondary expansions, needed for var substitution in rules's deps
 .SECONDEXPANSION:
 

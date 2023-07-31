@@ -210,7 +210,6 @@ E -.-> F
 ## TODO
 
 - [ ] Add `debug.zip` with `tool-versions.lock` and `ffmpeg` configs
-- [ ] Add docs about Makefile syntax
 
 ## How the libass optional patch was created
 
