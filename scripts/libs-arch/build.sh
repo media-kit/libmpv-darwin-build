@@ -23,11 +23,11 @@ mv ${OUTPUT_DIR}/libmpv.*.dylib ${OUTPUT_DIR}/libmpv.dylib
 install_name_tool -id @rpath/libmpv.dylib ${OUTPUT_DIR}/libmpv.dylib
 
 # fix deps paths
-${PROJECT_DIR}/scripts/libs-arch/relink_dylibs.sh ${PROJECT_DIR} @rpath ${OUTPUT_DIR}
+${PROJECT_DIR}/scripts/libs-arch/relink-dylibs.sh ${PROJECT_DIR} @rpath ${OUTPUT_DIR}
 
 # remove signatures
 codesign --remove ${OUTPUT_DIR}/*.dylib
 
 if [ "${OS}" == "iossimulator" ] && [ "${ARCH}" == "arm64" ]; then
-    sh ${PROJECT_DIR}/scripts/libs-arch/ios/fix_iossimulator_arm64.sh ${OUTPUT_DIR}
+    sh ${PROJECT_DIR}/scripts/libs-arch/fix-iossimulator-arm64.sh ${OUTPUT_DIR}
 fi
