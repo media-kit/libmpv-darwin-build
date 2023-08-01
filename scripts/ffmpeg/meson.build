@@ -246,7 +246,7 @@ video_default_options = [
     '--enable-demuxer=vplayer',
 ]
 
-full_options = [
+audio_full_options = [
     '--enable-decoders',
     '--enable-hwaccels',
     '--enable-parsers',
@@ -257,6 +257,16 @@ full_options = [
     # filters
     '--enable-filter=overlay',
     '--enable-filter=equalizer',
+
+    # TODO: `media_kit` checks the presence of the h264 decoder to determine if
+    # `ffmpeg` is an audio or video variant, so we disable it for the audio
+    # variant.
+    # Ideally, we should only enable the audio decoders…
+    '--disable-decoder=h264',
+]
+
+video_full_options = [
+    '--enable-decoder=h264',
 ]
 
 # disable all option
@@ -276,7 +286,10 @@ if flavor == 'default'
         options += video_default_options
     endif
 elif flavor == 'full'
-    options += full_options
+    options += audio_full_options
+    if variant == 'video'
+        options += video_full_options
+    endif
 endif
 
 p = mod.add_project('configure',
