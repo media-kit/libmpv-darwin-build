@@ -193,6 +193,7 @@ E -.-> F
 ├── cross-files                           # cross build files used by meson
 ├── build
 │   ├── intermediate                      # intermediate build artifacts
+│   │   ├── tool-versions.lock            # versions of tools used during build
 │   │   ├── downloads                     # dependencies archives files
 │   │   ├── links                         # symbolic links to host binaries
 │   │   ├── <rule>_<os>-<arch>-<variant>
@@ -201,7 +202,7 @@ E -.-> F
 │   │   ├── <rule>_<os>-<arch>-<variant>
 │   │   └── ...
 │   └── output
-│       ├── tool-versions.lock            # versions of tools used during build
+│       ├── debug.zip                     # zip containing locks and logs
 │       ├── libmpv-<format>_<version>_<os>-<arch>-<variant>.tar.gz
 │       └── ...
 └── ...
