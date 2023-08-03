@@ -244,6 +244,15 @@ video_default_options = [
     '--enable-demuxer=subviewer',
     '--enable-demuxer=subviewer1',
     '--enable-demuxer=vplayer',
+
+    # hwaccels
+    '--enable-hwaccel=h263_videotoolbox',
+    '--enable-hwaccel=h264_videotoolbox',
+    '--enable-hwaccel=hevc_videotoolbox',
+    '--enable-hwaccel=mpeg1_videotoolbox',
+    '--enable-hwaccel=mpeg2_videotoolbox',
+    '--enable-hwaccel=mpeg4_videotoolbox',
+    '--enable-hwaccel=vp9_videotoolbox',
 ]
 
 audio_full_options = [
