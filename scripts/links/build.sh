@@ -1,6 +1,9 @@
 #!/bin/sh
 
-mkdir -p ${TOOLS_PREFIX}/bin
+set -e # exit immediately if a command exits with a non-zero status
+set -u # treat unset variables as an error
+
+mkdir -p ${OUTPUT_DIR}/bin
 
 # check BINARY presence in PATH
 for BINARY in ${BINARIES}; do
@@ -11,7 +14,7 @@ done
 
 # sym link BINARY
 for BINARY in ${BINARIES}; do
-    [ ! -h ${TOOLS_PREFIX}/bin/$BINARY ] &&
-        ln -s $(which $BINARY) ${TOOLS_PREFIX}/bin/$BINARY ||
+    [ ! -h ${OUTPUT_DIR}/bin/$BINARY ] &&
+        ln -s $(which $BINARY) ${OUTPUT_DIR}/bin/$BINARY ||
         true
 done

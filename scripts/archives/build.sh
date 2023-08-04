@@ -1,11 +1,11 @@
 #!/bin/sh
 
-rm -rf "${ARCHIVES_DIR}"
-mkdir -p "${ARCHIVES_DIR}"
+set -e # exit immediately if a command exits with a non-zero status
+set -u # treat unset variables as an error
 
-NAME=libmpv-${TYPE}-${VARIANT}-${VERSION}-${OS}-${ARCH}
+cd ${SRC_DIR}
 
-cp -R "${FILES_DIR}" "${ARCHIVES_DIR}"/$NAME
+NAME=$(basename ${OUTPUT_FILE} .tar.gz)
 
-cd "${ARCHIVES_DIR}"
-tar -czvf $NAME.tar.gz $NAME
+cp -R ${DEPS} ${NAME}
+tar -czvf ${NAME}.tar.gz ${NAME}

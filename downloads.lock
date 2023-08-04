@@ -1,31 +1,35 @@
 ffmpeg:
-  version: 5.1.2
-  url: https://ffmpeg.org/releases/ffmpeg-5.1.2.tar.xz
-  sha256: 619e706d662c8420859832ddc259cd4d4096a48a2ce1eefd052db9e440eef3dc
+  version: "6.0"
+  url: https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
+  sha256: 57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
 freetype:
-  version: 2.13.0
-  url: https://downloads.sourceforge.net/project/freetype/freetype2/2.13.0/freetype-2.13.0.tar.xz
-  sha256: 5ee23abd047636c24b2d43c6625dcafc66661d1aca64dec9e0d05df29592624c
+  version: 2.13.1
+  url: https://downloads.sourceforge.net/project/freetype/freetype2/2.13.1/freetype-2.13.1.tar.xz
+  sha256: ea67e3b019b1104d1667aa274f5dc307d8cbd606b399bc32df308a77f1a564bf
 fribidi:
-  version: 1.0.12
-  url: https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz
-  sha256: 0cd233f97fc8c67bb3ac27ce8440def5d3ffacf516765b91c2cc654498293495
+  version: 1.0.13
+  url: https://github.com/fribidi/fribidi/releases/download/v1.0.13/fribidi-1.0.13.tar.xz
+  sha256: 7fa16c80c81bd622f7b198d31356da139cc318a63fc7761217af4130903f54a2
 harfbuzz:
-  version: 7.1.0
-  url: https://github.com/harfbuzz/harfbuzz/archive/7.1.0.tar.gz
-  sha256: 6c7a358c6e134bd6da4fe39f59ec273ff0ee461697945027b7538287b8c73b1e
+  version: 8.0.1
+  url: https://github.com/harfbuzz/harfbuzz/archive/8.0.1.tar.gz
+  sha256: d54ca67b6a0bf732b66a343566446d7f93df2bb850133f886c0082fb618a06b2
 libass:
   version: 0.17.1
   url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
   sha256: f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784
 libressl:
-  version: 3.6.2
-  url: https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.6.2.tar.gz
-  sha256: 4be80fff073746cf50b4a8e5babe2795acae98c6b132a9e02519b445dfbfd033
+  version: 3.7.3
+  url: https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.7.3.tar.gz
+  sha256: 7948c856a90c825bd7268b6f85674a8dcd254bae42e221781b24e3f8dc335db3
+libxml2:
+  version: 2.11.4
+  url: https://download.gnome.org/sources/libxml2/2.11/libxml2-2.11.4.tar.xz
+  sha256: 737e1d7f8ab3f139729ca13a2494fd17bf30ddb4b7a427cf336252cab57f57f7
 mpv:
-  version: 0.35.1
-  url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.35.1.tar.gz
-  sha256: 41df981b7b84e33a2ef4478aaf81d6f4f5c8b9cd2c0d337ac142fc20b387d1a9
+  version: 0.36.0
+  url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.36.0.tar.gz
+  sha256: 29abc44f8ebee013bb2f9fe14d80b30db19b534c679056e4851ceadf5a5e8bf6
 pkg-config:
   version: 0.29.2
   url: https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz

@@ -1,10 +1,10 @@
 diff --git a/meson.build b/meson.build
-index acaa39f764..32cc0bf066 100644
+index f9fe4e7..a3d55c4 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -23,13 +23,11 @@ libavutil = dependency('libavutil', version: '>= 56.12.100')
- libswresample = dependency('libswresample', version: '>= 3.0.100')
- libswscale = dependency('libswscale', version: '>= 5.0.101')
+@@ -23,13 +23,11 @@ libavutil = dependency('libavutil', version: '>= 56.70.100')
+ libswresample = dependency('libswresample', version: '>= 3.9.100')
+ libswscale = dependency('libswscale', version: '>= 5.9.100')
  
 -libass = dependency('libass', version: '>= 0.12.2')
  pthreads = dependency('threads')
@@ -18,17 +18,17 @@ index acaa39f764..32cc0bf066 100644
                  libavfilter,
                  libavformat,
                  libavutil,
-@@ -43,7 +41,7 @@ features = {
-     'ffmpeg': true,
+@@ -44,7 +42,7 @@ features = {
      'gpl': get_option('gpl'),
      'jpegxl': libavformat.version().version_compare('>= 59.27.100'),
+     'avif_muxer': libavformat.version().version_compare('>= 59.24.100'),
 -    'libass': true,
 +    'libass': false,
      'threads': true,
  }
  
 diff --git a/player/command.c b/player/command.c
-index 2e6b9875d7..d358d6dae4 100644
+index 0eb13a7..f7a17c8 100644
 --- a/player/command.c
 +++ b/player/command.c
 @@ -27,7 +27,7 @@
@@ -40,7 +40,7 @@ index 2e6b9875d7..d358d6dae4 100644
  #include <libavutil/avstring.h>
  #include <libavutil/common.h>
  
-@@ -3275,7 +3275,8 @@ static int mp_property_ffmpeg(void *ctx, struct m_property *prop,
+@@ -3310,7 +3310,8 @@ static int mp_property_ffmpeg(void *ctx, struct m_property *prop,
  static int mp_property_libass_version(void *ctx, struct m_property *prop,
                                        int action, void *arg)
  {
@@ -49,10 +49,10 @@ index 2e6b9875d7..d358d6dae4 100644
 +    return m_property_int64_ro(action, arg, 0);
  }
  
- static int mp_property_alias(void *ctx, struct m_property *prop,
+ static int mp_property_platform(void *ctx, struct m_property *prop,
 diff --git a/sub/ass.h b/sub/ass.h
 new file mode 100644
-index 0000000000..05d97fb7d2
+index 0000000..05d97fb
 --- /dev/null
 +++ b/sub/ass.h
 @@ -0,0 +1,812 @@
@@ -869,7 +869,7 @@ index 0000000000..05d97fb7d2
 +
 +#endif /* LIBASS_ASS_H */
 diff --git a/sub/ass_mp.c b/sub/ass_mp.c
-index 8d0ab96e7d..70f8a99b92 100644
+index 634681f..ddd945d 100644
 --- a/sub/ass_mp.c
 +++ b/sub/ass_mp.c
 @@ -25,8 +25,8 @@
@@ -884,7 +884,7 @@ index 8d0ab96e7d..70f8a99b92 100644
  #include "common/common.h"
  #include "common/global.h"
 diff --git a/sub/ass_mp.h b/sub/ass_mp.h
-index f4488bf8c7..0e60b854aa 100644
+index 3dd2bf6..77597ec 100644
 --- a/sub/ass_mp.h
 +++ b/sub/ass_mp.h
 @@ -23,8 +23,10 @@
@@ -902,7 +902,7 @@ index f4488bf8c7..0e60b854aa 100644
  // sd_lavc_conv might indirectly still assume this PlayResY, though.
 diff --git a/sub/ass_types.h b/sub/ass_types.h
 new file mode 100644
-index 0000000000..e4cc222217
+index 0000000..e4cc222
 --- /dev/null
 +++ b/sub/ass_types.h
 @@ -0,0 +1,292 @@
@@ -1199,10 +1199,10 @@ index 0000000000..e4cc222217
 +
 +#endif /* LIBASS_TYPES_H */
 diff --git a/sub/osd_libass.c b/sub/osd_libass.c
-index 7bb0471610..dd88b9eec4 100644
+index 1687f14..23df4cc 100644
 --- a/sub/osd_libass.c
 +++ b/sub/osd_libass.c
-@@ -49,21 +49,21 @@ void osd_init_backend(struct osd_state *osd)
+@@ -47,21 +47,21 @@ void osd_init_backend(struct osd_state *osd)
  
  static void create_ass_renderer(struct osd_state *osd, struct ass_state *ass)
  {
@@ -1212,11 +1212,11 @@ index 7bb0471610..dd88b9eec4 100644
 +    //     return;
  
 -    ass->log = mp_log_new(NULL, osd->log, "libass");
--    ass->library = mp_ass_init(osd->global, ass->log);
+-    ass->library = mp_ass_init(osd->global, osd->opts->osd_style, ass->log);
 -    ass_add_font(ass->library, "mpv-osd-symbols", (void *)osd_font_pfb,
 -                 sizeof(osd_font_pfb) - 1);
 +    // ass->log = mp_log_new(NULL, osd->log, "libass");
-+    // ass->library = mp_ass_init(osd->global, ass->log);
++    // ass->library = mp_ass_init(osd->global, osd->opts->osd_style, ass->log);
 +    // ass_add_font(ass->library, "mpv-osd-symbols", (void *)osd_font_pfb,
 +    //              sizeof(osd_font_pfb) - 1);
  
@@ -1237,7 +1237,7 @@ index 7bb0471610..dd88b9eec4 100644
  
  static void destroy_ass_renderer(struct ass_state *ass)
 diff --git a/sub/sd_ass.c b/sub/sd_ass.c
-index ec79bda10b..a6e35f2168 100644
+index e4e5652..0e55f7f 100644
 --- a/sub/sd_ass.c
 +++ b/sub/sd_ass.c
 @@ -22,7 +22,7 @@
@@ -1249,7 +1249,7 @@ index ec79bda10b..a6e35f2168 100644
  
  #include "mpv_talloc.h"
  
-@@ -203,41 +203,41 @@ static void enable_output(struct sd *sd, bool enable)
+@@ -205,41 +205,41 @@ static void enable_output(struct sd *sd, bool enable)
  
  static void assobjects_init(struct sd *sd)
  {
@@ -1258,9 +1258,9 @@ index ec79bda10b..a6e35f2168 100644
 +//     struct sd_ass_priv *ctx = sd->priv;
 +//     struct mp_subtitle_opts *opts = sd->opts;
  
--    ctx->ass_library = mp_ass_init(sd->global, sd->log);
+-    ctx->ass_library = mp_ass_init(sd->global, sd->opts->sub_style, sd->log);
 -    ass_set_extract_fonts(ctx->ass_library, opts->use_embedded_fonts);
-+//     ctx->ass_library = mp_ass_init(sd->global, sd->log);
++//     ctx->ass_library = mp_ass_init(sd->global, sd->opts->sub_style, sd->log);
 +//     ass_set_extract_fonts(ctx->ass_library, opts->use_embedded_fonts);
  
 -    add_subtitle_fonts(sd);

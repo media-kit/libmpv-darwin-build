@@ -1,5 +1,7 @@
 #!/bin/sh
-set -e
+
+set -e # exit immediately if a command exits with a non-zero status
+set -u # treat unset variables as an error
 
 # relink_dylibs updates the dependency paths of dynamic libraries by replacing a
 # source prefix with a target prefix
@@ -40,7 +42,7 @@ relink_dylibs() {
 }
 
 SOURCE_PREFIX=$1
-TARGET_PREFIX="@rpath"
-DIR=$2
+TARGET_PREFIX=$2
+DIR=$3
 
 relink_dylibs "$SOURCE_PREFIX" "$TARGET_PREFIX" "$DIR"

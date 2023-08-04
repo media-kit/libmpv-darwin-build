@@ -1,12 +1,12 @@
 #!/bin/bash
 
+set -e # exit immediately if a command exits with a non-zero status
+set -u # treat unset variables as an error
+
 # see: VLCKit cocoapods
 # see: https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPFrameworks/Concepts/FrameworkAnatomy.html
 
-LIBS_DIR="$1"
-FRAMEWORKS_DIR="$2"
-
-find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
+find ${DEPS} -name "*.dylib" -type f | while read DYLIB; do
     echo "${DYLIB}"
 
     # create framework name: libavcodec.59.dylib -> Avcodec
@@ -14,7 +14,7 @@ find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
     FRAMEWORK_NAME="$(tr '[:lower:]' '[:upper:]' <<<${FRAMEWORK_NAME:0:1})${FRAMEWORK_NAME:1}"
 
     # framework dir
-    FRAMEWORK_DIR="${FRAMEWORKS_DIR}/${FRAMEWORK_NAME}.framework"
+    FRAMEWORK_DIR="${OUTPUT_DIR}/${FRAMEWORK_NAME}.framework"
 
     # determine archs
     ARCHS=$(lipo -archs "${DYLIB}")
@@ -34,6 +34,7 @@ find "${LIBS_DIR}" -name "*.dylib" -type f | while read DYLIB; do
         fi
 
         # if $MIN_OS_VERSION is null or greater than $ARCH_MIN_OS_VERSION replace it
+        MIN_OS_VERSION=
         if [ -z "${MIN_OS_VERSION}" ] || (($(bc -l <<<"${MIN_OS_VERSION} > ${ARCH_MIN_OS_VERSION}"))); then
             MIN_OS_VERSION=${ARCH_MIN_OS_VERSION}
         fi

@@ -1,10 +1,10 @@
 #!/bin/sh
 
+set -e # exit immediately if a command exits with a non-zero status
+set -u # treat unset variables as an error
+
 mkdir -p ${TARGET_DIR}
-find downloads -type f -name "${PKG_NAME}-*.tar.*" -exec \
-    tar \
-    -xvf {} \
+tar \
+    -xvf ${ARCHIVE_FILE} \
     --strip-components 1 \
-    -C ${TARGET_DIR} \
-    \
-    \; 2>&1
+    -C ${TARGET_DIR}

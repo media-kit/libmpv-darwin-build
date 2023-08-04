@@ -5,15 +5,12 @@ set -u # treat unset variables as an error
 
 cd ${SRC_DIR}
 
-cp ${PROJECT_DIR}/scripts/libressl/meson.build ./meson.build
+cp ${PROJECT_DIR}/scripts/libxml2/meson.build ./meson.build
 meson setup build \
     --cross-file ${PROJECT_DIR}/cross-files/${OS}-${ARCH}.ini \
     --prefix="${OUTPUT_DIR}"
 
-meson compile -C build libressl
-
-# fix file permissions
-chmod 755 build/dist"${OUTPUT_DIR}"/lib/*
+meson compile -C build libxml2
 
 # manual install to preserve symlinks (meson install -C build)
 mkdir -p "${OUTPUT_DIR}"

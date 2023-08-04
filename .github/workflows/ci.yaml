@@ -13,10 +13,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install requirements
-        run: brew install go-task meson ninja
+        run: brew install meson ninja
 
       - name: Print tool versions
-        run: task tool-versions
+        run: make tool-versions
 
       - name: Determine version
         id: version
@@ -35,21 +35,39 @@ jobs:
 
       - name: Build
         # macOS runners have unknown resource limits (timeout or number of open
-        # files…) that prevent the execution of a single Taskfile task that
-        # manages all builds. Concurrent tasks must be limited.
+        # files…) that prevent the execution of a single Makefile rule that
+        # manages all builds. So the time per rule must be limited.
         run: |
-          VERSION=${{ steps.version.outputs.version }} task build-macos-audio
-          VERSION=${{ steps.version.outputs.version }} task build-macos-video
-          VERSION=${{ steps.version.outputs.version }} task build-ios-audio
-          VERSION=${{ steps.version.outputs.version }} task build-ios-video
+          VERSION=${{ steps.version.outputs.version }}
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-audio-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_ios-arm64-video-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-audio-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-video-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_iossimulator-universal-video-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-audio-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-audio-full.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-video-default.tar.gz
+          make build/output/libmpv-libs_${VERSION}_macos-universal-video-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-audio-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-audio-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-video-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_ios-universal-video-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-audio-full.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video-default.tar.gz
+          make build/output/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz
+          make build/output/debug.zip
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
           path: |
-            build/tool-versions.lock
-            build/**/*.tar.gz
+            build/output/debug.zip
+            build/output/*.tar.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -57,5 +75,5 @@ jobs:
         with:
           fail_on_unmatched_files: true
           files: |
-            build/tool-versions.lock
-            build/**/*.tar.gz
+            build/output/debug.zip
+            build/output/*.tar.gz
