@@ -83,7 +83,7 @@ ${OUTPUT_DIR}/debug.zip: \
 				$$(foreach FLAVOR,default full, \
 					$$(if $$(filter-out ios-amd64, $${OS}-$${ARCH}), \
 						${INTERMEDIATE_DIR}/ffmpeg_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
-						${INTERMEDIATE_DIR}/mpv_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
+						${INTERMEDIATE_DIR}/mpv_$${OS}-$${ARCH}-$${VARIANT} \
 					) \
 				) \
 			) \
@@ -565,11 +565,11 @@ ${INTERMEDIATE_DIR}/uchardet_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
-# mpv_<os>-<arch>-<variant>-<flavor>
+# mpv_<os>-<arch>-<variant>
 ${INTERMEDIATE_DIR}/mpv_%: \
 	${DOWNLOADS_DIR} \
 	${PKGCONFIG_DIR} \
-	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-default \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/uchardet_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libass_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
@@ -594,7 +594,6 @@ ${INTERMEDIATE_DIR}/mpv_%: \
 	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
 	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
-	$(eval TARGET_FLAVOR=$(word 4, $(subst -, ,${TARGET_PATTERN})))
 
 	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
 		$(if $(findstring downloads,${DEP}),, \
@@ -627,7 +626,7 @@ ${INTERMEDIATE_DIR}/mpv_%: \
 
 # libs-arch_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/libs-arch_%: \
-	${INTERMEDIATE_DIR}/mpv_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/mpv_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
