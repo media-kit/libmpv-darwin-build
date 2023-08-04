@@ -58,10 +58,26 @@ all: \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-full.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-full.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-default.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-full.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-full.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-default.tar.gz \
