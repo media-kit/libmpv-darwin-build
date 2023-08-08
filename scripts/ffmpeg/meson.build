@@ -70,7 +70,7 @@ video_common_options = [
     '--enable-videotoolbox',
 ]
 
-# https://github.com/media-kit/libmpv-android-audio-build/blob/main/buildscripts/variants/default.sh
+# https://github.com/media-kit/libmpv-android-audio-build/blob/260666c0fef8c154971b5faf3f78da27c2bf2c40/buildscripts/flavors/default.sh
 audio_default_options = [
     # decoders
     '--enable-decoder=aac*',
@@ -140,6 +140,7 @@ audio_default_options = [
     # protocols
     '--enable-protocol=async',
     '--enable-protocol=cache',
+    '--enable-protocol=crypto',
     '--enable-protocol=data',
     '--enable-protocol=ffrtmphttp',
     '--enable-protocol=file',
@@ -164,7 +165,7 @@ audio_default_options = [
     '--enable-filter=equalizer',
 ]
 
-# https://github.com/media-kit/libmpv-android-video-build/blob/main/buildscripts/variants/default.sh
+# https://github.com/media-kit/libmpv-android-video-build/blob/7353af784df9bab3256acd8d90f208024d16ab96/buildscripts/flavors/default.sh
 video_default_options = [
     # decoders
     '--enable-decoder=flv',
