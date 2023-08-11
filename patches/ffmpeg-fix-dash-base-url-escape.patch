@@ -1,0 +1,26 @@
+diff --git a/libavformat/dashdec.c b/libavformat/dashdec.c
+index 29d4680..c50afaf 100644
+--- a/libavformat/dashdec.c
++++ b/libavformat/dashdec.c
+@@ -768,7 +768,9 @@ static int resolve_content_path(AVFormatContext *s, const char *url, int *max_ur
+     baseurl = xmlNodeGetContent(node);
+     root_url = (av_strcasecmp(baseurl, "")) ? baseurl : path;
+     if (node) {
+-        xmlNodeSetContent(node, root_url);
++        char* root_url_content = xmlEncodeSpecialChars(NULL, root_url);
++        xmlNodeSetContent(node, root_url_content);
++        xmlFree(root_url_content);
+         updated = 1;
+     }
+ 
+@@ -802,7 +804,9 @@ static int resolve_content_path(AVFormatContext *s, const char *url, int *max_ur
+                 memset(p + 1, 0, strlen(p));
+             }
+             av_strlcat(tmp_str, text + start, tmp_max_url_size);
+-            xmlNodeSetContent(baseurl_nodes[i], tmp_str);
++            char* tmp_str_content = xmlEncodeSpecialChars(NULL, tmp_str);
++            xmlNodeSetContent(baseurl_nodes[i], tmp_str_content);
++            xmlFree(tmp_str_content);
+             updated = 1;
+             xmlFree(text);
+         }

@@ -6,6 +6,7 @@ set -u # treat unset variables as an error
 cd ${SRC_DIR}
 
 patch -p1 <${PROJECT_DIR}/patches/ffmpeg-fix-ios-hdr-texture.patch
+patch -p1 <${PROJECT_DIR}/patches/ffmpeg-fix-dash-base-url-escape.patch
 
 cp ${PROJECT_DIR}/scripts/ffmpeg/meson.* .
 
