@@ -206,6 +206,7 @@ video_default_options = [
     '--enable-decoder=text',
     '--enable-decoder=vplayer',
     '--enable-decoder=webvtt',
+    '--enable-decoder=mov_text',
 
     # parsers
     '--enable-parser=h263',
