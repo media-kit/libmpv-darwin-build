@@ -42,7 +42,7 @@ DISABLE_ALL_OPTIONS=(
     -Dvector=disabled `# GCC vector instructions`
     -Dwin32-internal-pthreads=disabled `#internal pthread wrapper for win32 (Vista+)`
     -Dzimg=disabled `# libzimg support (high quality software scaler)`
-    -Dzlib=enabled `# zlib`
+    -Dzlib=disabled `# zlib`
 
     `# audio output features`
     -Dalsa=disabled `# ALSA audio output`
@@ -137,6 +137,7 @@ COMMON_OPTIONS=(
 COMMON_VIDEO_OPTIONS=(
     `# misc features`
     -Duchardet=enabled `# uchardet support`
+    -Dzlib=enabled `# zlib`
 
     `# video output features`
     -Dgl=enabled `# OpenGL context support`
