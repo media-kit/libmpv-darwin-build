@@ -1,0 +1,52 @@
+diff --git a/libavcodec/allcodecs.c b/libavcodec/allcodecs.c
+index e593ad1..f074ac8 100644
+--- a/libavcodec/allcodecs.c
++++ b/libavcodec/allcodecs.c
+@@ -884,6 +884,7 @@ extern const FFCodec ff_vp9_cuvid_decoder;
+ extern const FFCodec ff_vp9_mediacodec_decoder;
+ extern const FFCodec ff_vp9_qsv_decoder;
+ extern const FFCodec ff_vp9_vaapi_encoder;
++extern const FFCodec ff_vp9_videotoolbox_decoder;
+ extern const FFCodec ff_vp9_qsv_encoder;
+ 
+ // null codecs
+diff --git a/libavcodec/vp9.c b/libavcodec/vp9.c
+index 7c0a246..2abd3d3 100644
+--- a/libavcodec/vp9.c
++++ b/libavcodec/vp9.c
+@@ -1906,6 +1906,35 @@ const FFCodec ff_vp9_decoder = {
+ #if CONFIG_VP9_VDPAU_HWACCEL
+                                HWACCEL_VDPAU(vp9),
+ #endif
++                               NULL
++                           },
++};
++
++const FFCodec ff_vp9_videotoolbox_decoder = {
++    .p.name                = "vp9_videotoolbox",
++    CODEC_LONG_NAME("VideoToolbox Google VP9"),
++    .p.type                = AVMEDIA_TYPE_VIDEO,
++    .p.id                  = AV_CODEC_ID_VP9,
++    .priv_data_size        = sizeof(VP9Context),
++    .init                  = vp9_decode_init,
++    .close                 = vp9_decode_free,
++    FF_CODEC_DECODE_CB(vp9_decode_frame),
++    .p.capabilities        = AV_CODEC_CAP_DR1 | AV_CODEC_CAP_FRAME_THREADS | AV_CODEC_CAP_SLICE_THREADS,
++    .caps_internal         = FF_CODEC_CAP_INIT_CLEANUP |
++                                FF_CODEC_CAP_SLICE_THREAD_HAS_MF |
++                                FF_CODEC_CAP_ALLOCATE_PROGRESS,
++    .flush                 = vp9_decode_flush,
++    UPDATE_THREAD_CONTEXT(vp9_decode_update_thread_context),
++    .p.profiles            = NULL_IF_CONFIG_SMALL(ff_vp9_profiles),
++#if ARCH_X86_64
++    /* @low-batt: Video Toolbox requires VP9 invisible (alt-ref) frames be merged into VP9 superframes when running on Intel
++     * based Macs. Violation of this requirement will cause Video Toolbox to hang due to defective error handing
++     * in VTDecompressionSessionDecodeFrame. See FFmpeg ticket #9599. */
++    .bsfs                  = "vp9_superframe",
++#else
++    .bsfs                  = "vp9_superframe_split",
++#endif
++    .hw_configs            = (const AVCodecHWConfigInternal *const []) {
+ #if CONFIG_VP9_VIDEOTOOLBOX_HWACCEL
+                                HWACCEL_VIDEOTOOLBOX(vp9),
+ #endif
