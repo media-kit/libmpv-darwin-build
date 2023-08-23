@@ -137,6 +137,7 @@ COMMON_OPTIONS=(
 COMMON_VIDEO_OPTIONS=(
     `# misc features`
     -Duchardet=enabled `# uchardet support`
+    -Dzlib=enabled `# zlib`
 
     `# video output features`
     -Dgl=enabled `# OpenGL context support`
