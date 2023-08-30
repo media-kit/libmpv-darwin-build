@@ -217,6 +217,46 @@ ${INTERMEDIATE_DIR}/pkg-config_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
+# dav1d_<os>-<arch>
+${INTERMEDIATE_DIR}/dav1d_%: \
+	${DOWNLOADS_DIR} \
+	${PKGCONFIG_DIR}
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_DIR=$@)
+	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
+	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR}/src/${TARGET_PKGNAME})
+	$(eval TARGET_OUTPUT_DIR=${PROJECT_DIR}/${TARGET_DIR})
+
+	$(eval ARCHIVE_FILE=$(firstword $(wildcard ${DOWNLOADS_DIR}/${TARGET_PKGNAME}-*.tar.*)))
+
+	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
+	mkdir -p ${TARGET_TMP_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		ARCHIVE_FILE=${ARCHIVE_FILE} \
+		TARGET_DIR=${TARGET_SRC_DIR} \
+		sh ${PROJECT_DIR}/scripts/extract/build.sh
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		OS=${TARGET_OS} \
+		ARCH=${TARGET_ARCH} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+
+	rm -rf ${TARGET_TMP_DIR}
+
 # libressl_<os>-<arch>
 ${INTERMEDIATE_DIR}/libressl_%: \
 	${DOWNLOADS_DIR} \
@@ -303,6 +343,7 @@ ${INTERMEDIATE_DIR}/ffmpeg_%: \
 	${PKGCONFIG_DIR} \
 	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
+		${INTERMEDIATE_DIR}/dav1d_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 	)
 
@@ -646,6 +687,7 @@ ${INTERMEDIATE_DIR}/libs-arch_%: \
 	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
+		${INTERMEDIATE_DIR}/dav1d_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/uchardet_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libass_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
@@ -852,6 +894,7 @@ update-downloads-lock:
 		ffmpeg \
 		libressl \
 		libxml2 \
+		dav1d \
 	)
 
 	go run cmd/update-downloads-lock/main.go ${DEPS} > downloads.lock
