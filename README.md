@@ -100,8 +100,9 @@ A(mpv) --> B(ffmpeg)
 A(mpv) -.-> C(libass)
 A(mpv) -.-> D(uchardet)
 
-B -.-> H(libressl)
-B -.-> I(libxml2)
+B -.-> H(dav1d)
+B -.-> I(libressl)
+B -.-> J(libxml2)
 
 C --> E(freetype)
 C --> F(harfbuzz)
@@ -130,6 +131,9 @@ E -.-> F
   and laying out text in multiple languages and scripts, with support for
   advanced typography features such as ligatures and kerning
 
+- **[dav1d](https://code.videolan.org/videolan/dav1d) (optional)**: A library
+  for cross-platform AV1 decoding
+
 - **[libressl](https://www.libressl.org/) (optional)**: A fork of OpenSSL that
   aims to provide a more secure and auditable implementation of the SSL/TLS
   protocols
@@ -154,6 +158,7 @@ E -.-> F
 | libressl   | Apache-1.0, BSD-4-Clause, ISC, public domain           |       ✅       |
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 | libxml2    | MIT                                                    |       ✅       |
+| dav1d      | BSD-2-clause                                           |       ✅       |
 
 ## Notes
 

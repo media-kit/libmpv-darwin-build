@@ -1,19 +1,23 @@
+dav1d:
+  version: 1.2.1
+  url: https://code.videolan.org/videolan/dav1d/-/archive/1.2.1/dav1d-1.2.1.tar.bz2
+  sha256: a4003623cdc0109dec3aac8435520aa3fb12c4d69454fa227f2658cdb6dab5fa
 ffmpeg:
   version: "6.0"
   url: https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
   sha256: 57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
 freetype:
-  version: 2.13.1
-  url: https://downloads.sourceforge.net/project/freetype/freetype2/2.13.1/freetype-2.13.1.tar.xz
-  sha256: ea67e3b019b1104d1667aa274f5dc307d8cbd606b399bc32df308a77f1a564bf
+  version: 2.13.2
+  url: https://downloads.sourceforge.net/project/freetype/freetype2/2.13.2/freetype-2.13.2.tar.xz
+  sha256: 12991c4e55c506dd7f9b765933e62fd2be2e06d421505d7950a132e4f1bb484d
 fribidi:
   version: 1.0.13
   url: https://github.com/fribidi/fribidi/releases/download/v1.0.13/fribidi-1.0.13.tar.xz
   sha256: 7fa16c80c81bd622f7b198d31356da139cc318a63fc7761217af4130903f54a2
 harfbuzz:
-  version: 8.0.1
-  url: https://github.com/harfbuzz/harfbuzz/archive/8.0.1.tar.gz
-  sha256: d54ca67b6a0bf732b66a343566446d7f93df2bb850133f886c0082fb618a06b2
+  version: 8.1.1
+  url: https://github.com/harfbuzz/harfbuzz/archive/8.1.1.tar.gz
+  sha256: b16e6bc0fc7e6a218583f40c7d201771f2e3072f85ef6e9217b36c1dc6b2aa25
 libass:
   version: 0.17.1
   url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
@@ -23,9 +27,9 @@ libressl:
   url: https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.7.3.tar.gz
   sha256: 7948c856a90c825bd7268b6f85674a8dcd254bae42e221781b24e3f8dc335db3
 libxml2:
-  version: 2.11.4
-  url: https://download.gnome.org/sources/libxml2/2.11/libxml2-2.11.4.tar.xz
-  sha256: 737e1d7f8ab3f139729ca13a2494fd17bf30ddb4b7a427cf336252cab57f57f7
+  version: 2.11.5
+  url: https://download.gnome.org/sources/libxml2/2.11/libxml2-2.11.5.tar.xz
+  sha256: 3727b078c360ec69fa869de14bd6f75d7ee8d36987b071e6928d4720a28df3a6
 mpv:
   version: 0.36.0
   url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.36.0.tar.gz
