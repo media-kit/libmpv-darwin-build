@@ -98,6 +98,7 @@ audio_default_options = [
     '--enable-decoder=wma*',
     '--enable-decoder=pcm*',
     '--enable-decoder=dsd*',
+    '--enable-decoder=dca', # required by dts
 
     # parsers   
     '--enable-parser=aac*',
