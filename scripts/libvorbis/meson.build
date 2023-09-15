@@ -1,6 +1,6 @@
 # https://mesonbuild.com/External-Project-module.html
 
-project('libressl', 'c')
+project('libvorbis', 'c')
 
 mod = import('unstable-external_project')
 
@@ -9,11 +9,9 @@ p = mod.add_project('configure',
         '--prefix=@PREFIX@',
         '--disable-static',
         '--enable-shared',
-        '--disable-dependency-tracking',
-        '--disable-silent-rules',
     ],
     verbose: true,
 )
 
-libressl_dep = p.dependency('libressl')
-meson.override_dependency('libressl', libressl_dep)
+libvorbis_dep = p.dependency('libvorbis')
+meson.override_dependency('libvorbis', libvorbis_dep)

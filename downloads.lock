@@ -6,6 +6,10 @@ ffmpeg:
   version: "6.0"
   url: https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
   sha256: 57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
+fftools-ffi:
+  version: "106d5813"
+  url: https://github.com/moffatman/fftools-ffi/archive/106d58138071eba66c7d814f6573029c712cd597.tar.gz
+  sha256: 4577bb410978f5026270390aa65ebf0307250f3f5b0adf5353e060a5a3f4ee25
 freetype:
   version: 2.13.2
   url: https://downloads.sourceforge.net/project/freetype/freetype2/2.13.2/freetype-2.13.2.tar.xz
@@ -22,14 +26,30 @@ libass:
   version: 0.17.1
   url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
   sha256: f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784
-libressl:
-  version: 3.7.3
-  url: https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.7.3.tar.gz
-  sha256: 7948c856a90c825bd7268b6f85674a8dcd254bae42e221781b24e3f8dc335db3
+libogg:
+  version: 1.3.5
+  url: https://github.com/xiph/ogg/releases/download/v1.3.5/libogg-1.3.5.tar.gz
+  sha256: 0eb4b4b9420a0f51db142ba3f9c64b333f826532dc0f48c6410ae51f4799b664
+libvorbis:
+  version: 1.3.7
+  url: https://github.com/xiph/vorbis/releases/download/v1.3.7/libvorbis-1.3.7.tar.gz
+  sha256: 0e982409a9c3fc82ee06e08205b1355e5c6aa4c36bca58146ef399621b0ce5ab
+libvpx:
+  version: 1.13.0+1
+  url: https://gitlab.freedesktop.org/gstreamer/meson-ports/libvpx/-/archive/90d26fac0d895969a82cd873ad36e39737104c44/libvpx-v1.13.0.tar.gz
+  sha256: 4f872ad2709d17b848b3588231495e432c42b9263731b9121fa210a3c5a893ff
+libx264:
+  version: "a8b68ebf"
+  url: https://code.videolan.org/videolan/x264/-/archive/a8b68ebfaa68621b5ac8907610d3335971839d52/libx264-a8b68ebfaa68621b5ac8907610d3335971839d52.tar.gz
+  sha256: 164688b63f11a6e4f6d945057fc5c57d5eefb97973d0029fb0303744e10839ff
 libxml2:
   version: 2.11.5
   url: https://download.gnome.org/sources/libxml2/2.11/libxml2-2.11.5.tar.xz
   sha256: 3727b078c360ec69fa869de14bd6f75d7ee8d36987b071e6928d4720a28df3a6
+mbedtls:
+  version: 3.4.1
+  url: https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.1.tar.gz
+  sha256: a420fcf7103e54e775c383e3751729b8fb2dcd087f6165befd13f28315f754f5
 mpv:
   version: 0.36.0
   url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.36.0.tar.gz

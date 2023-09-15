@@ -46,7 +46,8 @@ common_options = [
     '--enable-network',
     '--enable-pthreads',
     '--enable-pic',
-    '--enable-libtls', # tls support (libressl)
+    '--enable-mbedtls', # tls support (mbedtls)
+    '--enable-version3',
     '--enable-safe-bitstream-reader',
     '--enable-stripping',
     '--enable-avcodec',
@@ -282,6 +283,20 @@ video_full_options = [
     '--enable-decoder=h264',
 ]
 
+audio_encodersgpl_options = [
+    '--enable-encoders',
+    '--enable-muxers',
+    '--enable-filters',
+    '--enable-libvorbis',
+    # TODO: If audio_encoders is going to exist as its own package, be smarter about what encoders to include
+]
+
+video_encodersgpl_options = [
+    '--enable-libvpx',
+    '--enable-libx264',
+    '--enable-gpl'
+]
+
 # disable all option
 options = disable_all_options
 
@@ -302,6 +317,13 @@ elif flavor == 'full'
     options += audio_full_options
     if variant == 'video'
         options += video_full_options
+    endif
+elif flavor == 'encodersgpl'
+    options += audio_full_options
+    options += audio_encodersgpl_options
+    if variant == 'video'
+        options += video_full_options
+        options += video_encodersgpl_options
     endif
 endif
 
@@ -333,14 +355,16 @@ p = mod.add_project('configure',
     verbose: true,
 )
 
-libavfilter_dep = p.dependency('libavfilter')
-libswscale_dep = p.dependency('libswscale')
-libavcodec_dep = p.dependency('libavcodec')
-libavformat_dep = p.dependency('libavformat')
-libswresample_dep = p.dependency('libswresample')
+libavfilter_dep = p.dependency('avfilter')
+libswscale_dep = p.dependency('swscale')
+libavcodec_dep = p.dependency('avcodec')
+libavformat_dep = p.dependency('avformat')
+libavutil_dep = p.dependency('avutil')
+libswresample_dep = p.dependency('swresample')
 
 meson.override_dependency('libavfilter', libavfilter_dep)
 meson.override_dependency('libswscale', libswscale_dep)
 meson.override_dependency('libavcodec', libavcodec_dep)
 meson.override_dependency('libavformat', libavformat_dep)
+meson.override_dependency('libavutil', libavutil_dep)
 meson.override_dependency('libswresample', libswresample_dep)

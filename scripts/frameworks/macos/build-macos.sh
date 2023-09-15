@@ -16,6 +16,11 @@ find ${DEPS} -name "*.dylib" -type f | while read DYLIB; do
     # framework dir
     FRAMEWORK_DIR="${OUTPUT_DIR}/${FRAMEWORK_NAME}.framework"
 
+    if [ -d $FRAMEWORK_DIR ]; then
+        # Duplicated framework because of versioned dylibs, just skip
+        continue
+    fi
+
     # determine archs
     ARCHS=$(lipo -archs "${DYLIB}")
 

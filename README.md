@@ -2,7 +2,7 @@
 
 Provides builds of [libmpv](https://github.com/mpv-player/mpv) for macOS & iOS,
 used by [media_kit](https://github.com/alexmercerind/media_kit), compatible
-with commercial use.
+with commercial use for playback, and GPL use for encoding.
 
 Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 [IINA](https://github.com/iina/iina).
@@ -15,24 +15,34 @@ $ VERSION=v0.0.1 make
 $ ls build/output
 libmpv-libs_v0.0.1_ios-arm64-audio-default.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-audio-full.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-audio-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-video-default.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-video-full.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-video-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-audio-default.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-audio-full.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-audio-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-video-default.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-video-full.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-video-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_macos-universal-audio-default.tar.gz
 libmpv-libs_v0.0.1_macos-universal-audio-full.tar.gz
+libmpv-libs_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_macos-universal-video-default.tar.gz
 libmpv-libs_v0.0.1_macos-universal-video-full.tar.gz
+libmpv-libs_v0.0.1_macos-universal-video-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-audio-default.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-audio-full.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-audio-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-video-default.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-video-full.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-video-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-audio-default.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-audio-full.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-video-default.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-video-encodersgpl.tar.gz
 ```
 
 ## Naming convention
@@ -41,14 +51,14 @@ libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
 libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 ```
 
-| Component   | Notes                           | Value                    |
-| ----------- | ------------------------------- | ------------------------ |
-| **format**  | Output format of built files    | libs, xcframeworks       |
-| **version** | Semantic version                | v0.0.1, …                |
-| **os**      | Operating system                | ios, iossimulator, macos |
-| **arch**    | Architecture                    | arm64, amd64, universal  |
-| **variant** | Usage context                   | audio, video             |
-| **flavor**  | Number of available decoders, … | default, full            |
+| Component   | Notes                           | Value                      |
+| ----------- | ------------------------------- | -------------------------- |
+| **format**  | Output format of built files    | libs, xcframeworks         |
+| **version** | Semantic version                | v0.0.1, …                  |
+| **os**      | Operating system                | ios, iossimulator, macos   |
+| **arch**    | Architecture                    | arm64, amd64, universal    |
+| **variant** | Usage context                   | audio, video               |
+| **flavor**  | Available decoders and encoders | default, full, encodersgpl |
 
 ## Minimum versions
 
@@ -99,21 +109,31 @@ flowchart LR
 A(mpv) --> B(ffmpeg)
 A(mpv) -.-> C(libass)
 A(mpv) -.-> D(uchardet)
+A(mpv) -.-> K(fftools-ffi)
 
 B -.-> H(dav1d)
-B -.-> I(libressl)
+B -.-> I(mbedtls)
 B -.-> J(libxml2)
+B -.-> L(libvpx)
+B -.-> M(libx264)
+B -.-> N(libvorbis)
 
 C --> E(freetype)
 C --> F(harfbuzz)
 C --> G(fribidi)
 
+N --> O(libogg)
+
 E -.-> F
+K -.-> B
 ```
 
 - [**ffmpeg**](https://ffmpeg.org): A cross-platform solution for converting,
   streaming, and recording audio and video, with support for a wide range of
   codecs and formats
+
+- [**fftools-ffi**](https://github.com/moffatman/fftools-ffi): FFmpeg's command-line
+  interface exposed as a shared library for FFI usage
 
 - **[libass](https://github.com/libass/libass)(optional)**: A library for rendering
   subtitles in videos, with support for advanced text formatting and positioning
@@ -134,9 +154,20 @@ E -.-> F
 - **[dav1d](https://code.videolan.org/videolan/dav1d) (optional)**: A library
   for cross-platform AV1 decoding
 
-- **[libressl](https://www.libressl.org/) (optional)**: A fork of OpenSSL that
-  aims to provide a more secure and auditable implementation of the SSL/TLS
-  protocols
+- **[libogg](https://github.com/xiph/ogg) (optional)**: Reference implementation
+  of the Ogg media container
+
+- **[libvorbis](https://github.com/xiph/vorbis) (optional)**: Reference implementation
+  of the Ogg Vorbis audio format
+
+- **[libvpx](https://gitlab.freedesktop.org/gstreamer/meson-ports/libvpx) (optional)**: Reference
+  implementation of the VP8 and VP9 video formats
+
+- **[libx264](https://www.videolan.org/developers/x264.html) (optional)**: Free software library
+  for encoding video streams into the H.264/MPEG-4 AVC compression format
+
+- **[mbedtls](https://www.libressl.org/) (optional)**: An open source, portable,
+  easy to use, readable and flexible TLS library
 
 - **[libxml2](http://xmlsoft.org/) (optional)**: A library for processing XML
   data, used by ffmpeg to support the Dash protocol
@@ -147,6 +178,8 @@ E -.-> F
 
 ## Commercial use
 
+### Default, Full flavors
+
 | Dependency | Licence                                                | Commercial use |
 | ---------- | ------------------------------------------------------ | :------------: |
 | mpv        | LGPL-2.1 (`-Dgpl=false`)                               |       ✅       |
@@ -155,10 +188,28 @@ E -.-> F
 | freetype   | FreeType                                               |       ✅       |
 | harfbuzz   | MIT                                                    |       ✅       |
 | fribidi    | LGPL-2.1                                               |       ✅       |
-| libressl   | Apache-1.0, BSD-4-Clause, ISC, public domain           |       ✅       |
+| mbedtls    | Apache 2.0                                             |       ✅       |
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 | libxml2    | MIT                                                    |       ✅       |
 | dav1d      | BSD-2-clause                                           |       ✅       |
+
+### Encoders-GPL flavor
+
+| mpv         | LGPL-2.1 (`-Dgpl=false`)                              |       ✅       |
+| ffmpeg      | GPL-2.1 (`--enable-nonfree` omitted)                  |       ❌       |
+| libass      | ISC                                                   |       ✅       |
+| freetype    | FreeType                                              |       ✅       |
+| harfbuzz    | MIT                                                   |       ✅       |
+| fribidi     | LGPL-2.1                                              |       ✅       |
+| mbedtls     | Apache 2.0                                            |       ✅       |
+| uchardet    | MPL-1.1, GPL-2, LGPL-2.1                              |       ✅       |
+| libxml2     | MIT                                                   |       ✅       |
+| dav1d       | BSD-2-clause                                          |       ✅       |
+| fftools-ffi | LGPL-2.1                                              |       ✅       |
+| libx264     | GPL-2.0+                                              |       ❌       |
+| libvpx      | BSD-3-clause                                          |       ✅       |
+| libvorbis   | BSD-3-clause                                          |       ✅       |
+| libogg      | BSD-3-clause                                          |       ✅       |
 
 ## Notes
 
@@ -235,3 +286,4 @@ solution was to:
 - https://github.com/ldwardx/mpv-build-mac-iOS
 - https://github.com/birros/godot_tl/tree/ca2fc4151bd8141241151dd6e29768608600473a/toolchains
 - https://github.com/Vargol/ffmpeg-apple-arm64-build
+- https://github.com/arthenica/ffmpeg-kit

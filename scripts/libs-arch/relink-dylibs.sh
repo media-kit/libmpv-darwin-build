@@ -28,7 +28,7 @@ relink_dylibs() {
             grep " name " |
             cut -d " " -f11 |
             tail -n +2 |
-            grep "$SOURCE_PREFIX" |
+            grep -E "$SOURCE_PREFIX|^lib" | # libmbedtls emitted without absolute path for some reason
             while read DEP; do
                 DEPNAME=$(basename $DEP)
 
