@@ -30,7 +30,7 @@ MAKEFLAGS += "-j -l $(shell sysctl -n hw.ncpu) "
 HOST_OS = macos
 ifeq ($(shell uname -m), x86_64)
     HOST_ARCH = amd64
-else ifeq ($(shell uname -m), aarch64)
+else ifeq ($(shell uname -m), arm64)
     HOST_ARCH = arm64
 else
     $(error "Invalid host arch: Your host arch must be amd64 or arm64")
