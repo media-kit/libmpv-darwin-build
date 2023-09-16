@@ -56,65 +56,65 @@ all: \
 	${OUTPUT_DIR}/debug.zip \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-encoders.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-encoders.tar.gz
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-encodersgpl.tar.gz
 
 ${OUTPUT_DIR}/debug.zip: \
 	${INTERMEDIATE_DIR}/tool-versions.lock \
 	$$(foreach OS,ios iossimulator macos, \
 		$$(foreach ARCH,amd64 arm64, \
 			$$(foreach VARIANT,audio video, \
-				$$(foreach FLAVOR,default full encoders, \
+				$$(foreach FLAVOR,default full encodersgpl, \
 					$$(if $$(filter-out ios-amd64, $${OS}-$${ARCH}), \
 						${INTERMEDIATE_DIR}/ffmpeg_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
 						${INTERMEDIATE_DIR}/fftools-ffi_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
@@ -361,14 +361,14 @@ ${INTERMEDIATE_DIR}/ffmpeg_%: \
 	${DOWNLOADS_DIR} \
 	${PKGCONFIG_DIR} \
 	${INTERMEDIATE_DIR}/mbedtls_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
-	$$(if $$(filter encoders, $$(word 4,$$(subst -, ,$$*))), \
+	$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/libvorbis_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libogg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 	) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/dav1d_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
-		$$(if $$(filter encoders, $$(word 4,$$(subst -, ,$$*))), \
+		$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
 			${INTERMEDIATE_DIR}/libvpx_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 			${INTERMEDIATE_DIR}/libx264_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		) \
@@ -970,7 +970,7 @@ ${INTERMEDIATE_DIR}/libs-arch_%: \
 	${INTERMEDIATE_DIR}/mpv_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/mbedtls_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
-	$$(if $$(filter encoders, $$(word 4,$$(subst -, ,$$*))), \
+	$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/fftools-ffi_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libvorbis_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libogg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
@@ -983,7 +983,7 @@ ${INTERMEDIATE_DIR}/libs-arch_%: \
 		${INTERMEDIATE_DIR}/harfbuzz_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/fribidi_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/freetype_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
-		$$(if $$(filter encoders, $$(word 4,$$(subst -, ,$$*))), \
+		$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
 			${INTERMEDIATE_DIR}/libvpx_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 			${INTERMEDIATE_DIR}/libx264_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		) \

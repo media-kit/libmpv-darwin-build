@@ -1,2 +1,2 @@
 option('variant', type : 'combo', choices : ['audio', 'video'])
-option('flavor', type : 'combo', choices : ['default', 'full', 'encoders'])
+option('flavor', type : 'combo', choices : ['default', 'full', 'encodersgpl'])

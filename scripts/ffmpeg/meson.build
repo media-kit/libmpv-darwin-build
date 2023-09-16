@@ -283,7 +283,7 @@ video_full_options = [
     '--enable-decoder=h264',
 ]
 
-audio_encoders_options = [
+audio_encodersgpl_options = [
     '--enable-encoders',
     '--enable-muxers',
     '--enable-filters',
@@ -291,7 +291,7 @@ audio_encoders_options = [
     # TODO: If audio_encoders is going to exist as its own package, be smarter about what encoders to include
 ]
 
-video_encoders_options = [
+video_encodersgpl_options = [
     '--enable-libvpx',
     '--enable-libx264',
     '--enable-gpl'
@@ -318,12 +318,12 @@ elif flavor == 'full'
     if variant == 'video'
         options += video_full_options
     endif
-elif flavor == 'encoders'
+elif flavor == 'encodersgpl'
     options += audio_full_options
-    options += audio_encoders_options
+    options += audio_encodersgpl_options
     if variant == 'video'
         options += video_full_options
-        options += video_encoders_options
+        options += video_encodersgpl_options
     endif
 endif
 
