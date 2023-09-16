@@ -1174,23 +1174,6 @@ ${OUTPUT_DIR}/libmpv-%.tar.gz: \
 	mv ${TARGET_OUTPUT_FILE} ${TARGET_FILE}
 	rm -rf ${TARGET_TMP_DIR}
 
-.PHONY: update-downloads-lock
-update-downloads-lock:
-	$(eval DEPS= \
-		pkg-config \
-		mpv \
-		uchardet \
-		libass \
-		freetype \
-		harfbuzz \
-		fribidi \
-		ffmpeg \
-		libxml2 \
-		dav1d \
-	)
-
-	go run cmd/update-downloads-lock/main.go ${DEPS} > downloads.lock
-
 .PHONY: tool-versions
 tool-versions:
 	go run cmd/tool-versions/main.go
