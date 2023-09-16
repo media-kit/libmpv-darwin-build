@@ -60,6 +60,11 @@ libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 | **variant** | Usage context                   | audio, video               |
 | **flavor**  | Available decoders and encoders | default, full, encodersgpl |
 
+Inclusion:
+
+- Variants: $audio \subset video$
+- Flavors: $audio \subset full \subset encodersgpl$
+
 ## Minimum versions
 
 <table>
@@ -105,37 +110,73 @@ libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 
 ```mermaid
 flowchart LR
+    subgraph legend[Legend]
+        direction TB
+        subgraph links
+            P(node):::decoders -- "required" --> Q(node):::decoders
+            R(node):::decoders -. "optional" .-> S(node):::decoders
+        end
 
-A(mpv) --> B(ffmpeg)
-A(mpv) -.-> C(libass)
-A(mpv) -.-> D(uchardet)
-A(mpv) -.-> K(fftools-ffi)
+        subgraph variants
+            T(audio & video):::decoders
+            U{{video only}}:::decoders
+        end
 
-B -.-> H(dav1d)
-B -.-> I(mbedtls)
-B -.-> J(libxml2)
-B -.-> L(libvpx)
-B -.-> M(libx264)
-B -.-> N(libvorbis)
+        subgraph flavors
+            V(default, full):::decoders
+            W(encodersgpl):::encoders
+        end
+    end
 
-C --> E(freetype)
-C --> F(harfbuzz)
-C --> G(fribidi)
+    subgraph content[ ]
+        direction LR
+        A(mpv):::decoders -.-> B{{uchardet}}:::decoders
+        A                 -.-> C{{libass}}:::decoders
+        A                 -->  D(ffmpeg):::decoders
 
-N --> O(libogg)
+        E(fftools-ffi):::encoders --> D
 
-E -.-> F
-K -.-> B
+        %% libass
+        C -->  F{{fribidi}}:::decoders
+        C -->  G{{harfbuzz}}:::decoders
+        C -->  H{{freetype}}:::decoders
+        H -.-> G
+
+        %% ffmpeg
+        D -.-> I(mbedtls):::decoders
+        D -.-> J{{dav1d}}:::decoders
+        D -.-> K{{libxml2}}:::decoders
+        D -.-> L(libvorbis):::encoders
+        D -.-> M{{libvpx}}:::encoders
+        D -.-> N{{libx264}}:::encoders
+        L -->  O(libogg):::encoders
+    end
+
+    classDef decoders stroke:#888
+    classDef encoders stroke:#14a,stroke-width:3px
+    classDef legend fill:transparent,stroke:#8882
+    classDef content fill:transparent,stroke:transparent
+    classDef card fill:transparent,stroke:#888a
+
+    legend:::legend
+    content:::content
+    links:::card
+    variants:::card
+    flavors:::card
 ```
+
+- [**mpv**](https://github.com/mpv-player/mpv): A free (as in freedom) media
+  player for the command line. It supports a wide variety of media file formats,
+  audio and video codecs, and subtitle types
 
 - [**ffmpeg**](https://ffmpeg.org): A cross-platform solution for converting,
   streaming, and recording audio and video, with support for a wide range of
   codecs and formats
 
-- [**fftools-ffi**](https://github.com/moffatman/fftools-ffi): FFmpeg's command-line
-  interface exposed as a shared library for FFI usage
+- [**fftools-ffi**](https://github.com/moffatman/fftools-ffi): FFmpeg's
+  command-line interface exposed as a shared library for FFI usage
 
-- **[libass](https://github.com/libass/libass)(optional)**: A library for rendering
+- [**libass**](https://github.com/libass/libass): A library for rendering
   subtitles in videos, with support for advanced text formatting and positioning
   features (made optional with a patch)
 
@@ -151,30 +192,31 @@ K -.-> B
   and laying out text in multiple languages and scripts, with support for
   advanced typography features such as ligatures and kerning
 
-- **[dav1d](https://code.videolan.org/videolan/dav1d) (optional)**: A library
-  for cross-platform AV1 decoding
+- [**dav1d**](https://code.videolan.org/videolan/dav1d): A library for
+  cross-platform AV1 decoding
 
-- **[libogg](https://github.com/xiph/ogg) (optional)**: Reference implementation
-  of the Ogg media container
+- [**libogg**](https://github.com/xiph/ogg): Reference implementation of the Ogg
+  media container
 
-- **[libvorbis](https://github.com/xiph/vorbis) (optional)**: Reference implementation
-  of the Ogg Vorbis audio format
+- [**libvorbis**](https://github.com/xiph/vorbis): Reference implementation of
+  the Ogg Vorbis audio format
 
-- **[libvpx](https://gitlab.freedesktop.org/gstreamer/meson-ports/libvpx) (optional)**: Reference
-  implementation of the VP8 and VP9 video formats
+- [**libvpx**](https://gitlab.freedesktop.org/gstreamer/meson-ports/libvpx):
+  Reference implementation of the VP8 and VP9 video formats
 
-- **[libx264](https://www.videolan.org/developers/x264.html) (optional)**: Free software library
-  for encoding video streams into the H.264/MPEG-4 AVC compression format
+- [**libx264**](https://www.videolan.org/developers/x264.html): Free software
+  library for encoding video streams into the H.264/MPEG-4 AVC compression
+  format
 
-- **[mbedtls](https://www.libressl.org/) (optional)**: An open source, portable,
-  easy to use, readable and flexible TLS library
+- [**mbedtls**](https://www.libressl.org/): An open source, portable, easy to
+  use, readable and flexible TLS library
 
-- **[libxml2](http://xmlsoft.org/) (optional)**: A library for processing XML
-  data, used by ffmpeg to support the Dash protocol
+- [**libxml2**](http://xmlsoft.org/): A library for processing XML data, used by
+  ffmpeg to support the Dash protocol
 
-- **[uchardet](https://www.freedesktop.org/wiki/Software/uchardet/)
-  (optional)**: A C++ port of the Universal Character Encoding Detector (used by
-  Mozilla Firefox and Thunderbird) for detecting the encoding of input text
+- [**uchardet**](https://www.freedesktop.org/wiki/Software/uchardet/): A C++
+  port of the Universal Character Encoding Detector (used by Mozilla Firefox
+  and Thunderbird) for detecting the encoding of input text
 
 ## Commercial use
 
@@ -195,21 +237,23 @@ K -.-> B
 
 ### Encoders-GPL flavor
 
-| mpv         | LGPL-2.1 (`-Dgpl=false`)                              |       ✅       |
-| ffmpeg      | GPL-2.1 (`--enable-nonfree` omitted)                  |       ❌       |
-| libass      | ISC                                                   |       ✅       |
-| freetype    | FreeType                                              |       ✅       |
-| harfbuzz    | MIT                                                   |       ✅       |
-| fribidi     | LGPL-2.1                                              |       ✅       |
-| mbedtls     | Apache 2.0                                            |       ✅       |
-| uchardet    | MPL-1.1, GPL-2, LGPL-2.1                              |       ✅       |
-| libxml2     | MIT                                                   |       ✅       |
-| dav1d       | BSD-2-clause                                          |       ✅       |
-| fftools-ffi | LGPL-2.1                                              |       ✅       |
-| libx264     | GPL-2.0+                                              |       ❌       |
-| libvpx      | BSD-3-clause                                          |       ✅       |
-| libvorbis   | BSD-3-clause                                          |       ✅       |
-| libogg      | BSD-3-clause                                          |       ✅       |
+| Dependency  | Licence                              | Commercial use |
+| ----------- | ------------------------------------ | :------------: |
+| mpv         | LGPL-2.1 (`-Dgpl=false`)             |       ✅       |
+| ffmpeg      | GPL-2.1 (`--enable-nonfree` omitted) |       ❌       |
+| libass      | ISC                                  |       ✅       |
+| freetype    | FreeType                             |       ✅       |
+| harfbuzz    | MIT                                  |       ✅       |
+| fribidi     | LGPL-2.1                             |       ✅       |
+| mbedtls     | Apache 2.0                           |       ✅       |
+| uchardet    | MPL-1.1, GPL-2, LGPL-2.1             |       ✅       |
+| libxml2     | MIT                                  |       ✅       |
+| dav1d       | BSD-2-clause                         |       ✅       |
+| fftools-ffi | LGPL-2.1                             |       ✅       |
+| libx264     | GPL-2.0+                             |       ❌       |
+| libvpx      | BSD-3-clause                         |       ✅       |
+| libvorbis   | BSD-3-clause                         |       ✅       |
+| libogg      | BSD-3-clause                         |       ✅       |
 
 ## Notes
 
@@ -217,8 +261,8 @@ K -.-> B
   future:
 
   - [**libbluray**](https://code.videolan.org/videolan/libbluray): A library for
-    reading and parsing Blu-ray discs, with support for advanced features such as
-    BD-J menus and seamless branching
+    reading and parsing Blu-ray discs, with support for advanced features such
+    as BD-J menus and seamless branching
 
   - [**libarchive**](https://github.com/libarchive/libarchive): A library for
     reading various archive formats, including tar and zip, with support for
