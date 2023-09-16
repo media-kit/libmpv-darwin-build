@@ -15,34 +15,34 @@ $ VERSION=v0.0.1 make
 $ ls build/output
 libmpv-libs_v0.0.1_ios-arm64-audio-default.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-audio-full.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-audio-encodersgpl.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-audio-encoders.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-video-default.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-video-full.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-video-encodersgpl.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-video-encoders.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-audio-default.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-audio-full.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-audio-encodersgpl.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-audio-encoders.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-video-default.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-video-full.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-video-encodersgpl.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-video-encoders.tar.gz
 libmpv-libs_v0.0.1_macos-universal-audio-default.tar.gz
 libmpv-libs_v0.0.1_macos-universal-audio-full.tar.gz
-libmpv-libs_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
+libmpv-libs_v0.0.1_macos-universal-audio-encoders.tar.gz
 libmpv-libs_v0.0.1_macos-universal-video-default.tar.gz
 libmpv-libs_v0.0.1_macos-universal-video-full.tar.gz
-libmpv-libs_v0.0.1_macos-universal-video-encodersgpl.tar.gz
+libmpv-libs_v0.0.1_macos-universal-video-encoders.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-audio-default.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-audio-full.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-audio-encodersgpl.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-audio-encoders.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-video-default.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-video-full.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-video-encodersgpl.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-video-encoders.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-audio-default.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-audio-full.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-audio-encoders.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-video-default.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-video-encodersgpl.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-video-encoders.tar.gz
 ```
 
 ## Naming convention
@@ -51,19 +51,19 @@ libmpv-xcframeworks_v0.0.1_macos-universal-video-encodersgpl.tar.gz
 libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 ```
 
-| Component   | Notes                           | Value                      |
-| ----------- | ------------------------------- | -------------------------- |
-| **format**  | Output format of built files    | libs, xcframeworks         |
-| **version** | Semantic version                | v0.0.1, …                  |
-| **os**      | Operating system                | ios, iossimulator, macos   |
-| **arch**    | Architecture                    | arm64, amd64, universal    |
-| **variant** | Usage context                   | audio, video               |
-| **flavor**  | Available decoders and encoders | default, full, encodersgpl |
+| Component   | Notes                           | Value                    |
+| ----------- | ------------------------------- | ------------------------ |
+| **format**  | Output format of built files    | libs, xcframeworks       |
+| **version** | Semantic version                | v0.0.1, …                |
+| **os**      | Operating system                | ios, iossimulator, macos |
+| **arch**    | Architecture                    | arm64, amd64, universal  |
+| **variant** | Usage context                   | audio, video             |
+| **flavor**  | Available decoders and encoders | default, full, encoders  |
 
 Inclusion:
 
 - Variants: $audio \subset video$
-- Flavors: $audio \subset full \subset encodersgpl$
+- Flavors: $audio \subset full \subset encoders$
 
 ## Minimum versions
 
@@ -124,7 +124,7 @@ flowchart LR
 
         subgraph flavors
             V(default, full):::decoders
-            W(encodersgpl):::encoders
+            W(encoders):::encoders
         end
     end
 
@@ -235,7 +235,7 @@ flowchart LR
 | libxml2    | MIT                                                    |       ✅       |
 | dav1d      | BSD-2-clause                                           |       ✅       |
 
-### Encoders-GPL flavor
+### Encoders flavor
 
 | Dependency  | Licence                              | Commercial use |
 | ----------- | ------------------------------------ | :------------: |
