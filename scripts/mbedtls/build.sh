@@ -5,23 +5,27 @@ set -u # treat unset variables as an error
 
 cd ${SRC_DIR}
 
-# Extract c, c_args
-export CC="$(python3 -c "$(grep "^c" ${PROJECT_DIR}/cross-files/${OS}-${ARCH}.ini); print(' '.join(c + c_args))")"
+# cross build with meson
+cp ${PROJECT_DIR}/scripts/mbedtls/meson.build ./meson.build
+meson setup build_cross \
+    --cross-file ${PROJECT_DIR}/cross-files/${OS}-${ARCH}.ini \
+    --prefix="${OUTPUT_DIR}"
+meson compile -C build_cross mbedtls
 
-make clean
-make SHARED=1 no_test
-make SHARED=1 DESTDIR="${OUTPUT_DIR}" install
+# manually create output
+## create output layout
+mkdir -p dist/{include,lib}
+mkdir -p dist/include/{mbedtls,psa}
+mkdir -p dist/lib/pkgconfig
+## install headers
+cp -R subprojects/mbedtls/include/mbedtls/*.h dist/include/mbedtls
+cp -R subprojects/mbedtls/include/psa/*.h dist/include/psa
+## install libs
+find . -type f -name '*.dylib' -exec sh -c 'mv {} dist/lib' \;
+## install pkgconfig file
+cp ${PROJECT_DIR}/scripts/mbedtls/mbedtls.pc.in dist/lib/pkgconfig/mbedtls.pc
+sed -i '' 's|${PREFIX}|'${OUTPUT_DIR}'|g' dist/lib/pkgconfig/mbedtls.pc
 
-mkdir -p "${OUTPUT_DIR}/lib/pkgconfig"
-PC="${OUTPUT_DIR}/lib/pkgconfig/mbedtls.pc"
-echo "prefix=\"${OUTPUT_DIR}\"" > "${PC}"
-echo "exec_prefix=\${prefix}" >> "${PC}"
-echo "includedir=\"\${prefix}/include\"" >> "${PC}"
-echo "libdir=\"\${prefix}/lib\"" >> "${PC}"
-echo >> "${PC}"
-echo "Name: mbedtls" >> "${PC}"
-echo "Description: cryptographic library" >> "${PC}"
-echo "Version: unknown" >> "${PC}"
-echo "Libs: -L\"\${libdir}\" -lmbedtls -lmbedcrypto -lmbedx509" >> "${PC}"
-#echo Libs.private: -lm -framework ApplicationServices
-echo "Cflags: -I\"\${includedir}\"" >> "${PC}"
+# manual install
+mkdir -p "${OUTPUT_DIR}"
+cp -R dist/* "${OUTPUT_DIR}"/

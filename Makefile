@@ -302,7 +302,7 @@ ${INTERMEDIATE_DIR}/mbedtls_%: \
 	env -i \
 		PATH=${SANDBOX_PATH} \
 		ARCHIVE_FILE=${ARCHIVE_FILE} \
-		TARGET_DIR=${TARGET_SRC_DIR} \
+		TARGET_DIR=${TARGET_SRC_DIR}/subprojects/${TARGET_PKGNAME} \
 		sh ${PROJECT_DIR}/scripts/extract/build.sh
 
 	env -i \
