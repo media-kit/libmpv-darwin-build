@@ -56,49 +56,68 @@ all: \
 	${OUTPUT_DIR}/debug.zip \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_ios-arm64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-amd64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-arm64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_iossimulator-universal-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-amd64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-arm64-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-libs_${VERSION}_macos-universal-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_ios-universal-video-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-default.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-audio-encodersgpl.tar.gz \
 	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-default.tar.gz \
-	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-full.tar.gz \
+	${OUTPUT_DIR}/libmpv-xcframeworks_${VERSION}_macos-universal-video-encodersgpl.tar.gz
 
 ${OUTPUT_DIR}/debug.zip: \
 	${INTERMEDIATE_DIR}/tool-versions.lock \
 	$$(foreach OS,ios iossimulator macos, \
 		$$(foreach ARCH,amd64 arm64, \
 			$$(foreach VARIANT,audio video, \
-				$$(foreach FLAVOR,default full, \
+				$$(foreach FLAVOR,default full encodersgpl, \
 					$$(if $$(filter-out ios-amd64, $${OS}-$${ARCH}), \
 						${INTERMEDIATE_DIR}/ffmpeg_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
+						${INTERMEDIATE_DIR}/fftools-ffi_$${OS}-$${ARCH}-$${VARIANT}-$${FLAVOR} \
 						${INTERMEDIATE_DIR}/mpv_$${OS}-$${ARCH}-$${VARIANT} \
 					) \
 				) \
@@ -173,7 +192,7 @@ ${LINKS_DIR}:
 	rm -rf ${TARGET_DIR}
 
 	env \
-		BINARIES="meson ninja cmake" \
+		BINARIES="meson ninja cmake nasm" \
 		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
 		sh ${PROJECT_DIR}/scripts/links/build.sh
 
@@ -257,8 +276,8 @@ ${INTERMEDIATE_DIR}/dav1d_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
-# libressl_<os>-<arch>
-${INTERMEDIATE_DIR}/libressl_%: \
+# mbedtls_<os>-<arch>
+${INTERMEDIATE_DIR}/mbedtls_%: \
 	${DOWNLOADS_DIR} \
 	${PKGCONFIG_DIR}
 
@@ -283,7 +302,7 @@ ${INTERMEDIATE_DIR}/libressl_%: \
 	env -i \
 		PATH=${SANDBOX_PATH} \
 		ARCHIVE_FILE=${ARCHIVE_FILE} \
-		TARGET_DIR=${TARGET_SRC_DIR} \
+		TARGET_DIR=${TARGET_SRC_DIR}/subprojects/${TARGET_PKGNAME} \
 		sh ${PROJECT_DIR}/scripts/extract/build.sh
 
 	env -i \
@@ -341,10 +360,18 @@ ${INTERMEDIATE_DIR}/libxml2_%: \
 ${INTERMEDIATE_DIR}/ffmpeg_%: \
 	${DOWNLOADS_DIR} \
 	${PKGCONFIG_DIR} \
-	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/mbedtls_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
+		${INTERMEDIATE_DIR}/libvorbis_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/libogg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/dav1d_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+		$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
+			${INTERMEDIATE_DIR}/libvpx_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+			${INTERMEDIATE_DIR}/libx264_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+		) \
 	)
 
 	@echo "\033[32mRULE\033[0m $@"
@@ -681,11 +708,273 @@ ${INTERMEDIATE_DIR}/mpv_%: \
 
 	rm -rf ${TARGET_TMP_DIR}
 
+# fftools-ffi_<os>-<arch>-<variant>
+${INTERMEDIATE_DIR}/fftools-ffi_%: \
+	${DOWNLOADS_DIR} \
+	${PKGCONFIG_DIR} \
+	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-default
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_DIR=$@)
+	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
+	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
+	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR}/src/${TARGET_PKGNAME})
+	$(eval TARGET_OUTPUT_DIR=${PROJECT_DIR}/${TARGET_DIR})
+
+	$(eval ARCHIVE_FILE=$(firstword $(wildcard ${DOWNLOADS_DIR}/${TARGET_PKGNAME}-*.tar.*)))
+
+	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
+
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
+	mkdir -p ${TARGET_TMP_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		ARCHIVE_FILE=${ARCHIVE_FILE} \
+		TARGET_DIR=${TARGET_SRC_DIR} \
+		sh ${PROJECT_DIR}/scripts/extract/build.sh
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
+		OS=${TARGET_OS} \
+		ARCH=${TARGET_ARCH} \
+		VARIANT=${TARGET_VARIANT} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+
+	rm -rf ${TARGET_TMP_DIR}
+
+# libogg_<os>-<arch>-<variant>
+${INTERMEDIATE_DIR}/libogg_%: \
+	${DOWNLOADS_DIR} \
+	${PKGCONFIG_DIR}
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_DIR=$@)
+	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
+	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
+	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR}/src/${TARGET_PKGNAME})
+	$(eval TARGET_OUTPUT_DIR=${PROJECT_DIR}/${TARGET_DIR})
+
+	$(eval ARCHIVE_FILE=$(firstword $(wildcard ${DOWNLOADS_DIR}/${TARGET_PKGNAME}-*.tar.*)))
+
+	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
+
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
+	mkdir -p ${TARGET_TMP_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		ARCHIVE_FILE=${ARCHIVE_FILE} \
+		TARGET_DIR=${TARGET_SRC_DIR} \
+		sh ${PROJECT_DIR}/scripts/extract/build.sh
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
+		OS=${TARGET_OS} \
+		ARCH=${TARGET_ARCH} \
+		VARIANT=${TARGET_VARIANT} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+
+	rm -rf ${TARGET_TMP_DIR}
+
+# libvorbis_<os>-<arch>-<variant>
+${INTERMEDIATE_DIR}/libvorbis_%: \
+	${DOWNLOADS_DIR} \
+	${PKGCONFIG_DIR} \
+	${INTERMEDIATE_DIR}/libogg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_DIR=$@)
+	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
+	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
+	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR}/src/${TARGET_PKGNAME})
+	$(eval TARGET_OUTPUT_DIR=${PROJECT_DIR}/${TARGET_DIR})
+
+	$(eval ARCHIVE_FILE=$(firstword $(wildcard ${DOWNLOADS_DIR}/${TARGET_PKGNAME}-*.tar.*)))
+
+	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
+
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
+	mkdir -p ${TARGET_TMP_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		ARCHIVE_FILE=${ARCHIVE_FILE} \
+		TARGET_DIR=${TARGET_SRC_DIR} \
+		sh ${PROJECT_DIR}/scripts/extract/build.sh
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
+		OS=${TARGET_OS} \
+		ARCH=${TARGET_ARCH} \
+		VARIANT=${TARGET_VARIANT} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+
+	rm -rf x${TARGET_TMP_DIR}
+
+# libvpx_<os>-<arch>-<variant>
+${INTERMEDIATE_DIR}/libvpx_%: \
+	${DOWNLOADS_DIR} \
+	${PKGCONFIG_DIR}
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_DIR=$@)
+	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
+	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
+	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR}/src/${TARGET_PKGNAME})
+	$(eval TARGET_OUTPUT_DIR=${PROJECT_DIR}/${TARGET_DIR})
+
+	$(eval ARCHIVE_FILE=$(firstword $(wildcard ${DOWNLOADS_DIR}/${TARGET_PKGNAME}-*.tar.*)))
+
+	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
+
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
+	mkdir -p ${TARGET_TMP_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		ARCHIVE_FILE=${ARCHIVE_FILE} \
+		TARGET_DIR=${TARGET_SRC_DIR} \
+		sh ${PROJECT_DIR}/scripts/extract/build.sh
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
+		OS=${TARGET_OS} \
+		ARCH=${TARGET_ARCH} \
+		VARIANT=${TARGET_VARIANT} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+
+	rm -rf ${TARGET_TMP_DIR}
+
+# libx264_<os>-<arch>-<variant>
+${INTERMEDIATE_DIR}/libx264_%: \
+	${DOWNLOADS_DIR} \
+	${PKGCONFIG_DIR}
+
+	@echo "\033[32mRULE\033[0m $@"
+
+	$(eval TARGET_DIR=$@)
+	$(eval TARGET_PATTERN=$*)
+	$(eval TARGET_DEPS=$+)
+	$(eval TARGET_NAME=$(notdir ${TARGET_DIR}))
+	$(eval TARGET_PKGNAME=$(firstword $(subst _${TARGET_PATTERN}, ,${TARGET_NAME})))
+	$(eval TARGET_TMP_DIR=${TMP_DIR}/${TARGET_NAME})
+	$(eval TARGET_SRC_DIR=${TARGET_TMP_DIR}/src/${TARGET_PKGNAME})
+	$(eval TARGET_OUTPUT_DIR=${PROJECT_DIR}/${TARGET_DIR})
+
+	$(eval ARCHIVE_FILE=$(firstword $(wildcard ${DOWNLOADS_DIR}/${TARGET_PKGNAME}-*.tar.*)))
+
+	$(eval TARGET_OS=$(word 1, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_ARCH=$(word 2, $(subst -, ,${TARGET_PATTERN})))
+	$(eval TARGET_VARIANT=$(word 3, $(subst -, ,${TARGET_PATTERN})))
+
+	$(eval TARGET_PKGS_DEPS=$(foreach DEP,${TARGET_DEPS}, \
+		$(if $(findstring downloads,${DEP}),, \
+			$(if $(findstring pkg-config,${DEP}),, \
+				${DEP}))))
+	$(eval PKG_CONFIG_PATH_LIST=$(foreach DEP,${TARGET_PKGS_DEPS},${PROJECT_DIR}/${DEP}/lib/pkgconfig))
+	$(eval PKG_CONFIG_PATH=$(subst ${SPACE},${COLON},${PKG_CONFIG_PATH_LIST}))
+
+	rm -rf ${TARGET_TMP_DIR} ${TARGET_DIR}
+	mkdir -p ${TARGET_TMP_DIR}
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		ARCHIVE_FILE=${ARCHIVE_FILE} \
+		TARGET_DIR=${TARGET_SRC_DIR} \
+		sh ${PROJECT_DIR}/scripts/extract/build.sh
+
+	env -i \
+		PATH=${SANDBOX_PATH} \
+		PROJECT_DIR=${PROJECT_DIR} \
+		PKG_CONFIG_PATH=${PKG_CONFIG_PATH} \
+		OS=${TARGET_OS} \
+		ARCH=${TARGET_ARCH} \
+		VARIANT=${TARGET_VARIANT} \
+		SRC_DIR=${TARGET_SRC_DIR} \
+		OUTPUT_DIR=${TARGET_OUTPUT_DIR} \
+		sh ${PROJECT_DIR}/scripts/${TARGET_PKGNAME}/build.sh
+
+	rm -rf ${TARGET_TMP_DIR}
+
 # libs-arch_<os>-<arch>-<variant>-<flavor>
 ${INTERMEDIATE_DIR}/libs-arch_%: \
 	${INTERMEDIATE_DIR}/mpv_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
 	${INTERMEDIATE_DIR}/ffmpeg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*))-$$(word 4,$$(subst -, ,$$*)) \
-	${INTERMEDIATE_DIR}/libressl_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	${INTERMEDIATE_DIR}/mbedtls_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
+		${INTERMEDIATE_DIR}/fftools-ffi_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*))-$$(word 3,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/libvorbis_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+		${INTERMEDIATE_DIR}/libogg_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+	) \
 	$$(if $$(filter video, $$(word 3,$$(subst -, ,$$*))), \
 		${INTERMEDIATE_DIR}/dav1d_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/libxml2_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
@@ -694,6 +983,10 @@ ${INTERMEDIATE_DIR}/libs-arch_%: \
 		${INTERMEDIATE_DIR}/harfbuzz_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/fribidi_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
 		${INTERMEDIATE_DIR}/freetype_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+		$$(if $$(filter encodersgpl, $$(word 4,$$(subst -, ,$$*))), \
+			${INTERMEDIATE_DIR}/libvpx_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+			${INTERMEDIATE_DIR}/libx264_$$(word 1,$$(subst -, ,$$*))-$$(word 2,$$(subst -, ,$$*)) \
+		) \
 	)
 
 	@echo "\033[32mRULE\033[0m $@"
@@ -880,24 +1173,6 @@ ${OUTPUT_DIR}/libmpv-%.tar.gz: \
 
 	mv ${TARGET_OUTPUT_FILE} ${TARGET_FILE}
 	rm -rf ${TARGET_TMP_DIR}
-
-.PHONY: update-downloads-lock
-update-downloads-lock:
-	$(eval DEPS= \
-		pkg-config \
-		mpv \
-		uchardet \
-		libass \
-		freetype \
-		harfbuzz \
-		fribidi \
-		ffmpeg \
-		libressl \
-		libxml2 \
-		dav1d \
-	)
-
-	go run cmd/update-downloads-lock/main.go ${DEPS} > downloads.lock
 
 .PHONY: tool-versions
 tool-versions:

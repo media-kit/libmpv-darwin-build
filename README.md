@@ -2,7 +2,7 @@
 
 Provides builds of [libmpv](https://github.com/mpv-player/mpv) for macOS & iOS,
 used by [media_kit](https://github.com/alexmercerind/media_kit), compatible
-with commercial use.
+with commercial use for playback, and GPL use for encoding.
 
 Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 [IINA](https://github.com/iina/iina).
@@ -15,24 +15,34 @@ $ VERSION=v0.0.1 make
 $ ls build/output
 libmpv-libs_v0.0.1_ios-arm64-audio-default.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-audio-full.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-audio-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-video-default.tar.gz
 libmpv-libs_v0.0.1_ios-arm64-video-full.tar.gz
+libmpv-libs_v0.0.1_ios-arm64-video-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-audio-default.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-audio-full.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-audio-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-video-default.tar.gz
 libmpv-libs_v0.0.1_iossimulator-universal-video-full.tar.gz
+libmpv-libs_v0.0.1_iossimulator-universal-video-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_macos-universal-audio-default.tar.gz
 libmpv-libs_v0.0.1_macos-universal-audio-full.tar.gz
+libmpv-libs_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
 libmpv-libs_v0.0.1_macos-universal-video-default.tar.gz
 libmpv-libs_v0.0.1_macos-universal-video-full.tar.gz
+libmpv-libs_v0.0.1_macos-universal-video-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-audio-default.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-audio-full.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-audio-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-video-default.tar.gz
 libmpv-xcframeworks_v0.0.1_ios-universal-video-full.tar.gz
+libmpv-xcframeworks_v0.0.1_ios-universal-video-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-audio-default.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-audio-full.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-video-default.tar.gz
 libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
+libmpv-xcframeworks_v0.0.1_macos-universal-video-encodersgpl.tar.gz
 ```
 
 ## Naming convention
@@ -41,14 +51,19 @@ libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
 libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 ```
 
-| Component   | Notes                           | Value                    |
-| ----------- | ------------------------------- | ------------------------ |
-| **format**  | Output format of built files    | libs, xcframeworks       |
-| **version** | Semantic version                | v0.0.1, …                |
-| **os**      | Operating system                | ios, iossimulator, macos |
-| **arch**    | Architecture                    | arm64, amd64, universal  |
-| **variant** | Usage context                   | audio, video             |
-| **flavor**  | Number of available decoders, … | default, full            |
+| Component   | Notes                           | Value                      |
+| ----------- | ------------------------------- | -------------------------- |
+| **format**  | Output format of built files    | libs, xcframeworks         |
+| **version** | Semantic version                | v0.0.1, …                  |
+| **os**      | Operating system                | ios, iossimulator, macos   |
+| **arch**    | Architecture                    | arm64, amd64, universal    |
+| **variant** | Usage context                   | audio, video               |
+| **flavor**  | Available decoders and encoders | default, full, encodersgpl |
+
+Inclusion:
+
+- Variants: $audio \subset video$
+- Flavors: $audio \subset full \subset encodersgpl$
 
 ## Minimum versions
 
@@ -95,27 +110,73 @@ libmpv-<format>_<version>_<os>-<arch>-<variant>-<flavor>.tar.gz
 
 ```mermaid
 flowchart LR
+    subgraph legend[Legend]
+        direction TB
+        subgraph links
+            P(node):::decoders -- "required" --> Q(node):::decoders
+            R(node):::decoders -. "optional" .-> S(node):::decoders
+        end
 
-A(mpv) --> B(ffmpeg)
-A(mpv) -.-> C(libass)
-A(mpv) -.-> D(uchardet)
+        subgraph variants
+            T(audio & video):::decoders
+            U{{video only}}:::decoders
+        end
 
-B -.-> H(dav1d)
-B -.-> I(libressl)
-B -.-> J(libxml2)
+        subgraph flavors
+            V(default, full):::decoders
+            W(encodersgpl):::encoders
+        end
+    end
 
-C --> E(freetype)
-C --> F(harfbuzz)
-C --> G(fribidi)
+    subgraph content[ ]
+        direction LR
+        A(mpv):::decoders -.-> B{{uchardet}}:::decoders
+        A                 -.-> C{{libass}}:::decoders
+        A                 -->  D(ffmpeg):::decoders
 
-E -.-> F
+        E(fftools-ffi):::encoders --> D
+
+        %% libass
+        C -->  F{{fribidi}}:::decoders
+        C -->  G{{harfbuzz}}:::decoders
+        C -->  H{{freetype}}:::decoders
+        H -.-> G
+
+        %% ffmpeg
+        D -.-> I(mbedtls):::decoders
+        D -.-> J{{dav1d}}:::decoders
+        D -.-> K{{libxml2}}:::decoders
+        D -.-> L(libvorbis):::encoders
+        D -.-> M{{libvpx}}:::encoders
+        D -.-> N{{libx264}}:::encoders
+        L -->  O(libogg):::encoders
+    end
+
+    classDef decoders stroke:#888
+    classDef encoders stroke:#14a,stroke-width:3px
+    classDef legend fill:transparent,stroke:#8882
+    classDef content fill:transparent,stroke:transparent
+    classDef card fill:transparent,stroke:#888a
+
+    legend:::legend
+    content:::content
+    links:::card
+    variants:::card
+    flavors:::card
 ```
+
+- [**mpv**](https://github.com/mpv-player/mpv): A free (as in freedom) media
+  player for the command line. It supports a wide variety of media file formats,
+  audio and video codecs, and subtitle types
 
 - [**ffmpeg**](https://ffmpeg.org): A cross-platform solution for converting,
   streaming, and recording audio and video, with support for a wide range of
   codecs and formats
 
-- **[libass](https://github.com/libass/libass)(optional)**: A library for rendering
+- [**fftools-ffi**](https://github.com/moffatman/fftools-ffi): FFmpeg's
+  command-line interface exposed as a shared library for FFI usage
+
+- [**libass**](https://github.com/libass/libass): A library for rendering
   subtitles in videos, with support for advanced text formatting and positioning
   features (made optional with a patch)
 
@@ -131,21 +192,35 @@ E -.-> F
   and laying out text in multiple languages and scripts, with support for
   advanced typography features such as ligatures and kerning
 
-- **[dav1d](https://code.videolan.org/videolan/dav1d) (optional)**: A library
-  for cross-platform AV1 decoding
+- [**dav1d**](https://code.videolan.org/videolan/dav1d): A library for
+  cross-platform AV1 decoding
 
-- **[libressl](https://www.libressl.org/) (optional)**: A fork of OpenSSL that
-  aims to provide a more secure and auditable implementation of the SSL/TLS
-  protocols
+- [**libogg**](https://github.com/xiph/ogg): Reference implementation of the Ogg
+  media container
 
-- **[libxml2](http://xmlsoft.org/) (optional)**: A library for processing XML
-  data, used by ffmpeg to support the Dash protocol
+- [**libvorbis**](https://github.com/xiph/vorbis): Reference implementation of
+  the Ogg Vorbis audio format
 
-- **[uchardet](https://www.freedesktop.org/wiki/Software/uchardet/)
-  (optional)**: A C++ port of the Universal Character Encoding Detector (used by
-  Mozilla Firefox and Thunderbird) for detecting the encoding of input text
+- [**libvpx**](https://gitlab.freedesktop.org/gstreamer/meson-ports/libvpx):
+  Reference implementation of the VP8 and VP9 video formats
+
+- [**libx264**](https://www.videolan.org/developers/x264.html): Free software
+  library for encoding video streams into the H.264/MPEG-4 AVC compression
+  format
+
+- [**mbedtls**](https://www.libressl.org/): An open source, portable, easy to
+  use, readable and flexible TLS library
+
+- [**libxml2**](http://xmlsoft.org/): A library for processing XML data, used by
+  ffmpeg to support the Dash protocol
+
+- [**uchardet**](https://www.freedesktop.org/wiki/Software/uchardet/): A C++
+  port of the Universal Character Encoding Detector (used by Mozilla Firefox
+  and Thunderbird) for detecting the encoding of input text
 
 ## Commercial use
+
+### Default, Full flavors
 
 | Dependency | Licence                                                | Commercial use |
 | ---------- | ------------------------------------------------------ | :------------: |
@@ -155,10 +230,30 @@ E -.-> F
 | freetype   | FreeType                                               |       ✅       |
 | harfbuzz   | MIT                                                    |       ✅       |
 | fribidi    | LGPL-2.1                                               |       ✅       |
-| libressl   | Apache-1.0, BSD-4-Clause, ISC, public domain           |       ✅       |
+| mbedtls    | Apache 2.0                                             |       ✅       |
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 | libxml2    | MIT                                                    |       ✅       |
 | dav1d      | BSD-2-clause                                           |       ✅       |
+
+### Encoders-GPL flavor
+
+| Dependency  | Licence                              | Commercial use |
+| ----------- | ------------------------------------ | :------------: |
+| mpv         | LGPL-2.1 (`-Dgpl=false`)             |       ✅       |
+| ffmpeg      | GPL-2.1 (`--enable-nonfree` omitted) |       ❌       |
+| libass      | ISC                                  |       ✅       |
+| freetype    | FreeType                             |       ✅       |
+| harfbuzz    | MIT                                  |       ✅       |
+| fribidi     | LGPL-2.1                             |       ✅       |
+| mbedtls     | Apache 2.0                           |       ✅       |
+| uchardet    | MPL-1.1, GPL-2, LGPL-2.1             |       ✅       |
+| libxml2     | MIT                                  |       ✅       |
+| dav1d       | BSD-2-clause                         |       ✅       |
+| fftools-ffi | LGPL-2.1                             |       ✅       |
+| libx264     | GPL-2.0+                             |       ❌       |
+| libvpx      | BSD-3-clause                         |       ✅       |
+| libvorbis   | BSD-3-clause                         |       ✅       |
+| libogg      | BSD-3-clause                         |       ✅       |
 
 ## Notes
 
@@ -166,8 +261,8 @@ E -.-> F
   future:
 
   - [**libbluray**](https://code.videolan.org/videolan/libbluray): A library for
-    reading and parsing Blu-ray discs, with support for advanced features such as
-    BD-J menus and seamless branching
+    reading and parsing Blu-ray discs, with support for advanced features such
+    as BD-J menus and seamless branching
 
   - [**libarchive**](https://github.com/libarchive/libarchive): A library for
     reading various archive formats, including tar and zip, with support for
@@ -235,3 +330,4 @@ solution was to:
 - https://github.com/ldwardx/mpv-build-mac-iOS
 - https://github.com/birros/godot_tl/tree/ca2fc4151bd8141241151dd6e29768608600473a/toolchains
 - https://github.com/Vargol/ffmpeg-apple-arm64-build
+- https://github.com/arthenica/ffmpeg-kit

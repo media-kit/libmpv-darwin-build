@@ -24,14 +24,16 @@ func BuildToolVersions() (versions.VersionsMap, error) {
 }
 
 var toolVersionsCMDs = map[string]string{
-	"clang":  "clang --version | head -n1 | cut -d ' ' -f 4",
-	"cmake":  "cmake --version | head -n1 | cut -d ' ' -f 3",
-	"golang": "go version | cut -d ' ' -f 3 | sed 's/go//g'",
-	"macos":  "sw_vers -productVersion",
-	"make":   "make --version | head -n1 | cut -d ' ' -f 3",
-	"meson":  "meson --version",
-	"ninja":  "ninja --version",
-	"xcode":  "xcodebuild -version | head -n1 | cut -d ' ' -f 2",
+	"clang":   "clang --version | head -n1 | cut -d ' ' -f 4",
+	"cmake":   "cmake --version | head -n1 | cut -d ' ' -f 3",
+	"golang":  "go version | cut -d ' ' -f 3 | sed 's/go//g'",
+	"macos":   "sw_vers -productVersion",
+	"make":    "make --version | head -n1 | cut -d ' ' -f 3",
+	"meson":   "meson --version",
+	"nasm":    "nasm -v | cut -d ' ' -f 3",
+	"ninja":   "ninja --version",
+	"python3": "python3 --version | cut -d ' ' -f 2",
+	"xcode":   "xcodebuild -version | head -n1 | cut -d ' ' -f 2",
 }
 
 func shellCommand(cmd string) (string, error) {

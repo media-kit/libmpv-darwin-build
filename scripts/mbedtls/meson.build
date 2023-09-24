@@ -1,6 +1,6 @@
 # https://mesonbuild.com/External-Project-module.html
 
-project('uchardet', 'c', 'cpp')
+project('mbedtls', 'c')
 
 cmake = import('cmake')
 
@@ -15,12 +15,14 @@ options = cmake.subproject_options()
 options.add_cmake_defines({
     'CMAKE_OSX_ARCHITECTURES': arch,
     'CMAKE_OSX_SYSROOT': meson.get_cross_property('cmake_osx_sysroot'),
-    'BUILD_STATIC': false,
+    'USE_STATIC_MBEDTLS_LIBRARY': false,
+    'USE_SHARED_MBEDTLS_LIBRARY': true,
+    'LINK_WITH_PTHREAD': true,
 })
 
-uchardet = cmake.subproject('uchardet',
+mbedtls = cmake.subproject('mbedtls',
     options: options,
 )
 
-uchardet_dep = uchardet.dependency('libuchardet')
-meson.override_dependency('uchardet', uchardet_dep)
+mbedtls_dep = mbedtls.dependency('mbedtls')
+meson.override_dependency('mbedtls', mbedtls_dep)

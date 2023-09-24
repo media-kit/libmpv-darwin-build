@@ -12,6 +12,7 @@ meson setup build_cross \
     --prefix="${OUTPUT_DIR}"
 meson compile -C build_cross uchardet
 
+# TODO: don't build twice, see what's done for mbetls
 # native build with cmake
 cmake ./subprojects/uchardet \
     -B build_native \
