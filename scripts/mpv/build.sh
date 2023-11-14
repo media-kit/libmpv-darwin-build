@@ -6,6 +6,7 @@ set -u # treat unset variables as an error
 cd ${SRC_DIR}
 
 patch -p1 <${PROJECT_DIR}/patches/mpv-fix-missing-objc.patch
+patch -p1 <${PROJECT_DIR}/patches/mpv-mix-with-others.patch
 if [ "${VARIANT}" == "audio" ]; then
     patch -p1 <${PROJECT_DIR}/patches/mpv-remove-libass.patch
 fi
