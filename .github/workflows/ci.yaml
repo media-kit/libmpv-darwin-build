@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install requirements
-        run: brew install go meson ninja nasm
+        run: brew install go meson ninja nasm pkg-config
 
       - name: Print tool versions
         run: make tool-versions
