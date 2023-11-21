@@ -9,6 +9,7 @@ p = mod.add_project('configure',
         '--prefix=@PREFIX@',
         '--disable-static',
         '--enable-shared',
+        '--disable-tests'
     ],
     verbose: true,
 )
