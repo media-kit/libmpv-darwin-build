@@ -11,7 +11,7 @@ objc = meson.get_compiler('objc')
 nm = find_program('nm')
 ar = find_program('ar')
 strip = find_program('strip')
-pkg_config = find_program('pkgconfig')
+pkg_config = find_program('pkg-config')
 
 # build options
 c_args = get_option('c_args')
