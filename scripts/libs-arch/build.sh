@@ -27,7 +27,3 @@ ${PROJECT_DIR}/scripts/libs-arch/relink-dylibs.sh ${PROJECT_DIR} @rpath ${OUTPUT
 
 # remove signatures
 codesign --remove ${OUTPUT_DIR}/*.dylib
-
-if [ "${OS}" == "iossimulator" ] && [ "${ARCH}" == "arm64" ]; then
-    sh ${PROJECT_DIR}/scripts/libs-arch/fix-iossimulator-arm64.sh ${OUTPUT_DIR}
-fi

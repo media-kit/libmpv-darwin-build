@@ -5,6 +5,11 @@ set -u # treat unset variables as an error
 
 cd ${SRC_DIR}
 
+patch -p1 <${PROJECT_DIR}/patches/ltmain-target-passthrough.patch
+
+# Fix building on modern macOS
+sed -i '' 's/\-force_cpusubtype_ALL//g' configure
+
 cp ${PROJECT_DIR}/scripts/libvorbis/meson.* .
 
 meson setup build \

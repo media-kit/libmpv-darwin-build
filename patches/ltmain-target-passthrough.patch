@@ -1,0 +1,11 @@
+--- a/ltmain.sh
++++ b/ltmain.sh
+@@ -7154,7 +7154,7 @@
+       # Tru64 UNIX uses -model [arg] to determine the layout of C++
+       # classes, name mangling, and exception handling.
+       # Darwin uses the -arch flag to determine output architecture.
+-      -model|-arch|-isysroot|--sysroot)
++      -model|-arch|-isysroot|--sysroot|-target)
+ 	func_append compiler_flags " $arg"
+ 	func_append compile_command " $arg"
+ 	func_append finalize_command " $arg"
