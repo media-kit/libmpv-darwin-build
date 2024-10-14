@@ -56,6 +56,22 @@ common_options = [
     '--enable-swscale',
     '--enable-avfilter',
 
+    '--enable-decoder=mjpeg',
+    '--enable-decoder=ljpeg',
+    '--enable-decoder=jpegls',
+    '--enable-decoder=jpeg2000',
+    '--enable-decoder=png',
+    '--enable-decoder=gif',
+    '--enable-decoder=bmp',
+    '--enable-decoder=tiff',
+    '--enable-decoder=webp',
+
+    '--enable-encoder=mjpeg',
+    '--enable-encoder=ljpeg',
+    '--enable-encoder=jpegls',
+    '--enable-encoder=jpeg2000',
+    '--enable-encoder=png',
+
     # '--enable-gpl', # uncomment it to include GPL code
     # '--enable-nonfree', # uncomment it to include unredistributable code
 ]
