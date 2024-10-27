@@ -2,5 +2,18 @@
     "editor.formatOnSave": true,
     "[yaml]": {
         "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "nix.serverPath": "nixd",
+    "nix.enableLanguageServer": true,
+    "nix.formatterPath": "nixfmt",
+    "nix.serverSettings": {
+        "nixd": {
+            "nixpkgs": {
+                "expr": "import <nixpkgs> { }",
+            },
+            "formatting": {
+                "command": [ "nixfmt" ],
+            },
+        }
     }
 }

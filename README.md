@@ -7,42 +7,86 @@ with commercial use for playback, and GPL use for encoding.
 Heavily inspired by [Homebrew](https://github.com/Homebrew/brew) and
 [IINA](https://github.com/iina/iina).
 
-## Usage
+## Setup
+
+- Nix: [nixos.org/download/#nix-install-macos](https://nixos.org/download/#nix-install-macos)
+- Xcode: [./nix/overlays/xcode.md#how-to-store-xcode-and-prevent-to-be-garbage-collected](./nix/overlays/xcode.md#how-to-store-xcode-and-prevent-to-be-garbage-collected)
+
+## Build
 
 ```shell
-$ brew install cmake golang meson ninja
-$ VERSION=v0.0.1 make
-$ ls build/output
-libmpv-libs_v0.0.1_ios-arm64-audio-default.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-audio-full.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-audio-encodersgpl.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-video-default.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-video-full.tar.gz
-libmpv-libs_v0.0.1_ios-arm64-video-encodersgpl.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-audio-default.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-audio-full.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-audio-encodersgpl.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-video-default.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-video-full.tar.gz
-libmpv-libs_v0.0.1_iossimulator-universal-video-encodersgpl.tar.gz
-libmpv-libs_v0.0.1_macos-universal-audio-default.tar.gz
-libmpv-libs_v0.0.1_macos-universal-audio-full.tar.gz
-libmpv-libs_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
-libmpv-libs_v0.0.1_macos-universal-video-default.tar.gz
-libmpv-libs_v0.0.1_macos-universal-video-full.tar.gz
-libmpv-libs_v0.0.1_macos-universal-video-encodersgpl.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-audio-default.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-audio-full.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-audio-encodersgpl.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-video-default.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-video-full.tar.gz
-libmpv-xcframeworks_v0.0.1_ios-universal-video-encodersgpl.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-audio-default.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-audio-full.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-video-default.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
-libmpv-xcframeworks_v0.0.1_macos-universal-video-encodersgpl.tar.gz
+$ echo \"v0.0.1\" > nix/utils/default/version.nix
+$ nix build -v
+$ tree result
+```
+
+<details>
+<summary>result</summary>
+
+```shell
+├── libmpv-libs_v0.0.1_ios-arm64-audio-default.tar.gz
+├── libmpv-libs_v0.0.1_ios-arm64-audio-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_ios-arm64-audio-full.tar.gz
+├── libmpv-libs_v0.0.1_ios-arm64-video-default.tar.gz
+├── libmpv-libs_v0.0.1_ios-arm64-video-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_ios-arm64-video-full.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-amd64-audio-default.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-amd64-audio-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-amd64-audio-full.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-amd64-video-default.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-amd64-video-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-amd64-video-full.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-arm64-audio-default.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-arm64-audio-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-arm64-audio-full.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-arm64-video-default.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-arm64-video-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-arm64-video-full.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-universal-audio-default.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-universal-audio-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-universal-audio-full.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-universal-video-default.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-universal-video-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_iossimulator-universal-video-full.tar.gz
+├── libmpv-libs_v0.0.1_macos-amd64-audio-default.tar.gz
+├── libmpv-libs_v0.0.1_macos-amd64-audio-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_macos-amd64-audio-full.tar.gz
+├── libmpv-libs_v0.0.1_macos-amd64-video-default.tar.gz
+├── libmpv-libs_v0.0.1_macos-amd64-video-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_macos-amd64-video-full.tar.gz
+├── libmpv-libs_v0.0.1_macos-arm64-audio-default.tar.gz
+├── libmpv-libs_v0.0.1_macos-arm64-audio-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_macos-arm64-audio-full.tar.gz
+├── libmpv-libs_v0.0.1_macos-arm64-video-default.tar.gz
+├── libmpv-libs_v0.0.1_macos-arm64-video-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_macos-arm64-video-full.tar.gz
+├── libmpv-libs_v0.0.1_macos-universal-audio-default.tar.gz
+├── libmpv-libs_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_macos-universal-audio-full.tar.gz
+├── libmpv-libs_v0.0.1_macos-universal-video-default.tar.gz
+├── libmpv-libs_v0.0.1_macos-universal-video-encodersgpl.tar.gz
+├── libmpv-libs_v0.0.1_macos-universal-video-full.tar.gz
+├── libmpv-xcframeworks_v0.0.1_ios-universal-audio-default.tar.gz
+├── libmpv-xcframeworks_v0.0.1_ios-universal-audio-encodersgpl.tar.gz
+├── libmpv-xcframeworks_v0.0.1_ios-universal-audio-full.tar.gz
+├── libmpv-xcframeworks_v0.0.1_ios-universal-video-default.tar.gz
+├── libmpv-xcframeworks_v0.0.1_ios-universal-video-encodersgpl.tar.gz
+├── libmpv-xcframeworks_v0.0.1_ios-universal-video-full.tar.gz
+├── libmpv-xcframeworks_v0.0.1_macos-universal-audio-default.tar.gz
+├── libmpv-xcframeworks_v0.0.1_macos-universal-audio-encodersgpl.tar.gz
+├── libmpv-xcframeworks_v0.0.1_macos-universal-audio-full.tar.gz
+├── libmpv-xcframeworks_v0.0.1_macos-universal-video-default.tar.gz
+├── libmpv-xcframeworks_v0.0.1_macos-universal-video-encodersgpl.tar.gz
+└── libmpv-xcframeworks_v0.0.1_macos-universal-video-full.tar.gz
+```
+</details>
+
+## Build a specific target
+
+```shell
+$ nix flake show
+$ nix build -v .#mk-out-archive-libs-macos-universal-video-default
+$ open result
 ```
 
 ## Naming convention
@@ -113,18 +157,18 @@ flowchart LR
     subgraph legend[Legend]
         direction TB
         subgraph links
-            P(node):::decoders -- "required" --> Q(node):::decoders
-            R(node):::decoders -. "optional" .-> S(node):::decoders
+            Q(node):::decoders -- "required" --> R(node):::decoders
+            S(node):::decoders -. "optional" .-> T(node):::decoders
         end
 
         subgraph variants
-            T(audio & video):::decoders
-            U{{video only}}:::decoders
+            U(audio & video):::decoders
+            V{{video only}}:::decoders
         end
 
         subgraph flavors
-            V(default, full):::decoders
-            W(encodersgpl):::encoders
+            W(default, full):::decoders
+            X(encodersgpl):::encoders
         end
     end
 
@@ -137,19 +181,20 @@ flowchart LR
         E(fftools-ffi):::encoders --> D
 
         %% libass
-        C -->  F{{fribidi}}:::decoders
-        C -->  G{{harfbuzz}}:::decoders
-        C -->  H{{freetype}}:::decoders
-        H -.-> G
+        G -.-> F{{libpng}}:::decoders
+        C -->  G{{freetype}}:::decoders
+        C -->  H{{fribidi}}:::decoders
+        C -->  I{{harfbuzz}}:::decoders
+        G -.-> I
 
         %% ffmpeg
-        D -.-> I(mbedtls):::decoders
-        D -.-> J{{dav1d}}:::decoders
-        D -.-> K{{libxml2}}:::decoders
-        D -.-> L(libvorbis):::encoders
-        D -.-> M{{libvpx}}:::encoders
-        D -.-> N{{libx264}}:::encoders
-        L -->  O(libogg):::encoders
+        D -.-> J(mbedtls):::decoders
+        D -.-> K{{dav1d}}:::decoders
+        D -.-> L{{libxml2}}:::decoders
+        D -.-> M(libvorbis):::encoders
+        D -.-> N{{libvpx}}:::encoders
+        D -.-> O{{libx264}}:::encoders
+        M -->  P(libogg):::encoders
     end
 
     classDef decoders stroke:#888
@@ -192,6 +237,10 @@ flowchart LR
   and laying out text in multiple languages and scripts, with support for
   advanced typography features such as ligatures and kerning
 
+- [**libpng**](https://github.com/pnggroup/libpng): A library for reading and
+  writing PNG (Portable Network Graphics) images, providing efficient image
+  compression and lossless data handling
+
 - [**dav1d**](https://code.videolan.org/videolan/dav1d): A library for
   cross-platform AV1 decoding
 
@@ -230,6 +279,7 @@ flowchart LR
 | freetype   | FreeType                                               |       ✅       |
 | harfbuzz   | MIT                                                    |       ✅       |
 | fribidi    | LGPL-2.1                                               |       ✅       |
+| libpng     | zlib/libpng                                            |       ✅       |
 | mbedtls    | Apache 2.0                                             |       ✅       |
 | uchardet   | MPL-1.1, GPL-2, LGPL-2.1                               |       ✅       |
 | libxml2    | MIT                                                    |       ✅       |
@@ -245,6 +295,7 @@ flowchart LR
 | freetype    | FreeType                             |       ✅       |
 | harfbuzz    | MIT                                  |       ✅       |
 | fribidi     | LGPL-2.1                             |       ✅       |
+| libpng     | zlib/libpng                           |       ✅       |
 | mbedtls     | Apache 2.0                           |       ✅       |
 | uchardet    | MPL-1.1, GPL-2, LGPL-2.1             |       ✅       |
 | libxml2     | MIT                                  |       ✅       |
@@ -271,42 +322,6 @@ flowchart LR
 
 - We use `meson` as much as possible in order to simplify cross-compilation, at
   the cost of some heaviness regarding legacy packages
-
-- If the build freezes, reboot macOS
-
-- Command to visualize the workflow of a Makefile:
-
-  ```
-  $ make -Bnd | make2graph | dot -Grankdir=LR -Tpng -o graph.png
-  ```
-
-## Project layout
-
-```
-.
-├── ...
-├── cmd                                   # golang scripts
-├── pkg                                   # golang packages
-├── downloads.lock                        # lock file of dependencies archives
-├── Makefile                              # main build script
-├── scripts                               # build scripts
-├── cross-files                           # cross build files used by meson
-├── build
-│   ├── intermediate                      # intermediate build artifacts
-│   │   ├── tool-versions.lock            # versions of tools used during build
-│   │   ├── downloads                     # dependencies archives files
-│   │   ├── links                         # symbolic links to host binaries
-│   │   ├── <rule>_<os>-<arch>-<variant>
-│   │   └── ...
-│   ├── tmp
-│   │   ├── <rule>_<os>-<arch>-<variant>
-│   │   └── ...
-│   └── output
-│       ├── debug.zip                     # zip containing locks and logs
-│       ├── libmpv-<format>_<version>_<os>-<arch>-<variant>.tar.gz
-│       └── ...
-└── ...
-```
 
 ## How the libass optional patch was created
 

@@ -1,0 +1,4 @@
+{
+  audio = "audio";
+  video = "video";
+}
