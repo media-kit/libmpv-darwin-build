@@ -6,10 +6,8 @@
 
 let
   name = "libvpx";
-  version = "1.13.0+1";
-  url = "https://gitlab.freedesktop.org/gstreamer/meson-ports/libvpx/-/archive/90d26fac0d895969a82cd873ad36e39737104c44/libvpx-v1.13.0.tar.gz";
-  # archiveSha256= "4f872ad2709d17b848b3588231495e432c42b9263731b9121fa210a3c5a893ff";
-  sha256 = "07g3gmbg24clqc414yb5mhss0q2lkav698lhfpgsb0cqm08lddi7";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
@@ -54,10 +52,9 @@ let
   ];
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = callPackage ../../utils/patch-shebangs/default.nix {
     name = "${pname}-patched-source-${version}";

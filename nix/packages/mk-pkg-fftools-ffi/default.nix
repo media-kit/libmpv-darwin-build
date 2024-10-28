@@ -7,10 +7,8 @@
 
 let
   name = "fftools-ffi";
-  version = "106d5813";
-  url = "https://github.com/moffatman/fftools-ffi/archive/106d58138071eba66c7d814f6573029c712cd597.tar.gz";
-  # archiveSha256 = "4577bb410978f5026270390aa65ebf0307250f3f5b0adf5353e060a5a3f4ee25";
-  sha256 = "00sgx98clxaqkaz9cyyz86r3v7mypz0yg1g4sv9hvs5mm7zd3czj";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
@@ -19,10 +17,9 @@ let
   ffmpeg = callPackage ../mk-pkg-ffmpeg/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
 in
 

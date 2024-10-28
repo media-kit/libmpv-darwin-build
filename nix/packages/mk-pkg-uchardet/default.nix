@@ -6,10 +6,8 @@
 
 let
   name = "uchardet";
-  version = "0.0.8";
-  url = "https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz";
-  # archiveSha256 = "e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0";
-  sha256 = "0cagwlj2mf4xyszkly45pk24cq6bw212i69kjd4yx395lwav0x74";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
@@ -17,10 +15,9 @@ let
   xctoolchainInstallNameTool = callPackage ../../utils/xctoolchain/install-name-tool.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = pkgs.runCommand "${pname}-patched-source-${version}" { } ''
     mkdir -p $out/subprojects/uchardet

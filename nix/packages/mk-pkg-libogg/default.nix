@@ -6,20 +6,17 @@
 
 let
   name = "libogg";
-  version = "1.3.5";
-  url = "https://github.com/xiph/ogg/releases/download/v1.3.5/libogg-1.3.5.tar.gz";
-  # archiveSha256 = "0eb4b4b9420a0f51db142ba3f9c64b333f826532dc0f48c6410ae51f4799b664";
-  sha256 = "15rz32zw54jpjdjlrvw7r2fh1rnmrz3gkan3jvfm9nd1h1d4bj1g";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
   crossFile = callPackage ../../utils/cross-file/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = pkgs.runCommand "${pname}-patched-source-${version}" { } ''
     cp -r ${src} src

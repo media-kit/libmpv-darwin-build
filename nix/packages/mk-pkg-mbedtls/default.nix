@@ -6,20 +6,17 @@
 
 let
   name = "mbedtls";
-  version = "3.4.1";
-  url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.1.tar.gz";
-  # archiveSha256 = "a420fcf7103e54e775c383e3751729b8fb2dcd087f6165befd13f28315f754f5";
-  sha256 = "0fzm1a02r4mkhawxdgk6rr7pv9dp94z4yrg4xd9sk0svqm2z521l";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
   crossFile = callPackage ../../utils/cross-file/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = pkgs.runCommand "${pname}-patched-source-${version}" { } ''
     mkdir -p $out/subprojects/mbedtls

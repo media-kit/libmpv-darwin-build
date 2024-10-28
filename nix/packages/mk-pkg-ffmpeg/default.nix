@@ -8,10 +8,8 @@
 
 let
   name = "ffmpeg";
-  version = "6.0";
-  url = "https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz";
-  # archiveSha256 = "57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082";
-  sha256 = "13wxi4xry8d552s3ya8rp7vw7z3i93ky2jq9aa465gxkrh63jq54";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   flavors = import ../../utils/constants/flavors.nix;
   variants = import ../../utils/constants/variants.nix;
@@ -34,10 +32,9 @@ let
   libx264 = callPackage ../mk-pkg-libx264/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = pkgs.runCommand "${pname}-patched-source-${version}" { } ''
     cp -r ${src} src

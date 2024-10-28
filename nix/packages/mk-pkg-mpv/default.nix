@@ -7,10 +7,8 @@
 
 let
   name = "mpv";
-  version = "0.36.0";
-  url = "https://github.com/mpv-player/mpv/archive/refs/tags/v0.36.0.tar.gz";
-  # archiveSha256 = "29abc44f8ebee013bb2f9fe14d80b30db19b534c679056e4851ceadf5a5e8bf6";
-  sha256 = "1ri06h7pv6hrxmxxc618n9hymlgr0gfx38bqq5dcszdgnlashsgk";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   variants = import ../../utils/constants/variants.nix;
   oses = import ../../utils/constants/oses.nix;
@@ -38,10 +36,9 @@ let
   ];
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = pkgs.runCommand "${pname}-patched-source-${variant}-${version}" { } ''
     cp -r ${src} src

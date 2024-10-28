@@ -6,10 +6,8 @@
 
 let
   name = "libass";
-  version = "0.17.1";
-  url = "https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz";
-  # archiveSha256 = "f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784";
-  sha256 = "19qwqss8m451zc7vhi7prcc44s0dxg8k0ys5q89iinkc2lpifj1d";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
@@ -19,10 +17,9 @@ let
   freetype = callPackage ../mk-pkg-freetype/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = pkgs.runCommand "${pname}-patched-source-${version}" { } ''
     cp -r ${src} src

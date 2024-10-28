@@ -6,24 +6,21 @@
 
 let
   name = "libpng";
-  version = "1.6.40";
-  url = "https://github.com/pnggroup/libpng/archive/v1.6.40.tar.gz";
-  # archiveSha256 = "62d25af25e636454b005c93cae51ddcd5383c40fa14aa3dae8f6576feb5692c2";
-  sha256 = "065dgx3549z964krpp66ahhizzqhrcg71l0llji40gbxjripp9s5";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  packagePatchLock = (import ../../../packages.lock.nix).libpngPatch;
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
   crossFile = callPackage ../../utils/cross-file/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   libpngPatch = builtins.fetchurl {
-    url = "https://wrapdb.mesonbuild.com/v2/libpng_1.6.40-1/get_patch";
-    sha256 = "bad558070e0a82faa5c0ae553bcd12d49021fc4b628f232a8e58c3fbd281aae1";
+    inherit (packagePatchLock) url sha256;
   };
   patchedSource =
     pkgs.runCommand "${pname}-patched-source-${version}"

@@ -6,10 +6,8 @@
 
 let
   name = "freetype";
-  version = "2.13.2";
-  url = "https://downloads.sourceforge.net/project/freetype/freetype2/2.13.2/freetype-2.13.2.tar.xz";
-  # archiveSha256 = "12991c4e55c506dd7f9b765933e62fd2be2e06d421505d7950a132e4f1bb484d";
-  sha256 = "0z5vs9dc3gzxv1jg5b2w3p1hin1wlkcciqxbrp4m3qzsplm970cn";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
@@ -19,10 +17,9 @@ let
   libpng = callPackage ../mk-pkg-libpng/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
 in
 

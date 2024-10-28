@@ -6,10 +6,8 @@
 
 let
   name = "harfbuzz";
-  version = "8.1.1";
-  url = "https://github.com/harfbuzz/harfbuzz/archive/8.1.1.tar.gz";
-  # archiveSha256 = "b16e6bc0fc7e6a218583f40c7d201771f2e3072f85ef6e9217b36c1dc6b2aa25";
-  sha256 = "1ghhzqs8kfmjaijvb64zryh2h9bzz6n2ryyq7s9jy0cy173s5sim";
+  packageLock = (import ../../../packages.lock.nix).${name};
+  inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
@@ -23,10 +21,9 @@ let
   ];
 
   pname = import ../../utils/name/package.nix name;
-  src = builtins.fetchTarball {
+  src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "${pname}-source-${version}";
-    inherit url;
-    inherit sha256;
+    inherit (packageLock) url sha256;
   };
   patchedSource = callPackage ../../utils/patch-shebangs/default.nix {
     name = "${pname}-patched-source-${version}";
