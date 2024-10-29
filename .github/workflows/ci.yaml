@@ -11,13 +11,18 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: DeterminateSystems/nix-installer-action@v14
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
+          extra-conf: |
+            sandbox = true
+            sandbox-fallback = false
 
       - name: Nix version
         run: nix --version
+
+      - name: Show Nix config
+        run: nix config show
 
       - name: Xcode version
         run: /Applications/Xcode_16.app/Contents/Developer/usr/bin/xcodebuild -version
