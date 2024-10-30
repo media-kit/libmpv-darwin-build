@@ -25,12 +25,12 @@ jobs:
         run: nix config show
 
       - name: Xcode version
-        run: /Applications/Xcode_16.app/Contents/Developer/usr/bin/xcodebuild -version
+        run: /Applications/Xcode_16.0.0.app/Contents/Developer/usr/bin/xcodebuild -version
 
       # See ${workspace}/nix/overlays/xcode.md
       - name: Set up Xcode in Nix store
         run: |
-          XCODE_APP="/Applications/Xcode_16.app"
+          XCODE_APP=$(realpath /Applications/Xcode_16.0.0.app)
           NIX_STORE_PATH="/nix/store/9irb2b36sn0693q7x2l554inm81vb2g6-Xcode.app"
           HASH="sha256:e3ebfbc4f45488d6a8dd950d03da2d23a23659f490b440f5f59f8c28dbe5282e"
 
