@@ -25,14 +25,14 @@ jobs:
         run: nix config show
 
       - name: Xcode version
-        run: /Applications/Xcode_16.0.0.app/Contents/Developer/usr/bin/xcodebuild -version
+        run: /Applications/Xcode_16.1.0.app/Contents/Developer/usr/bin/xcodebuild -version
 
       # See ${workspace}/nix/overlays/xcode.md
       - name: Set up Xcode in Nix store
         run: |
-          XCODE_APP=$(realpath /Applications/Xcode_16.0.0.app)
-          NIX_STORE_PATH="/nix/store/9irb2b36sn0693q7x2l554inm81vb2g6-Xcode.app"
-          HASH="sha256:e3ebfbc4f45488d6a8dd950d03da2d23a23659f490b440f5f59f8c28dbe5282e"
+          XCODE_APP=$(realpath /Applications/Xcode_16.1.0.app)
+          NIX_STORE_PATH="/nix/store/v92p4w6nxhyhq6lv0maq5cbb59mbxw5b-Xcode.app"
+          HASH="sha256:d63c91255c8e98603b7f1470067c5225ab673850eed35449f5a0105c936e581c"
 
           sudo cp -a $XCODE_APP $NIX_STORE_PATH
           sudo sqlite3 /nix/var/nix/db/db.sqlite "INSERT INTO ValidPaths (path,hash,registrationTime) VALUES ('$NIX_STORE_PATH','$HASH',$(date +%s))"
