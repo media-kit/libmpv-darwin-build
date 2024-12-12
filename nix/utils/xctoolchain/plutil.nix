@@ -17,6 +17,7 @@ pkgs.stdenvNoCC.mkDerivation {
     mkdir -p ./build/bin
 
     swiftc \
+      -sdk ${pkgs.darwin.xcode}/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk \
       -module-cache-path ./cache \
       ${./plutil.swift} -o ./build/bin/plutil
   '';

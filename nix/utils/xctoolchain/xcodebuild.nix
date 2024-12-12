@@ -16,6 +16,7 @@ let
       mkdir -p ./build/bin
 
       swiftc \
+        -sdk ${pkgs.darwin.xcode}/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk \
         -module-cache-path ./cache \
         ${./xcodebuild.swift} -o ./build/bin/xcodebuild
     '';
