@@ -1,0 +1,4 @@
+{
+  libs = "libs";
+  xcframeworks = "xcframeworks";
+}

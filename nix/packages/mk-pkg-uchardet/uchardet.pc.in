@@ -1,0 +1,11 @@
+prefix=${PREFIX}
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: uchardet
+Description: An encoding detector library ported from Mozilla
+Version: ${VERSION}
+Libs: -L${libdir} -luchardet
+Libs.private: -lstdc++
+Cflags: -I${includedir}/uchardet

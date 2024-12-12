@@ -2,6 +2,7 @@
     "recommendations": [
         "redhat.vscode-yaml",
         "bierner.markdown-mermaid",
-        "foxundermoon.shell-format"
+        "foxundermoon.shell-format",
+        "jnoortheen.nix-ide"
     ]
 }
