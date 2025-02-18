@@ -101,7 +101,7 @@ audio_default_options = [
     '--enable-decoder=dsd*',
     '--enable-decoder=dca', # required by dts
 
-    # parsers   
+    # parsers
     '--enable-parser=aac*',
     '--enable-parser=ac3',
     '--enable-parser=cook',
@@ -161,7 +161,7 @@ audio_default_options = [
     '--enable-protocol=subfile',
     '--enable-protocol=tcp',
     '--enable-protocol=tls',
-    # '--enable-protocol=srt', # WARNING: Option --enable-protocol=srt did not match anything
+    '--enable-protocol=srt',
 
     # filters
     '--enable-filter=overlay',

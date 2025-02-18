@@ -30,6 +30,7 @@ let
   libvorbis = callPackage ../mk-pkg-libvorbis/default.nix { };
   libvpx = callPackage ../mk-pkg-libvpx/default.nix { };
   libx264 = callPackage ../mk-pkg-libx264/default.nix { };
+  libsrt = callPackage ../mk-pkg-libsrt/default.nix { };
 
   pname = import ../../utils/name/package.nix name;
   src = callPackage ../../utils/fetch-tarball/default.nix {

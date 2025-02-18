@@ -1,0 +1,56 @@
+diff --git a/configure-data.tcl b/configure-data.tcl
+index 2944c1c..eba0f30 100644
+--- a/configure-data.tcl
++++ b/configure-data.tcl
+@@ -13,7 +13,7 @@
+ # - options: dictionary "option-name" : "description"
+ #   if there's '=' in option name, it expects an argument. Otherwise it's boolean.
+ # - alias: optional, you can make shortcuts to longer named options. Remember to use = in target name.
+-#
++#
+ # Optional procedures:
+ # - preprocess: run before command-line arguments ($argv) are reviewed
+ # - postprocess: run after options are reviewed and all data filled in
+@@ -370,41 +370,5 @@ proc postprocess {} {
+ 		# Otherwise don't set PKG_CONFIG_PATH and we'll see.
+ 	}
+
+-	set use_brew 0
+-	if { $::HAVE_DARWIN && !$toolchain_changed } {
+-		set use_brew 1
+-	}
+-	if { $use_brew } {
+-		foreach item $::cmakeopt {
+-			if { [string first "Android" $item] != -1 } {
+-				set use_brew 0
+-				break
+-			}
+-		}
+-	}
+-	if { $use_brew } {
+-		if { $have_gnutls } {
+-			# Use gnutls explicitly, as found in brew
+-			set er [catch {exec brew info gnutls} res]
+-			if { $er } {
+-				error "Cannot find gnutls in brew"
+-			}
+-		} else {
+-			# ON Darwin there's a problem with linking against the Mac-provided OpenSSL.
+-			# This must use brew-provided OpenSSL.
+-			#
+-			if { !$have_openssl } {
+-
+-				set er [catch {exec brew info openssl} res]
+-				if { $er } {
+-					error "You must have OpenSSL installed from 'brew' tool. The standard Mac version is inappropriate."
+-				}
+-
+-				lappend ::cmakeopt "-DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include"
+-				lappend ::cmakeopt "-DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib/libcrypto.a"
+-			}
+-		}
+-	}
+-
+ }
+
+
