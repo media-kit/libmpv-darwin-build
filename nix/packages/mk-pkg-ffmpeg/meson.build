@@ -101,7 +101,7 @@ audio_default_options = [
     '--enable-decoder=dsd*',
     '--enable-decoder=dca', # required by dts
 
-    # parsers   
+    # parsers
     '--enable-parser=aac*',
     '--enable-parser=ac3',
     '--enable-parser=cook',
@@ -158,6 +158,8 @@ audio_default_options = [
     '--enable-protocol=rtmpt',
     '--enable-protocol=rtmpts',
     '--enable-protocol=rtp',
+    '--enable-protocol=udp',
+    '--enable-protocol=udp_multicast',
     '--enable-protocol=subfile',
     '--enable-protocol=tcp',
     '--enable-protocol=tls',
@@ -234,13 +236,14 @@ video_default_options = [
     '--enable-demuxer=mpegvideo',
     '--enable-demuxer=hevc',
     '--enable-demuxer=rtsp',
-    # '--enable-demuxer=mpeg4', # WARNING: Option --enable-demuxer=mpeg4 did not match anything
     '--enable-demuxer=mjpeg',
     '--enable-demuxer=avi',
     '--enable-demuxer=av1',
     '--enable-demuxer=matroska',
     '--enable-demuxer=dash', # --enable-libxml2 required
     '--enable-demuxer=webm_dash_manifest',
+    '--enable-demuxer=rtp',
+    '--enable-demuxer=sdp',
 
     '--enable-demuxer=ass',
     '--enable-demuxer=srt',
@@ -258,6 +261,9 @@ video_default_options = [
     '--enable-hwaccel=mpeg2_videotoolbox',
     '--enable-hwaccel=mpeg4_videotoolbox',
     '--enable-hwaccel=vp9_videotoolbox',
+    
+    # muxers
+    '--enable-muxer=matroska',
 ]
 
 audio_full_options = [
