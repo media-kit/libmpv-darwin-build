@@ -1,0 +1,31 @@
+tvOS prohibits fork(), marking it with __TVOS_PROHIBITED. The POSIX
+subprocess implementation is unusable on tvOS; provide a stub that
+reports MP_SUBPROCESS_EUNSUPPORTED instead, matching mpv's declared
+error contract for unavailable subprocess APIs.
+
+--- a/osdep/subprocess-posix.c
++++ b/osdep/subprocess-posix.c
+@@ -31,6 +31,18 @@
+ #include "osdep/io.h"
+ #include "stream/stream.h"
+
++#if defined(__APPLE__)
++#include <TargetConditionals.h>
++#endif
++
++#if defined(TARGET_OS_TV) && TARGET_OS_TV
++void mp_subprocess2(struct mp_subprocess_opts *opts,
++                    struct mp_subprocess_result *res)
++{
++    *res = (struct mp_subprocess_result){0};
++    res->error = MP_SUBPROCESS_EUNSUPPORTED;
++}
++#else
+ extern char **environ;
+
+ #ifdef SIGRTMAX
+@@ -344,3 +356,4 @@ void mp_subprocess2(struct mp_subprocess_opts *opts,
+         res->error = MP_SUBPROCESS_EGENERIC;
+     }
+ }
++#endif /* !TARGET_OS_TV */

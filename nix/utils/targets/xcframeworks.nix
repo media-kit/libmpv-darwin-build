@@ -8,6 +8,10 @@ in
     arch = archs.universal;
   }
   {
+    os = oses.tvos;
+    arch = archs.universal;
+  }
+  {
     os = oses.macos;
     arch = archs.universal;
   }

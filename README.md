@@ -346,6 +346,23 @@ Inclusion:
       <td><code>12.0</code></td>
       <td>Required by <code>xcodebuild -create-xcframework</code></td>
     </tr>
+    <tr>
+      <td><strong>tvOS</strong></td>
+      <td>arm64</td>
+      <td><code>12.0</code></td>
+      <td>OpenGL ES deprecated since tvOS 12.0 but still linkable</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>tvOS Simulator</strong></td>
+      <td>amd64</td>
+      <td><code>12.0</code></td>
+      <td>Matches device baseline</td>
+    </tr>
+    <tr>
+      <td>arm64</td>
+      <td><code>12.0</code></td>
+      <td>Required by <code>xcodebuild -create-xcframework</code></td>
+    </tr>
   </tbody>
 </table>
 

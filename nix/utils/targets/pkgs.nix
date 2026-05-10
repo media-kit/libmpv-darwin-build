@@ -16,6 +16,18 @@ in
     arch = archs.amd64;
   }
   {
+    os = oses.tvos;
+    arch = archs.arm64;
+  }
+  {
+    os = oses.tvossimulator;
+    arch = archs.arm64;
+  }
+  {
+    os = oses.tvossimulator;
+    arch = archs.amd64;
+  }
+  {
     os = oses.macos;
     arch = archs.arm64;
   }

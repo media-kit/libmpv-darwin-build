@@ -35,6 +35,9 @@ let
     if [[ "$sdk" == "iphonesimulator" && "$show_sdk_version" == true ]]; then
       echo ${pkgs.darwin.xcode}/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
       exit 0
+    elif [[ "$sdk" == "appletvsimulator" && "$show_sdk_version" == true ]]; then
+      echo ${pkgs.darwin.xcode}/Contents/Developer/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator.sdk
+      exit 0
     else
       echo UNIMPLEMETED
       exit 1

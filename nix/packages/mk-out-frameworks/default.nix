@@ -80,7 +80,7 @@ pkgs.stdenvNoCC.mkDerivation {
     if [ ${os} == ${oses.macos} ]; then
       export INFO_PLIST_PATH=${./macos/Info.plist}
       ${buildMacOSScript}
-    elif [ ${os} == ${oses.ios} ] || [ ${os} == ${oses.iossimulator} ]; then
+    elif [ ${os} == ${oses.ios} ] || [ ${os} == ${oses.iossimulator} ] || [ ${os} == ${oses.tvos} ] || [ ${os} == ${oses.tvossimulator} ]; then
       export INFO_PLIST_PATH=${./ios/Info.plist}
       ${buildIOSScript}
     else

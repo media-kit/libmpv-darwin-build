@@ -20,6 +20,8 @@ options.add_cmake_defines({
     'USE_STATIC_MBEDTLS_LIBRARY': false,
     'USE_SHARED_MBEDTLS_LIBRARY': true,
     'LINK_WITH_PTHREAD': true,
+    'ENABLE_PROGRAMS': false,
+    'ENABLE_TESTING': false,
 })
 
 mbedtls = cmake.subproject('mbedtls',

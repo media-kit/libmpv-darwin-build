@@ -26,6 +26,11 @@ let
         (callPackage ../mk-out-frameworks/default.nix { os = oses.ios; })
         (callPackage ../mk-out-frameworks/default.nix { os = oses.iossimulator; })
       ]
+    else if os == oses.tvos then
+      [
+        (callPackage ../mk-out-frameworks/default.nix { os = oses.tvos; })
+        (callPackage ../mk-out-frameworks/default.nix { os = oses.tvossimulator; })
+      ]
     else if os == oses.macos then
       [
         (callPackage ../mk-out-frameworks/default.nix { os = oses.macos; })

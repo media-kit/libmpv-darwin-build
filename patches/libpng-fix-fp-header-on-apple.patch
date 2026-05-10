@@ -1,0 +1,20 @@
+Modern Apple SDKs (iOS, tvOS, macOS) do not expose <fp.h> in the default
+include search path; it only exists inside CoreServices' CarbonCore
+framework on macOS. The existing TARGET_OS_MAC guard triggers on every
+Apple OS (TARGET_OS_MAC is 1 on macOS, iOS, tvOS, watchOS, visionOS),
+which causes the build to fail with "'fp.h' file not found". Force the
+<math.h> path on Darwin, matching what every modern Apple toolchain
+expects.
+
+--- a/pngpriv.h
++++ b/pngpriv.h
+@@ -514,7 +514,8 @@
+ #  include <float.h>
+
+ #  if (defined(__MWERKS__) && defined(macintosh)) || defined(applec) || \
+-    defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)
++    defined(THINK_C) || defined(__SC__) || \
++    (defined(TARGET_OS_MAC) && !defined(__APPLE__))
+    /* We need to check that <math.h> hasn't already been included earlier
+     * as it seems it doesn't agree with <fp.h>, yet we should really use
+     * <fp.h> if possible.

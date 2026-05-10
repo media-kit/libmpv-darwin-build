@@ -39,6 +39,10 @@ let
         unzip ${libpngPatch} -d libpng-patch
         rsync -a libpng-patch/libpng-*/ $src/
 
+        cd $src
+        patch -p1 <${../../../patches/libpng-fix-fp-header-on-apple.patch}
+        cd -
+
         cp -r $src $out
       '';
 in
