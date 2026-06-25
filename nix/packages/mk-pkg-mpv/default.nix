@@ -48,6 +48,7 @@ let
     cd $src
     patch -p1 <${../../../patches/mpv-fix-missing-objc.patch}
     patch -p1 <${../../../patches/mpv-mix-with-others.patch}
+    patch -p1 <${../../../patches/mpv-audiounit-skip-session-management.patch}
     if [ "${variant}" == "${variants.audio}" ]; then
       patch -p1 <${../../../patches/mpv-remove-libass.patch}
     fi
