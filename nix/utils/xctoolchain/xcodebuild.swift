@@ -143,7 +143,9 @@ func getPlatformAndVariant(usingVtoolFor binaryPath: String, architectures: [Str
       || (output.contains("LC_VERSION_MIN_IPHONEOS") && architecture == "x86_64")
     {
       return ("ios", "simulator")
-    } else if output.contains("LC_VERSION_MIN_IPHONEOS") && architecture == "arm64" {
+    } else if (output.contains("LC_VERSION_MIN_IPHONEOS") && architecture == "arm64")
+      || output.range(of: #"(?m)^\s*platform\s+IOS\s*$"#, options: .regularExpression) != nil
+    {
       return ("ios", nil)
     } else if output.contains("LC_VERSION_MIN_MACOSX") || output.contains("MACOS") {
       return ("macos", nil)
