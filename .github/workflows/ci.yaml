@@ -55,7 +55,7 @@ jobs:
       - name: Build iOS universal video-default
         env:
           XCODE_PATH: ${{ steps.xcode_path.outputs.xcode_path }}
-          VERSION: ${{ github.ref_type == 'tag' && github.ref_name || format('v0.0.0-test.{0}', github.run_number) }}
+          VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.2.1' }}
         run: |
           nix develop -c make \
             XCODE_PATH="${XCODE_PATH}" \
