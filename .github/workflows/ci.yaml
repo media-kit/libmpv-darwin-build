@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - ios-custom-build
-      - codex/ffmpeg-8.1.3
+      - codex/mpv-0.42.0
     tags:
       - "*"
   pull_request:
@@ -55,7 +55,7 @@ jobs:
       - name: Build iOS universal video-default
         env:
           XCODE_PATH: ${{ steps.xcode_path.outputs.xcode_path }}
-          VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.2.1' }}
+          VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.3.0' }}
         run: |
           nix develop -c make \
             XCODE_PATH="${XCODE_PATH}" \
@@ -81,6 +81,23 @@ jobs:
             while IFS= read -r -d '' library; do
               strings "${library}" | grep -F 'FFmpeg version 8.1.3'
             done
+
+      - name: Verify MPV version and Apple TLS
+        run: |
+          find "${RUNNER_TEMP}/libmpv" -path '*/Mpv.framework/Mpv' -print0 |
+            while IFS= read -r -d '' library; do
+              strings "${library}" | grep -F 'mpv v0.42.0'
+            done
+          find "${RUNNER_TEMP}/libmpv" -path '*/Avformat.framework/Avformat' -print0 |
+            while IFS= read -r -d '' library; do
+              otool -L "${library}" | grep -F 'Security.framework'
+              if otool -L "${library}" | grep -F 'Mbedtls.framework'; then
+                exit 1
+              fi
+            done
+
+      - name: Test Apple system certificate trust
+        run: bash tests/apple_tls.sh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7

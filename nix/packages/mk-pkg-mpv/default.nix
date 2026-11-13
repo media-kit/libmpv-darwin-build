@@ -93,17 +93,20 @@ pkgs.stdenvNoCC.mkDerivation {
       -Dcdda=disabled `# cdda support (libcdio)`
       -Dcplugins=disabled `# C plugins`
       -Ddvbin=disabled `# DVB input module`
+      -Ddvda=disabled `# DVD-Audio support`
       -Ddvdnav=disabled `# dvdnav support`
       -Diconv=disabled `# iconv`
       -Djavascript=disabled `# Javascript (MuJS backend)`
       -Dlcms2=disabled `# LCMS2 support`
       -Dlibarchive=disabled `# libarchive wrapper for reading zip files and more`
       -Dlibavdevice=disabled `# libavdevice`
+      -Dlibcurl=disabled `# retain the FFmpeg network backend`
       -Dlibbluray=disabled `# Bluray support`
       -Dlua=disabled `# Lua`
       -Dpthread-debug=disabled `# pthread runtime debugging wrappers`
       -Drubberband=disabled `# librubberband support`
       -Dsdl2-gamepad=disabled `# SDL2 gamepad input`
+      -Dsubrandr=disabled `# subtitles are drawn by Flutter`
       -Duchardet=disabled `# uchardet support`
       -Duwp=disabled `# Universal Windows Platform`
       -Dvapoursynth=disabled `# VapourSynth filter bridge`
@@ -171,6 +174,7 @@ pkgs.stdenvNoCC.mkDerivation {
       -Dd3d9-hwaccel=disabled `# DXVA2 hwaccel`
       -Dgl-dxinterop-d3d9=disabled `# OpenGL/DirectX Interop Backend DXVA2 interop`
       -Dios-gl=disabled `# iOS OpenGL ES hardware decoding interop support`
+      -Dvideotoolbox-pl=disabled `# retain the iOS OpenGL path`
       -Dvideotoolbox-gl=disabled `# Videotoolbox with OpenGL`
 
       `# macOS features`

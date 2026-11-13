@@ -45,9 +45,9 @@
     sha256 = "62d25af25e636454b005c93cae51ddcd5383c40fa14aa3dae8f6576feb5692c2";
   };
   libplacebo = {
-    version = "7.349.0";
-    url = "https://github.com/haasn/libplacebo/archive/refs/tags/v7.349.0.tar.gz";
-    sha256 = "627e32439a0b3d2b90368ead7e919f470ee7446c87cc0f7841bbe319b23aa8b1";
+    version = "7.387.0";
+    url = "https://codeload.github.com/haasn/libplacebo/tar.gz/refs/tags/v7.387.0";
+    sha256 = "f9e62d3774a9c4cfd198ec3abaa88294aaade2e31c04d5ab02bcf4abc98b1df5";
   };
   fast_float = {
     version = "5.2.0";
@@ -105,9 +105,9 @@
     sha256 = "8fb65fae8dcae5840f793c0a334860a411f884cc537ea290ce1c52bb64ca007a";
   };
   mpv = {
-    version = "0.41.0";
-    url = "https://github.com/mpv-player/mpv/archive/refs/tags/v0.41.0.tar.gz";
-    sha256 = "ee21092a5ee427353392360929dc64645c54479aefdb5babc5cfbb5fad626209";
+    version = "0.42.0";
+    url = "https://codeload.github.com/mpv-player/mpv/tar.gz/refs/tags/v0.42.0";
+    sha256 = "bcfebbfa2b65a6d88dc97ea18117831072373e38b5785a2afb874ed4df5070dd";
   };
   uchardet = {
     version = "0.0.8";

@@ -1,16 +1,15 @@
 diff --git a/meson.build b/meson.build
-index f9fe4e7..8f60675 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -384,6 +384,7 @@ cocoa = dependency('appleframeworks', modules: ['Cocoa', 'IOKit', 'QuartzCore'],
+@@ -433,6 +433,7 @@
                     required: get_option('cocoa'))
  features += {'cocoa': cocoa.found()}
  if features['cocoa']
 +    add_languages('objc')
      dependencies += cocoa
-     sources += files('osdep/apple_utils.c',
-                      'osdep/language-apple.c',
-@@ -778,6 +779,7 @@ audiounit = {
+     path_source += files('osdep/path-mac.m')
+     sources += files('osdep/language-mac.c',
+@@ -855,6 +856,7 @@
  }
  features += {'audiounit': audiounit['deps'].found() and audiounit['symbol']}
  if features['audiounit']
