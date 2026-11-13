@@ -113,4 +113,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           fail_on_unmatched_files: true
+          overwrite_files: false
           files: result/libmpv-xcframeworks_*_ios-universal-video-default.tar.gz
