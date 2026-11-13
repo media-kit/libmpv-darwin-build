@@ -27,7 +27,7 @@ let
   source = pkgs.runCommand "${pname}-source-with-submodules-${version}" { } ''
     cp -r ${src} src
     chmod -R 777 src
-    rm -rf src/3rdparty
+    rm -rf src/3rdparty/{fast_float,glad,jinja,markupsafe,Vulkan-Headers}
     mkdir -p src/3rdparty
     cp -r ${fastFloat} src/3rdparty/fast_float
     cp -r ${glad} src/3rdparty/glad
