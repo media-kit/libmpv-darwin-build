@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - ios-custom-build
+      - codex/ffmpeg-8.1.3
     tags:
       - "*"
   pull_request:
@@ -73,6 +74,13 @@ jobs:
             -C "${RUNNER_TEMP}/libmpv"
           find "${RUNNER_TEMP}/libmpv" -path '*/Avcodec.framework/Avcodec' \
             -exec strings {} \; | grep -q av1_videotoolbox
+
+      - name: Verify FFmpeg version
+        run: |
+          find "${RUNNER_TEMP}/libmpv" -path '*/Avutil.framework/Avutil' -print0 |
+            while IFS= read -r -d '' library; do
+              strings "${library}" | grep -F 'FFmpeg version 8.1.3'
+            done
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
