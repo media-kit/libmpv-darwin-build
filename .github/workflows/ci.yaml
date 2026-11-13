@@ -15,7 +15,7 @@ on:
 jobs:
   ci:
     name: iOS universal video-default
-    runs-on: macos-26-intel
+    runs-on: xcode-27
     permissions:
       contents: write
 
@@ -48,8 +48,10 @@ jobs:
       - name: Xcode path
         id: xcode_path
         run: |
-          XCODE_PATH=$(realpath /Applications/Xcode_26.6.app)
-          "${XCODE_PATH}/Contents/Developer/usr/bin/xcodebuild" -version
+          XCODE_PATH=$(realpath "$(xcode-select -p)/../..")
+          XCODE_VERSION=$("${XCODE_PATH}/Contents/Developer/usr/bin/xcodebuild" -version)
+          printf '%s\n' "${XCODE_VERSION}"
+          [[ "${XCODE_VERSION}" == "Xcode 27"* ]]
           echo "xcode_path=${XCODE_PATH}" >> "$GITHUB_OUTPUT"
 
       - name: Build iOS universal video-default
