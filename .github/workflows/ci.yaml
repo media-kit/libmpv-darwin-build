@@ -15,7 +15,7 @@ on:
 jobs:
   ci:
     name: iOS universal video-default
-    runs-on: macos-26
+    runs-on: macos-26-intel
     permissions:
       contents: write
 
